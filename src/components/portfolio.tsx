@@ -43,11 +43,13 @@ export function Portfolio() {
         <Hero />
         <section id="projets" className="section site-wrap" aria-labelledby="projets-titre">
           <SectionHeading id="projets-titre" {...sectionContent.projects} />
-          <div className="projects-list">
+          <ul className="projects-grid" role="list">
             {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+              <li key={project.id}>
+                <ProjectCard project={project} />
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
         <JourneySection />
         <SkillsSection />
