@@ -1,24 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+import { Portfolio } from '@/components/portfolio';
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({ meta: [
+    { title: 'Fiona Talbi — Portfolio Marketing 360 & Communication' },
+    { name: 'description', content: 'Fiona Talbi, professionnelle du marketing 360 et de la communication à Paris. Découvrez mes projets chez Logitech, CosmétiCar et Massilia, mes résultats et mon parcours international.' },
+    { property: 'og:title', content: 'Fiona Talbi — Marketing, créativité & impact' },
+    { property: 'og:description', content: 'Plus de 3 ans d’expérience, +30 % de ventes et 140 top stores activés : découvrez le portfolio de Fiona Talbi.' },
+    { property: 'og:type', content: 'website' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+  ] }),
+  component: Portfolio,
 });
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
