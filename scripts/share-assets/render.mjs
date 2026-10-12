@@ -1,8 +1,9 @@
 // Génère les images de partage à partir des gabarits de ce dossier (à lancer à la main, pas au build) :
 //   node scripts/share-assets/render.mjs og-image-v1.jpg
 // → public/og-image-v1.jpg (1200 × 630, JPEG < 150 Ko) et public/apple-touch-icon.png (180 × 180).
-// Nécessite Playwright (Chromium) : `bunx playwright install chromium` une fois, ou
-// PLAYWRIGHT_MODULE=/chemin/vers/playwright/index.mjs pour une installation existante.
+// Nécessite le module Playwright et Chromium (absents des dépendances du projet) :
+//   npm install --no-save playwright && npx playwright install chromium
+// ou PLAYWRIGHT_MODULE=/chemin/vers/playwright/index.mjs pour une installation existante.
 import { readFileSync, statSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
