@@ -117,6 +117,19 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+
+  // Arrivée sur une page projet par navigation client : le focus passe au contenu, pour que la
+  // nouvelle page soit annoncée et que la tabulation reparte de là (le lien activé a disparu).
+  // Pas au retour vers l'accueil (/#projets) : le focus resterait sinon en haut de page.
+  useEffect(
+    () =>
+      router.subscribe("onResolved", ({ fromLocation, toLocation, pathChanged }) => {
+        if (fromLocation && pathChanged && toLocation.pathname.startsWith("/projets/"))
+          document.getElementById("contenu")?.focus({ preventScroll: true });
+      }),
+    [router],
+  );
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -315,7 +315,7 @@ export const brands: Readonly<Record<BrandId, Brand>> = {
   massilia: {
     id: "massilia",
     name: "Massilia E-consulting",
-    logo: { src: "logos/massilia-e-consulting.svg", width: 360, height: 151, scale: 1.3 },
+    logo: { src: "logos/massilia-e-consulting.svg", width: 970, height: 96, scale: 0.92 },
   },
 };
 
@@ -333,28 +333,28 @@ export const impactStats: readonly ImpactStat[] = [
     id: "sales-growth",
     value: "+30 %",
     label: "de ventes sur le rayon informatique",
-    source: "Logitech · Category management",
+    source: "Logitech · Category management",
     targetId: "logitech-category-management",
   },
   {
     id: "stores-activated",
     value: "140",
     label: "top stores équipés en PLV dès le lancement",
-    source: "Logitech · Trade marketing",
+    source: "Logitech · Trade marketing",
     targetId: "logitech-trade-marketing",
   },
   {
     id: "instagram-community",
     value: "500+",
     label: "abonnés Instagram en moins d’un an",
-    source: "CosmétiCar · Réseaux sociaux",
+    source: "CosmétiCar · Réseaux sociaux",
     targetId: "cosmeticar-social-media",
   },
   {
     id: "marketing-experience",
     value: "3+ ans",
     label: "en marketing et communication",
-    source: "Logitech · CosmétiCar · Massilia",
+    source: "Logitech · CosmétiCar · Massilia",
     targetId: "parcours",
   },
 ];
@@ -510,12 +510,6 @@ export const projects: readonly Project[] = [
         "formation",
         "Écran de présentation et carnets sur une table de formation",
         "Une formation communication pour les franchisés d’une nouvelle agence.",
-      ),
-      projectPhoto(
-        "cosmeticar-social-media",
-        "lavage",
-        "Voiture sous un portique de lavage, couverte de mousse",
-        "Le métier du réseau : le lavage automobile.",
       ),
     ],
   },
@@ -760,7 +754,6 @@ export const sectionContent = {
     lead: "Plus de trois ans en marketing et communication, entre la marque et le terrain : category management et trade marketing chez Logitech, réseaux sociaux chez CosmétiCar, relations influenceurs chez Massilia E-consulting.",
     credentials:
       "Diplômée d’un Master Marketing Digital & Innovation (IÉSEG) et d’un MSc Luxury Marketing (GCU London)",
-    linkedinLabel: "LinkedIn",
     primaryAction: "Voir les projets",
     /** Bouton du CV : « Télécharger le » est masqué sur téléphone (« CV »), le nom lu reste complet. */
     cvActionPrefix: "Télécharger le ",
@@ -784,8 +777,6 @@ export const sectionContent = {
     titleAccent: "Des résultats mesurables.",
     description:
       "Quatre missions chez Logitech, CosmétiCar et Massilia E-consulting. Chaque carte mène au détail du projet.",
-    contextLabel: "Enjeu",
-    actionLabel: "Action",
     resultsLabel: "Résultats",
     /** Appel en bas de chaque carte (lien interne : flèche droite, pas ↗). */
     openLabel: "Voir le projet",
@@ -800,7 +791,6 @@ export const sectionContent = {
     companyLabel: "Entreprise",
     roleLabel: "Poste",
     locationLabel: "Lieu",
-    fieldLabel: "Domaine",
     galleryTitle: "En images",
     /** Nom des photos-liens : « Agrandir la photo : <texte alternatif> ». */
     enlargeLabel: "Agrandir la photo",

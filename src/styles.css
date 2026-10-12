@@ -315,11 +315,6 @@
   border-color: var(--border-strong);
   box-shadow: 0 1px 2px color-mix(in oklch, var(--ink) 5%, transparent);
 }
-/* Bouton rond (icône seule, nom accessible porté par le lien). */
-.action-icon {
-  width: 48px;
-  padding: 0;
-}
 
 /* Logo d'entreprise ou d'outil : hauteur fixée par --logo-h, corrigée par --logo-scale (données). */
 .brand-logo {
@@ -754,9 +749,11 @@
 .video-welcome-play svg {
   translate: 1px 0; /* centrage optique du triangle */
 }
-/* Pendant la modale ou le lecteur, et sous le menu mobile ouvert : retiré (et hors tabulation). */
+/* Pendant la modale, le lecteur ou l'agrandissement d'une photo, et sous le menu mobile ouvert :
+   retiré (et hors tabulation). */
 .video-fab[data-hidden],
-html:has(.mobile-menu[open]) .video-fab {
+html:has(.mobile-menu[open]) .video-fab,
+html:has(dialog.lightbox[open]) .video-fab {
   opacity: 0;
   visibility: hidden;
   translate: 0 12px;
@@ -2462,9 +2459,6 @@ html:has(.video-welcome[open], .intro-video-dialog[open]) {
     flex: 1 1 auto;
     min-width: 0;
     padding-inline: 16px;
-  }
-  .hero-actions .action-icon {
-    flex: none;
   }
   .hero-facts {
     margin-top: 20px;

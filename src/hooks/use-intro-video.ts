@@ -6,9 +6,12 @@ import type { IntroVideo } from "@/data/portfolio";
 export type IntroVideoChoice = "ignored" | "watched";
 
 const STORAGE_PREFIX = "ft-intro-video:";
-/** Textes des chiffres clés (hero de l'accueil, résultats d'une page projet) : jamais sous le bouton. */
-const FIGURE_TEXT =
-  ".hero-kpi-value, .hero-kpi-label, .hero-kpi-source, .project-kpi-value, .project-kpi-label";
+/**
+ * Valeurs des chiffres clés (hero de l'accueil, résultats d'une page projet) : jamais sous le
+ * bouton. Libellés et sources peuvent passer dessous : le bouton reste ainsi visible dès l'arrivée
+ * sur presque tous les écrans.
+ */
+const FIGURE_TEXT = ".hero-kpi-value, .project-kpi-value";
 /** Délai avant la modale d'accueil : le hero a fini d'entrer (550 ms) et la page est posée. */
 export const WELCOME_DELAY_MS = 800;
 /** Au-delà, le visiteur a commencé à lire la page : pas de modale. */
@@ -38,10 +41,10 @@ function writeIntroChoice(id: string, choice: IntroVideoChoice) {
 /** « 20 s », « 1 min », « 1 min 05 s » (espaces insécables). */
 export function formatDuration(totalSeconds: number): string {
   const seconds = Math.max(0, Math.round(totalSeconds));
-  if (seconds < 60) return seconds + " s";
+  if (seconds < 60) return seconds + " s";
   const minutes = Math.floor(seconds / 60);
   const rest = seconds % 60;
-  return minutes + " min" + (rest ? " " + String(rest).padStart(2, "0") + " s" : "");
+  return minutes + " min" + (rest ? " " + String(rest).padStart(2, "0") + " s" : "");
 }
 
 /** Arrivée « propre » sur l'accueil : en haut, sans ancre, rien d'autre d'ouvert. */
@@ -145,11 +148,20 @@ export function useIntroVideo(video: IntroVideo, offerWelcome: boolean): IntroVi
       const bottom = document.documentElement.clientHeight - parseFloat(style.bottom);
       const left = right - fab.offsetWidth;
       const top = bottom - fab.offsetHeight;
+      // Les lignes de texte réelles, pas la boîte du bloc (qui s'étend sur toute la carte).
+      const range = document.createRange();
+      const lines = (figure: HTMLElement) => {
+        // Sans Range.getClientRects (jsdom), la boîte de l'élément.
+        if (typeof range.getClientRects !== "function") return [figure.getBoundingClientRect()];
+        range.selectNodeContents(figure);
+        return Array.from(range.getClientRects());
+      };
       setFabCovering(
-        figures.some((figure) => {
-          const box = figure.getBoundingClientRect();
-          return box.right > left && box.left < right && box.bottom > top && box.top < bottom;
-        }),
+        figures.some((figure) =>
+          lines(figure).some(
+            (box) => box.right > left && box.left < right && box.bottom > top && box.top < bottom,
+          ),
+        ),
       );
     };
     const schedule = () => {

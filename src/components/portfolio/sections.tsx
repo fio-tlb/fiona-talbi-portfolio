@@ -199,7 +199,7 @@ export function SkillsSection() {
                   return (
                     <li className="tool-chip" key={tool.id}>
                       {tool.logo ? (
-                        <Logo logo={tool.logo} alt="" />
+                        <Logo logo={tool.logo} alt="" loading="lazy" />
                       ) : (
                         <Icon size={17} strokeWidth={1.75} aria-hidden />
                       )}
@@ -233,7 +233,7 @@ export function SkillsSection() {
               <li className="cert-card" key={cert.id} data-reveal data-delay={index * 50}>
                 {cert.logo ? (
                   <span className="logo-tile is-square">
-                    <Logo logo={cert.logo} alt="" />
+                    <Logo logo={cert.logo} alt="" loading="lazy" />
                   </span>
                 ) : (
                   <span className="icon-tile" aria-hidden>

@@ -5,7 +5,7 @@ import { isNotFound } from "@tanstack/react-router";
 import axe from "axe-core";
 import { afterEach, describe, expect, it } from "vitest";
 import { ProjectPage } from "@/components/project-page";
-import { profile, projects, sectionContent, seo } from "@/data/portfolio";
+import { brands, experiences, profile, projects, sectionContent, seo } from "@/data/portfolio";
 import { buildProjectHead } from "@/lib/seo";
 import { Route } from "@/routes/projets.$projectId";
 import { renderToStringWithRouter, renderWithRouter } from "./render-with-router";
@@ -169,5 +169,13 @@ describe("Project page", () => {
     const results = await axe.run(container, { rules: { "color-contrast": { enabled: false } } });
     expect(results.violations.map((violation) => violation.id)).toEqual([]);
     expect(container.querySelectorAll("h1")).toHaveLength(1);
+  });
+});
+
+describe("Company names", () => {
+  // Le nom est saisi dans `brands` et repris par les projets et les expériences : un seul nom.
+  it("spells each company the same way as its brand", () => {
+    for (const item of projects) expect(item.brand).toBe(brands[item.brandId].name);
+    for (const item of experiences) expect(item.company).toBe(brands[item.brandId].name);
   });
 });

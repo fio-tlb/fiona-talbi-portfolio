@@ -206,11 +206,6 @@
 .project-cover-link:focus-visible {
   border-radius: var(--radius-card-lg);
 }
-@media (min-width: 900px) {
-  .project-cover-link {
-    aspect-ratio: 2 / 1;
-  }
-}
 
 /* ---------- Contexte, mission, actions, récit : cartes en bento ---------- */
 .project-panels {
@@ -337,11 +332,6 @@
 }
 .gallery-grid > .is-wide {
   grid-column: 1 / -1;
-}
-@media (min-width: 900px) {
-  .gallery-grid > .is-wide .photo-link {
-    aspect-ratio: 2 / 1;
-  }
 }
 
 /* ---------- Projets voisins ---------- */
@@ -780,9 +770,6 @@ html:has(.lightbox[open]) {
   }
   .project-cover-figure {
     margin-top: 20px;
-  }
-  .project-cover-link {
-    aspect-ratio: 2 / 1;
   }
   .project-gallery {
     margin-top: 24px;

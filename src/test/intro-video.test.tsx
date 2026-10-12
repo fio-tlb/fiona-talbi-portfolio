@@ -6,7 +6,7 @@ import { Portfolio } from "@/components/portfolio";
 import { ProjectPage } from "@/components/project-page";
 import { IntroVideoLayer } from "@/components/portfolio/intro-video";
 import { introVideo, projects } from "@/data/portfolio";
-import { WELCOME_DELAY_MS } from "@/hooks/use-intro-video";
+import { formatDuration, WELCOME_DELAY_MS } from "@/hooks/use-intro-video";
 import { renderWithRouter, renderToStringWithRouter } from "./render-with-router";
 
 const video = introVideo!;
@@ -204,5 +204,14 @@ describe("Intro video", () => {
     if (video.captions) {
       expect(readFileSync(path.join(publicDir, video.captions), "utf8")).toMatch(/^WEBVTT/);
     }
+  });
+});
+
+describe("formatDuration", () => {
+  // Espaces insécables : le nombre ne se sépare jamais de son unité.
+  it("keeps numbers and units together", () => {
+    expect(formatDuration(20)).toBe("20\u00a0s");
+    expect(formatDuration(60)).toBe("1\u00a0min");
+    expect(formatDuration(90)).toBe("1\u00a0min\u00a030\u00a0s");
   });
 });

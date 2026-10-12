@@ -66,22 +66,25 @@ function VideoFab({ controller }: { controller: IntroVideoController }) {
     event.preventDefault();
     controller.play();
   };
+  // Dans un repère : les lecteurs d'écran le trouvent dans la liste des régions.
   return (
-    <a
-      ref={controller.fabRef}
-      className="video-fab"
-      href={publicPath(video.src)}
-      onClick={onClick}
-      data-hidden={controller.dialogOpen || controller.fabCovering || undefined}
-    >
-      <span className="video-fab-mark" aria-hidden>
-        <Play size={14} fill="currentColor" strokeWidth={0} />
-      </span>
-      {text.fabLabel}
-      <span className="sr-only">
-        {" " + text.fabNameSuffix + " (" + formatDuration(video.durationSeconds) + ")"}
-      </span>
-    </a>
+    <aside aria-label={text.welcomeLabel}>
+      <a
+        ref={controller.fabRef}
+        className="video-fab"
+        href={publicPath(video.src)}
+        onClick={onClick}
+        data-hidden={controller.dialogOpen || controller.fabCovering || undefined}
+      >
+        <span className="video-fab-mark" aria-hidden>
+          <Play size={14} fill="currentColor" strokeWidth={0} />
+        </span>
+        {text.fabLabel}
+        <span className="sr-only">
+          {" " + text.fabNameSuffix + " (" + formatDuration(video.durationSeconds) + ")"}
+        </span>
+      </a>
+    </aside>
   );
 }
 
