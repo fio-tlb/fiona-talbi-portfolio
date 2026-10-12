@@ -32,11 +32,17 @@ Continue developing this project in the [Lovable editor](https://lovable.dev/pro
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Prefer working locally? Install Node.js and Bun 1.4.3, then use the committed lockfile:
 
 ```sh
 git clone <this-repository-url>
 cd <repository-name>
-npm i
-npm run dev
+bun install --frozen-lockfile
+bun run dev
 ```
+
+## GitHub Pages
+
+The site is built as a static page for <https://fio-tlb.github.io/fiona-talbi-portfolio/>. In **Settings → Pages**, select **GitHub Actions** as the build source once. The workflow in `.github/workflows/pages.yml` then tests, builds and deploys the site after every push to `main` (or when run manually). Check the **Actions** tab for deployment status.
+
+For a local Pages build, run `GITHUB_PAGES=true bun run build`; the files to publish are in `dist/client`. See [AI_README.md](AI_README.md) for concise agent instructions.

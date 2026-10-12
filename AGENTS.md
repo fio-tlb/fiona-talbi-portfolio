@@ -9,6 +9,7 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
+- Lire `AI_README.md` avant de modifier le portfolio : commandes, structure et déploiement GitHub Pages y sont résumés.
 - Keep portfolio content in browser-safe data modules and reusable presentation components; this keeps career facts separate from layout.
 - Use anchored sections on the single portfolio page; navigation scrolls between sections of one continuous narrative.
 - Keep scroll progress and active-section navigation client-side in the portfolio; use passive, frame-throttled scrolling to avoid unnecessary rendering work.
