@@ -603,8 +603,34 @@
     color var(--motion-base) var(--ease-out),
     text-decoration-color var(--motion-base) var(--ease-out);
 }
-/* Portrait d'au moins 300 px : « Plus tard » à droite, la durée sous le libellé. En dessous
-   (tablette), les deux boutons sont empilés. */
+/* « Plus tard » à droite, la durée sous le libellé ; plus serré quand le portrait fait
+   moins de 300 px de large (tablette). */
+@container (max-width: 299px) {
+  .intro-invite {
+    flex-direction: row;
+  }
+  .intro-invite-watch {
+    gap: 8px;
+    padding-inline: 10px 8px;
+    font-size: var(--text-meta);
+  }
+  .intro-play-mark {
+    width: 28px;
+    height: 28px;
+  }
+  .intro-invite-duration {
+    display: block;
+    font-size: var(--text-small);
+  }
+  .intro-invite-sep {
+    display: none;
+  }
+  .intro-invite-later {
+    padding-inline: 10px;
+    border-top: 0;
+    border-left: 1px solid var(--line);
+  }
+}
 @container (min-width: 300px) {
   .intro-invite {
     flex-direction: row;
@@ -672,7 +698,7 @@
     visibility 0s;
 }
 /* Au-dessus du pied de page et sous le menu mobile ouvert : retirée (et hors de la tabulation). */
-.intro-widget[data-away]:not(:focus-within),
+.intro-widget[data-away]:not(:has(:focus-visible)),
 html:has(.mobile-menu[open]) .intro-widget {
   opacity: 0;
   visibility: hidden;
@@ -1079,7 +1105,7 @@ html:has(.intro-video-dialog[open]) {
   .experience > * {
     grid-column: 1;
   }
-  .experience-role {
+  .experience .experience-role {
     font-size: 1.1875rem;
   }
   .experience .experience-text {
@@ -1169,15 +1195,20 @@ html:has(.intro-video-dialog[open]) {
 .tool-line {
   display: flex;
   flex-wrap: wrap;
+  margin-left: -26px;
+  clip-path: inset(0 0 0 26px); /* le « · » de début de ligne reste hors champ */
   font-size: var(--text-body);
   line-height: 1.75;
 }
 .tool-line li {
   white-space: nowrap;
 }
-.tool-line li:not(:last-child)::after {
+/* Séparateur avant chaque outil : jamais de « · » orphelin en fin de ligne. */
+.tool-line li::before {
   content: "·";
-  padding-inline: 10px;
+  display: inline-block;
+  width: 26px;
+  text-align: center;
   color: var(--ink-soft);
 }
 /* Certifications : badges compacts d'une ligne. Logo seulement s'il est fourni et autorisé. */
@@ -1490,9 +1521,6 @@ html:has(.intro-video-dialog[open]) {
 .enter-4 {
   animation-delay: 170ms;
 }
-.enter-5 {
-  animation-delay: 210ms;
-}
 @keyframes hero-enter {
   from {
     opacity: 0;
@@ -1581,7 +1609,7 @@ html:has(.intro-video-dialog[open]) {
   .hero-link:hover {
     text-decoration-color: currentColor;
   }
-  .hero-kpi:hover {
+  .hero-kpi:hover:not(:active) {
     background: color-mix(in oklch, var(--sky) 40%, var(--sky-soft));
   }
   .hero-kpi:hover .hero-kpi-label {
@@ -1620,7 +1648,7 @@ html:has(.intro-video-dialog[open]) {
   .footer-links a:hover .lucide-arrow-up {
     translate: 0 calc(-1 * var(--nudge));
   }
-  .intro-invite-watch:hover {
+  .intro-invite-watch:hover:not(:active) {
     background: color-mix(in oklch, var(--paper-deep) 55%, var(--paper-light));
   }
   .intro-invite-watch:hover .intro-play-mark,
@@ -1791,7 +1819,7 @@ html:has(.intro-video-dialog[open]) {
 @media (max-width: 980px) {
   /* Hero tablette : même disposition que sur desktop, portrait plus petit. */
   .hero {
-    --portrait-h: clamp(15rem, 36vw, 20rem);
+    --portrait-h: clamp(15rem, 42vw, 24rem);
   }
   .hero-kpi {
     padding: 18px 18px 20px;
