@@ -37,8 +37,9 @@ export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
         menuRef.current.querySelector("summary")?.focus();
       }
     };
-    // Taps outside land on the scrim (body::after), so closing here never triggers the element below.
-    const onOutsideClick = (event: PointerEvent) => {
+    // Taps outside land on the scrim (body::after). Closing on click (not pointerdown) keeps the
+    // scrim in place until the click is dispatched, so the element below is never activated.
+    const onOutsideClick = (event: MouseEvent) => {
       if (event.target instanceof Node && !menuRef.current?.contains(event.target)) closeMenu();
     };
     // Close when keyboard focus leaves the open panel, so the focused element is never hidden under it.
@@ -50,12 +51,12 @@ export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
     };
     const menu = menuRef.current;
     document.addEventListener("keydown", onEscape);
-    document.addEventListener("pointerdown", onOutsideClick);
+    document.addEventListener("click", onOutsideClick);
     menu?.addEventListener("focusout", onFocusOut);
     desktop.addEventListener("change", onDesktop);
     return () => {
       document.removeEventListener("keydown", onEscape);
-      document.removeEventListener("pointerdown", onOutsideClick);
+      document.removeEventListener("click", onOutsideClick);
       menu?.removeEventListener("focusout", onFocusOut);
       desktop.removeEventListener("change", onDesktop);
     };
