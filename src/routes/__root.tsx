@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { profile, seo } from "@/data/portfolio";
 
 function NotFoundComponent() {
   return (
@@ -78,11 +79,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Fiona Talbi — Marketing & Communication" },
-      { name: "description", content: "Le portfolio de Fiona Talbi, marketing 360 et communication à Paris." },
-      { name: "author", content: "Fiona Talbi" },
-      { property: "og:title", content: "Fiona Talbi — Marketing & Communication" },
-      { property: "og:description", content: "Stratégie, créativité et impact : découvrez le parcours de Fiona Talbi." },
+      { title: seo.title },
+      { name: "description", content: seo.description },
+      { name: "author", content: profile.name },
+      { property: "og:title", content: seo.socialTitle },
+      { property: "og:description", content: seo.socialDescription },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -96,7 +97,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: `${import.meta.env.BASE_URL}favicon.svg`,
         type: "image/svg+xml",
       },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;600;700&family=Manrope:wght@400;500;600;650;700;750;800&display=swap" },
     ],
   }),
   shellComponent: RootShell,
