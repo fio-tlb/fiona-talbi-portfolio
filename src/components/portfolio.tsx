@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { navigation, profile, projects, sectionContent } from "@/data/portfolio";
+import { navigation, projects, sectionContent } from "@/data/portfolio";
 import { usePortfolioNavigation } from "@/hooks/use-portfolio-navigation";
 import { useReveal } from "@/hooks/use-reveal";
 import { ContactSection } from "./portfolio/contact-section";
@@ -20,7 +20,7 @@ export function Portfolio() {
     <SiteShell
       activeSection={activeSection}
       progressRef={progressRef}
-      canInvite={profile.portrait !== null}
+      offerVideoWelcome
       mainRef={mainRef}
       topId="accueil"
     >

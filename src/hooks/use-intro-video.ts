@@ -2,15 +2,17 @@ import { useCallback, useEffect, useRef, useState, type RefObject } from "react"
 import { flushSync } from "react-dom";
 import type { IntroVideo } from "@/data/portfolio";
 
-/** Ce qui flotte à l'écran : rien, le bandeau du portrait (« Plus tard »), ou la pastille. */
-export type IntroVideoUi = "none" | "invite" | "widget";
-/** Choix mémorisé par vidéo : `later` garde la pastille, `dismissed` ne laisse que le bouton du hero. */
-export type IntroVideoChoice = "later" | "dismissed";
+/** Choix mémorisé par vidéo : la modale d'accueil ne revient plus, quel qu'il soit. */
+export type IntroVideoChoice = "ignored" | "watched";
 
 const STORAGE_PREFIX = "ft-intro-video:";
-// Bandeau posé sur le portrait à partir de 721 px de large et 521 px de haut (mêmes seuils que
-// styles.css) ; sur téléphone, le bouton du hero suffit et la pastille arrive quand on quitte le hero.
-const INVITE_QUERY = "(min-width: 721px) and (min-height: 521px)";
+/** Textes des chiffres clés (hero de l'accueil, résultats d'une page projet) : jamais sous le bouton. */
+const FIGURE_TEXT =
+  ".hero-kpi-value, .hero-kpi-label, .hero-kpi-source, .project-kpi-value, .project-kpi-label";
+/** Délai avant la modale d'accueil : le hero a fini d'entrer (550 ms) et la page est posée. */
+export const WELCOME_DELAY_MS = 800;
+/** Au-delà, le visiteur a commencé à lire la page : pas de modale. */
+const WELCOME_MAX_SCROLL = 100;
 
 // Repli en mémoire quand le stockage est bloqué (navigation privée, cookies refusés).
 const memoryChoices = new Map<string, IntroVideoChoice>();
@@ -18,83 +20,155 @@ const memoryChoices = new Map<string, IntroVideoChoice>();
 export function readIntroChoice(id: string): IntroVideoChoice | null {
   try {
     const value = window.localStorage.getItem(STORAGE_PREFIX + id);
-    return value === "later" || value === "dismissed" ? value : null;
+    return value === "ignored" || value === "watched" ? value : null;
   } catch {
     return memoryChoices.get(id) ?? null;
   }
 }
 
 function writeIntroChoice(id: string, choice: IntroVideoChoice) {
-  memoryChoices.set(id, choice);
   try {
     window.localStorage.setItem(STORAGE_PREFIX + id, choice);
   } catch {
     // Stockage indisponible : le choix vaut pour cette visite seulement.
+    memoryChoices.set(id, choice);
   }
 }
 
 /** « 20 s », « 1 min », « 1 min 05 s » (espaces insécables). */
 export function formatDuration(totalSeconds: number): string {
   const seconds = Math.max(0, Math.round(totalSeconds));
-  if (seconds < 60) return seconds + " s";
+  if (seconds < 60) return seconds + " s";
   const minutes = Math.floor(seconds / 60);
   const rest = seconds % 60;
-  return minutes + " min" + (rest ? " " + String(rest).padStart(2, "0") + " s" : "");
+  return minutes + " min" + (rest ? " " + String(rest).padStart(2, "0") + " s" : "");
+}
+
+/** Arrivée « propre » sur l'accueil : en haut, sans ancre, rien d'autre d'ouvert. */
+function canWelcome() {
+  return (
+    !window.location.hash &&
+    window.scrollY < WELCOME_MAX_SCROLL &&
+    !document.querySelector("dialog[open], .mobile-menu[open]")
+  );
 }
 
 export type IntroVideoController = {
   video: IntroVideo;
-  /** Faux avant l'hydratation : le lien du hero reste un simple lien vers le MP4. */
+  /** Faux avant l'hydratation (ou sans <dialog>) : le bouton flottant reste un lien vers le MP4. */
   ready: boolean;
-  ui: IntroVideoUi;
+  /** La modale d'accueil est montée (elle ne l'est qu'une fois, sur l'accueil). */
+  welcomeMounted: boolean;
+  /** Une des deux fenêtres est ouverte : le bouton flottant s'efface. */
+  dialogOpen: boolean;
+  /** Le bouton flottant masquerait un chiffre clé du hero (haut de l'accueil) : il attend. */
+  fabCovering: boolean;
   /** La <video> n'existe qu'après le premier clic : aucun octet chargé avant. */
   playerMounted: boolean;
   playerError: boolean;
   duration: string;
+  welcomeRef: RefObject<HTMLDialogElement | null>;
+  welcomeWatchRef: RefObject<HTMLButtonElement | null>;
   dialogRef: RefObject<HTMLDialogElement | null>;
   videoRef: RefObject<HTMLVideoElement | null>;
   closeButtonRef: RefObject<HTMLButtonElement | null>;
-  widgetPlayRef: RefObject<HTMLButtonElement | null>;
+  fabRef: RefObject<HTMLAnchorElement | null>;
   play: () => void;
-  later: () => void;
-  dismiss: () => void;
+  ignore: () => void;
+  onWelcomeClose: () => void;
   onPlayerClose: () => void;
   onEnded: () => void;
   onError: () => void;
 };
 
-export function useIntroVideo(video: IntroVideo, canInvite: boolean): IntroVideoController {
+/**
+ * Vidéo de présentation : modale d'accueil (première visite, accueil seulement), bouton
+ * flottant permanent et lecteur. `offerWelcome` est vrai sur l'accueil uniquement.
+ */
+export function useIntroVideo(video: IntroVideo, offerWelcome: boolean): IntroVideoController {
   const [ready, setReady] = useState(false);
-  const [ui, setUi] = useState<IntroVideoUi>("none");
+  const [welcomeMounted, setWelcomeMounted] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [fabCovering, setFabCovering] = useState(false);
   const [playerMounted, setPlayerMounted] = useState(false);
   const [playerError, setPlayerError] = useState(false);
   const choiceRef = useRef<IntroVideoChoice | null>(null);
   const openerRef = useRef<HTMLElement | null>(null);
+  const welcomeRef = useRef<HTMLDialogElement>(null);
+  const welcomeWatchRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const widgetPlayRef = useRef<HTMLButtonElement>(null);
+  const fabRef = useRef<HTMLAnchorElement>(null);
   const id = video.id;
 
-  // Après l'hydratation seulement : le HTML pré-rendu ne contient rien de flottant, et le
-  // choix mémorisé ne peut pas faire clignoter un bandeau déjà refusé.
+  // Après l'hydratation seulement : le HTML pré-rendu ne contient que le lien flottant, et un
+  // choix déjà fait ne peut pas faire clignoter la modale.
   useEffect(() => {
+    // Sans <dialog> modal (très vieux navigateurs), le lien ouvre simplement le MP4.
+    if (typeof HTMLDialogElement !== "function" || !("showModal" in HTMLDialogElement.prototype))
+      return;
     setReady(true);
-    const choice = readIntroChoice(id);
-    choiceRef.current = choice;
-    if (choice === "dismissed") return;
-    if (choice === "later") setUi("widget");
-    else if (canInvite && window.matchMedia(INVITE_QUERY).matches) setUi("invite");
+    choiceRef.current = readIntroChoice(id);
+    if (!offerWelcome || choiceRef.current || !canWelcome()) return;
 
-    // Quitter le hero sans avoir choisi : la pastille prend le relais du bandeau.
-    const hero = document.getElementById("accueil");
-    if (!hero || typeof window.IntersectionObserver !== "function") return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry && !entry.isIntersecting && choiceRef.current === null) setUi("widget");
-    });
-    observer.observe(hero);
-    return () => observer.disconnect();
-  }, [id, canInvite]);
+    // Montée tout de suite (fermée, donc invisible) pour que la vignette soit chargée à l'ouverture.
+    setWelcomeMounted(true);
+    const timer = window.setTimeout(() => {
+      const dialog = welcomeRef.current;
+      if (choiceRef.current || !canWelcome() || !dialog) {
+        setWelcomeMounted(false);
+        return;
+      }
+      dialog.showModal();
+      setDialogOpen(true);
+      welcomeWatchRef.current?.focus();
+    }, WELCOME_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [id, offerWelcome]);
+
+  // Le bouton flottant ne cache jamais le texte d'une carte de chiffre clé : en haut de page, sur
+  // les écrans où il tomberait dessus (390 × 664, 1280 × 720…), il arrive au premier défilement.
+  // Défilement passif, mesure une fois par image, et seulement près du haut de page.
+  useEffect(() => {
+    const fab = fabRef.current;
+    const figures = Array.from(document.querySelectorAll<HTMLElement>(FIGURE_TEXT));
+    if (!fab || figures.length === 0) return;
+    let frame = 0;
+    let disposed = false;
+    const measure = () => {
+      frame = 0;
+      if (window.scrollY > window.innerHeight) return setFabCovering(false);
+      // Position de repos du bouton (sans le décalage de son animation d'entrée ou de sortie).
+      const style = window.getComputedStyle(fab);
+      const right = document.documentElement.clientWidth - parseFloat(style.right);
+      const bottom = document.documentElement.clientHeight - parseFloat(style.bottom);
+      const left = right - fab.offsetWidth;
+      const top = bottom - fab.offsetHeight;
+      setFabCovering(
+        figures.some((figure) => {
+          const box = figure.getBoundingClientRect();
+          return box.right > left && box.left < right && box.bottom > top && box.top < bottom;
+        }),
+      );
+    };
+    const schedule = () => {
+      if (!frame && !disposed) frame = window.requestAnimationFrame(measure);
+    };
+    measure();
+    // Nouvelle mesure une fois l'entrée du hero (550 ms) et les polices terminées.
+    const settled = window.setTimeout(schedule, 700);
+    document.fonts?.ready.then(schedule, () => {});
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      disposed = true;
+      window.clearTimeout(settled);
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  }, []);
 
   const remember = useCallback(
     (choice: IntroVideoChoice) => {
@@ -104,63 +178,72 @@ export function useIntroVideo(video: IntroVideo, canInvite: boolean): IntroVideo
     [id],
   );
 
-  // Tout dans le même geste (iOS exige que play() suive le clic) : créer la vidéo, ouvrir, lire.
+  // Tout dans le même geste (iOS exige que play() suive le clic) : fermer la modale d'accueil,
+  // créer la vidéo, ouvrir le lecteur, lire. Ouvrir le lecteur vaut choix « watched ».
   const play = useCallback(() => {
+    remember("watched");
+    const welcome = welcomeRef.current;
+    const fromWelcome = Boolean(welcome?.open);
     const active = document.activeElement;
-    openerRef.current = active instanceof HTMLElement ? active : null;
+    openerRef.current = !fromWelcome && active instanceof HTMLElement ? active : null;
+    if (welcome?.open) welcome.close();
     flushSync(() => setPlayerMounted(true));
     const dialog = dialogRef.current;
     if (dialog && !dialog.open) dialog.showModal();
+    setDialogOpen(true);
     closeButtonRef.current?.focus();
     const media = videoRef.current;
     if (media) {
       // Lecture refusée (économie d'énergie…) : la vidéo reste en pause avec ses contrôles.
       Promise.resolve(media.play()).catch(() => {});
     }
-  }, []);
-
-  const later = useCallback(() => {
-    remember("later");
-    flushSync(() => setUi("widget"));
-    widgetPlayRef.current?.focus();
   }, [remember]);
 
-  const dismiss = useCallback(() => {
-    remember("dismissed");
-    setUi("none");
-    document.getElementById("contenu")?.focus({ preventScroll: true });
+  /** « Ignorer », Échap ou clic sur le voile : la modale se ferme et ne reviendra pas. */
+  const ignore = useCallback(() => welcomeRef.current?.close(), []);
+
+  const onWelcomeClose = useCallback(() => {
+    if (choiceRef.current !== "watched") remember("ignored");
+    // Le lecteur a pu prendre le relais dans le même geste.
+    if (!dialogRef.current?.open) setDialogOpen(false);
   }, [remember]);
 
-  // Échap, bouton Fermer ou clic sur le voile : pause, choix « plus tard » (sauf vidéo finie ou
-  // pastille déjà masquée), puis focus rendu au bouton d'origine ou, s'il a disparu, à la pastille.
+  // Échap, bouton Fermer ou clic sur le voile : pause, puis focus rendu au bouton d'origine
+  // ou, si le lecteur a été ouvert depuis la modale d'accueil, au bouton flottant.
   const onPlayerClose = useCallback(() => {
     videoRef.current?.pause();
-    if (choiceRef.current !== "dismissed") remember("later");
-    flushSync(() => setUi(choiceRef.current === "dismissed" ? "none" : "widget"));
+    // Le bouton flottant redevient visible avant de recevoir le focus.
+    flushSync(() => setDialogOpen(false));
     const opener = openerRef.current;
-    if (opener && opener !== document.body && opener.isConnected)
-      opener.focus({ preventScroll: true });
-    else if (widgetPlayRef.current) widgetPlayRef.current.focus({ preventScroll: true });
-    else document.getElementById("contenu")?.focus({ preventScroll: true });
-  }, [remember]);
+    const target =
+      opener && opener !== document.body && opener.isConnected ? opener : fabRef.current;
+    target?.focus({ preventScroll: true });
+    // Bouton en attente (il cacherait un chiffre clé) : le focus revient au contenu.
+    if (!target || document.activeElement !== target)
+      document.getElementById("contenu")?.focus({ preventScroll: true });
+  }, []);
 
-  const onEnded = useCallback(() => remember("dismissed"), [remember]);
+  const onEnded = useCallback(() => remember("watched"), [remember]);
   const onError = useCallback(() => setPlayerError(true), []);
 
   return {
     video,
     ready,
-    ui,
+    welcomeMounted,
+    dialogOpen,
+    fabCovering,
     playerMounted,
     playerError,
     duration: formatDuration(video.durationSeconds),
+    welcomeRef,
+    welcomeWatchRef,
     dialogRef,
     videoRef,
     closeButtonRef,
-    widgetPlayRef,
+    fabRef,
     play,
-    later,
-    dismiss,
+    ignore,
+    onWelcomeClose,
     onPlayerClose,
     onEnded,
     onError,

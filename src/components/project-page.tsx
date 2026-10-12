@@ -62,7 +62,6 @@ export function ProjectPage({ project }: { project: Project }) {
     <SiteShell
       activeSection="projets"
       progressRef={progressRef}
-      canInvite={false}
       mainRef={mainRef}
       mainClassName="project-page"
       topId="contenu"

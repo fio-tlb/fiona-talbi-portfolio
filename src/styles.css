@@ -549,7 +549,6 @@
 }
 .hero-portrait {
   position: relative;
-  container-type: inline-size; /* le bandeau vidéo s'adapte à la largeur du portrait */
   height: var(--portrait-h);
   aspect-ratio: 4 / 5;
   overflow: hidden;
@@ -703,239 +702,276 @@
 }
 
 /* ---------- Vidéo de présentation ---------- */
-/* Bouton du hero (lien vers le MP4), bandeau sur le portrait, pastille fixe et lecteur <dialog>.
-   La pastille et son invitation sont les seuls éléments avec une ombre. */
-.hero-video-icon {
-  translate: 1px 0; /* centrage optique du triangle */
-}
-.intro-invite {
-  position: absolute;
-  inset: auto 0 0;
-  display: flex;
-  flex-direction: column;
-  background: var(--paper-light);
-  border-top: 1px solid var(--line);
-  animation: invite-in var(--motion-slow) var(--ease-out) 450ms both;
-}
-.intro-invite button:focus-visible {
-  outline-offset: -3px;
-}
-.intro-invite-watch {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
+/* Bouton flottant « Voir la vidéo » (toutes les pages, sans croix), modale d'accueil (accueil,
+   première visite) et lecteur <dialog>. Composants : portfolio/intro-video.tsx. */
+.video-fab {
+  --fab-offset: max(16px, env(safe-area-inset-bottom));
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: var(--fab-offset);
+  z-index: 90; /* sous l'en-tête (100) et le voile du menu mobile (99) */
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   min-height: 52px;
-  padding: 8px 12px 8px 14px;
-  text-align: left;
+  padding: 6px 20px 6px 6px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow:
+    0 1px 2px color-mix(in oklch, var(--ink) 8%, transparent),
+    0 10px 28px color-mix(in oklch, var(--ink) 16%, transparent);
+  color: var(--ink);
   font-size: var(--text-ui);
   font-weight: 600;
-  line-height: 1.3;
-  text-wrap: balance;
-  color: var(--ink);
-  transition: background-color var(--motion-base) var(--ease-out);
+  line-height: 1.2;
+  white-space: nowrap;
+  /* Arrive après l'entrée du hero (et après la modale d'accueil, qui s'ouvre à 800 ms). */
+  animation: fab-in var(--motion-slow) var(--ease-out) 1.2s backwards;
+  transition:
+    opacity var(--motion-base) var(--ease-out),
+    translate var(--motion-base) var(--ease-out),
+    box-shadow var(--motion-base) var(--ease-out),
+    scale var(--motion-fast) var(--ease-out),
+    visibility 0s;
 }
-.intro-play-mark {
+.video-fab:focus-visible {
+  outline-offset: 3px;
+}
+.video-fab-mark {
   flex: none;
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: var(--bordeaux);
   color: var(--paper-light);
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--bordeaux) 12%, transparent);
+  transition: background-color var(--motion-base) var(--ease-out);
+}
+.video-fab-mark svg,
+.video-welcome-play svg {
+  translate: 1px 0; /* centrage optique du triangle */
+}
+/* Pendant la modale ou le lecteur, et sous le menu mobile ouvert : retiré (et hors tabulation). */
+.video-fab[data-hidden],
+html:has(.mobile-menu[open]) .video-fab {
+  opacity: 0;
+  visibility: hidden;
+  translate: 0 12px;
   transition:
-    background-color var(--motion-base) var(--ease-out),
-    scale var(--motion-fast) var(--ease-out);
+    opacity var(--motion-base) var(--ease-in),
+    translate var(--motion-base) var(--ease-in),
+    visibility 0s var(--motion-base);
 }
-.intro-play-mark svg {
-  translate: 1px 0;
+/* Un élément focalisé ne finit jamais sous le bouton, et le pied de page garde ses liens dégagés. */
+html:has(.video-fab) {
+  scroll-padding-bottom: 92px;
 }
-.intro-invite-duration {
-  font-weight: 400;
-  color: var(--ink-soft);
-  white-space: nowrap;
+body:has(.video-fab) .site-footer {
+  padding-bottom: calc(52px + max(16px, env(safe-area-inset-bottom)) + 16px);
 }
-.intro-invite-later {
-  flex: none;
-  min-height: 44px;
-  padding: 0 16px;
-  border-top: 1px solid var(--line);
-  font-size: var(--text-meta);
-  font-weight: 500;
-  color: var(--ink-soft);
-  text-decoration-line: underline;
-  text-decoration-color: transparent;
-  text-underline-offset: 4px;
-  transition:
-    background-color var(--motion-base) var(--ease-out),
-    color var(--motion-base) var(--ease-out),
-    text-decoration-color var(--motion-base) var(--ease-out);
-}
-/* « Plus tard » à droite, la durée sous le libellé ; plus serré quand le portrait fait
-   moins de 300 px de large (tablette). */
-@container (max-width: 299px) {
-  .intro-invite {
-    flex-direction: row;
-  }
-  .intro-invite-watch {
-    gap: 8px;
-    padding-inline: 10px 8px;
-    font-size: var(--text-meta);
-  }
-  .intro-play-mark {
-    width: 28px;
-    height: 28px;
-  }
-  .intro-invite-duration {
-    display: block;
-    font-size: var(--text-small);
-  }
-  .intro-invite-sep {
-    display: none;
-  }
-  .intro-invite-later {
-    padding-inline: 10px;
-    border-top: 0;
-    border-left: 1px solid var(--line);
-  }
-}
-@container (min-width: 300px) {
-  .intro-invite {
-    flex-direction: row;
-  }
-  .intro-invite-watch {
-    gap: 10px;
-    min-height: 60px;
-    padding-inline: 10px;
-    font-size: var(--text-meta);
-  }
-  .intro-play-mark {
-    width: 30px;
-    height: 30px;
-  }
-  .intro-invite-duration {
-    display: block;
-    font-size: var(--text-small);
-  }
-  .intro-invite-sep {
-    display: none;
-  }
-  .intro-invite-later {
-    padding-inline: 14px;
-    border-top: 0;
-    border-left: 1px solid var(--line);
-  }
-}
-@container (min-width: 360px) {
-  .intro-invite-watch {
-    gap: 12px;
-    padding-inline: 14px 12px;
-    font-size: var(--text-ui);
-  }
-  .intro-play-mark {
-    width: 32px;
-    height: 32px;
-  }
-  .intro-invite-later {
-    padding-inline: 16px;
-  }
-}
-@keyframes invite-in {
+@keyframes fab-in {
   from {
     opacity: 0;
+    translate: 0 12px;
+  }
+}
+
+/* Modale d'accueil : carte centrée (vignette | texte), feuille du bas arrondie sur téléphone.
+   La preflight de Tailwind met margin: 0 partout : margin: auto recentre le <dialog>. */
+.video-welcome {
+  margin: auto;
+  padding: 0;
+  border: 0;
+  width: min(100% - 48px, 42rem);
+  max-width: none;
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  border-radius: var(--radius-card-lg);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-3);
+}
+.video-welcome::backdrop,
+.intro-video-dialog::backdrop {
+  background: color-mix(in oklch, var(--ink) 52%, transparent);
+  backdrop-filter: blur(6px);
+}
+.video-welcome[open] {
+  animation: welcome-in var(--motion-slow) var(--ease-out) both;
+}
+.video-welcome[open]::backdrop,
+.intro-video-dialog[open]::backdrop {
+  animation: fade-in var(--motion-base) var(--ease-out) both;
+}
+html:has(.video-welcome[open], .intro-video-dialog[open]) {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+.video-welcome-body {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1.5rem, 1rem + 1.6vw, 2.25rem);
+  padding: 16px clamp(1.5rem, 1rem + 1.6vw, 2.5rem) 16px 16px;
+}
+.video-welcome-poster {
+  position: relative;
+  height: clamp(13rem, 100dvh - 8rem, 21rem);
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: calc(var(--radius-card-lg) - 8px);
+  background: var(--paper-deep);
+  box-shadow: inset 0 0 0 1px var(--border-soft);
+  cursor: pointer;
+}
+.video-welcome-poster picture {
+  position: absolute;
+  inset: 0;
+}
+.video-welcome-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: scale var(--motion-slow) var(--ease-out);
+}
+/* Léger dégradé sous la durée pour qu'elle reste lisible sur la vraie vidéo. */
+.video-welcome-poster::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 40%;
+  background: linear-gradient(
+    to top,
+    color-mix(in oklch, var(--ink) 28%, transparent),
+    transparent
+  );
+  pointer-events: none;
+}
+.video-welcome-play {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  margin: auto;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--bordeaux);
+  color: var(--paper-light);
+  box-shadow:
+    0 0 0 6px color-mix(in oklch, var(--paper-light) 55%, transparent),
+    0 10px 24px color-mix(in oklch, var(--bordeaux-deep) 35%, transparent);
+  transition:
+    background-color var(--motion-base) var(--ease-out),
+    scale var(--motion-base) var(--ease-out);
+}
+.video-welcome-duration {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 1;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklch, var(--ink) 78%, transparent);
+  color: var(--paper-light);
+  font-size: var(--text-small);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+}
+.video-welcome-copy {
+  min-width: 0;
+  padding-block: 12px;
+}
+.video-welcome-title {
+  margin-top: 16px;
+  font-size: clamp(1.625rem, 1.25rem + 1.2vw, 2.125rem);
+  font-weight: var(--weight-heading);
+  line-height: 1.1;
+  letter-spacing: var(--tracking-heading);
+  text-wrap: balance;
+}
+.video-welcome-text {
+  margin-top: 12px;
+  max-width: 26rem;
+  color: var(--ink-soft);
+  font-size: var(--text-body);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+.video-welcome-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: clamp(1.5rem, 1.1rem + 1vw, 2rem);
+}
+.video-welcome-actions .action-secondary {
+  min-width: 7.5rem;
+}
+/* Téléphone : feuille du bas, vignette recadrée en bandeau, boutons pleine largeur. */
+@media (max-width: 599px) {
+  .video-welcome {
+    width: 100%;
+    max-height: calc(100dvh - 16px);
+    margin: auto 0 0;
+    border-radius: 24px 24px 0 0;
+  }
+  .video-welcome[open] {
+    animation-name: sheet-in;
+  }
+  .video-welcome-body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding: 12px 12px max(16px, env(safe-area-inset-bottom));
+  }
+  .video-welcome-poster {
+    height: auto;
+    aspect-ratio: 16 / 9;
+    max-height: 34dvh;
+    border-radius: 16px;
+  }
+  .video-welcome-poster img {
+    object-position: 50% 40%;
+  }
+  .video-welcome-play {
+    width: 52px;
+    height: 52px;
+  }
+  .video-welcome-copy {
+    padding: 20px 8px 0;
+  }
+  .video-welcome-title {
+    margin-top: 12px;
+    font-size: 1.5rem;
+  }
+  .video-welcome-text {
+    margin-top: 8px;
+    font-size: 1rem;
+  }
+  .video-welcome-actions {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    margin-top: 20px;
+  }
+}
+@keyframes welcome-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+}
+@keyframes sheet-in {
+  from {
     transform: translateY(100%);
   }
 }
 
-.intro-widget {
-  position: fixed;
-  right: max(20px, env(safe-area-inset-right));
-  bottom: max(20px, env(safe-area-inset-bottom));
-  z-index: 90;
-  display: flex;
-  gap: 4px;
-  padding: 3px;
-  background: var(--paper-light);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-control);
-  box-shadow: var(--shadow-float);
-  animation: widget-in 180ms var(--ease-out) both;
-  transition:
-    opacity 180ms var(--ease-out),
-    translate 180ms var(--ease-out),
-    visibility 0s;
-}
-/* Au-dessus du pied de page et sous le menu mobile ouvert : retirée (et hors de la tabulation). */
-.intro-widget[data-away]:not(:has(:focus-visible)),
-html:has(.mobile-menu[open]) .intro-widget {
-  opacity: 0;
-  visibility: hidden;
-  translate: 0 8px;
-  transition:
-    opacity 180ms var(--ease-in),
-    translate 180ms var(--ease-in),
-    visibility 0s 180ms;
-}
-html:has(.intro-widget) {
-  scroll-padding-bottom: 88px; /* un élément focalisé ne finit jamais sous la pastille */
-}
-.intro-widget button {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius);
-  transition:
-    background-color var(--motion-base) var(--ease-out),
-    color var(--motion-base) var(--ease-out),
-    scale var(--motion-fast) var(--ease-out);
-}
-.intro-widget button:focus-visible {
-  outline-offset: 1px;
-}
-.intro-widget-play {
-  overflow: hidden;
-  background: var(--paper-deep);
-}
-.intro-widget-play picture {
-  position: absolute;
-  inset: 0;
-}
-.intro-widget-play img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 28%; /* haut de l'affiche : visage sur la vraie vidéo, monogramme ici */
-}
-.intro-widget-mark {
-  position: relative; /* au-dessus de la vignette */
-  display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--bordeaux);
-  color: var(--paper-light);
-  box-shadow: 0 0 0 1.5px var(--paper-light);
-  transition: background-color var(--motion-base) var(--ease-out);
-}
-.intro-widget-mark svg {
-  translate: 1px 0;
-}
-.intro-widget-dismiss {
-  color: var(--ink-soft);
-}
-@keyframes widget-in {
-  from {
-    opacity: 0;
-    translate: 0 8px;
-  }
-}
-
-/* Lecteur. La preflight de Tailwind met margin: 0 partout : margin: auto recentre le <dialog>. */
+/* Lecteur. */
 .intro-video-dialog {
   margin: auto;
   padding: 0;
@@ -945,22 +981,13 @@ html:has(.intro-widget) {
   max-height: calc(100dvh - 48px);
   overflow: hidden;
   overscroll-behavior: contain;
-  border-radius: var(--radius);
+  border-radius: var(--radius-card);
   background: var(--ink);
   color: var(--paper-light);
-}
-.intro-video-dialog::backdrop {
-  background: color-mix(in oklch, var(--ink) 72%, transparent);
+  box-shadow: var(--shadow-3);
 }
 .intro-video-dialog[open] {
-  animation: dialog-in var(--motion-base) var(--ease-out) both;
-}
-.intro-video-dialog[open]::backdrop {
-  animation: fade-in var(--motion-base) var(--ease-out) both;
-}
-html:has(.intro-video-dialog[open]) {
-  overflow: hidden;
-  scrollbar-gutter: stable;
+  animation: welcome-in var(--motion-base) var(--ease-out) both;
 }
 .intro-video-dialog :focus-visible {
   outline-color: var(--sky);
@@ -971,7 +998,7 @@ html:has(.intro-video-dialog[open]) {
   justify-content: space-between;
   gap: 12px;
   height: 56px;
-  padding: 0 6px 0 18px;
+  padding: 0 6px 0 20px;
 }
 .intro-video-title {
   min-width: 0;
@@ -991,7 +1018,7 @@ html:has(.intro-video-dialog[open]) {
   place-items: center;
   width: 44px;
   height: 44px;
-  border-radius: var(--radius-control);
+  border-radius: 50%;
   color: var(--paper-light);
   transition:
     background-color var(--motion-base) var(--ease-out),
@@ -1043,10 +1070,34 @@ html:has(.intro-video-dialog[open]) {
     aspect-ratio: auto;
   }
 }
-@keyframes dialog-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
+/* Pression et survol (souris seulement), dans l'esprit des autres boutons. */
+.video-fab:active {
+  scale: var(--press-scale);
+  transition-duration: 0s;
+}
+.intro-video-close:active {
+  scale: var(--press-scale-icon);
+  transition-duration: 0s;
+}
+@media (hover: hover) and (pointer: fine) {
+  .video-fab:hover:not(:active) {
+    translate: 0 var(--lift);
+    box-shadow:
+      0 2px 4px color-mix(in oklch, var(--ink) 8%, transparent),
+      0 16px 36px color-mix(in oklch, var(--ink) 20%, transparent);
+  }
+  .video-fab:hover .video-fab-mark,
+  .video-welcome-poster:hover .video-welcome-play {
+    background: var(--bordeaux-deep);
+  }
+  .video-welcome-poster:hover img {
+    scale: 1.03;
+  }
+  .video-welcome-poster:hover .video-welcome-play {
+    scale: 1.06;
+  }
+  .intro-video-close:hover {
+    background: color-mix(in oklch, var(--paper-light) 12%, transparent);
   }
 }
 
@@ -1845,10 +1896,10 @@ html:has(.intro-video-dialog[open]) {
 }
 
 /* ---------- Pied de page (accueil et pages projet) ---------- */
-/* Marge basse : le bouton flottant « Voir la vidéo » (≈ 56 px, à 16 px du bord) ne recouvre
-   jamais un lien quand on arrive en bas de page. */
+/* Marge basse : agrandie par `body:has(.video-fab) .site-footer` (bloc vidéo plus haut) pour que
+   le bouton flottant « Voir la vidéo » ne recouvre jamais un lien en bas de page. */
 .site-footer {
-  padding-bottom: calc(56px + 2 * max(16px, env(safe-area-inset-bottom)));
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
 }
 .footer-inner {
   display: flex;
@@ -2140,17 +2191,6 @@ html:has(.intro-video-dialog[open]) {
   translate: none;
   transition-duration: 0s;
 }
-.intro-invite-watch:active,
-.intro-invite-later:active {
-  background: var(--paper-deep);
-  transition-duration: 0s;
-}
-.intro-invite-watch:active .intro-play-mark,
-.intro-widget button:active,
-.intro-video-close:active {
-  scale: var(--press-scale-icon);
-  transition-duration: 0s;
-}
 
 /* ---------- Survols : souris et pavés tactiles uniquement ---------- */
 @media (hover: hover) and (pointer: fine) {
@@ -2211,42 +2251,6 @@ html:has(.intro-video-dialog[open]) {
   }
   .project-card:hover .project-cta-arrow svg {
     translate: var(--nudge) 0;
-  }
-  .intro-invite-watch:hover:not(:active) {
-    background: color-mix(in oklch, var(--paper-deep) 55%, var(--paper-light));
-  }
-  .intro-invite-watch:hover .intro-play-mark,
-  .intro-widget-play:hover .intro-widget-mark {
-    background: var(--bordeaux-deep);
-  }
-  .intro-invite-later:hover {
-    color: var(--ink);
-    text-decoration-color: currentColor;
-  }
-  .intro-widget-dismiss:hover {
-    background: var(--paper-deep);
-    color: var(--ink);
-  }
-  .intro-video-close:hover {
-    background: color-mix(in oklch, var(--paper-light) 12%, transparent);
-  }
-}
-
-/* Bouton vidéo du hero : rond seul sous 1000 px, pour ne pas pousser les chiffres clés. */
-@media (max-width: 999px) {
-  .hero-actions .hero-video-link {
-    flex: none;
-    width: 48px;
-    padding: 0;
-    border-radius: 50%;
-  }
-  .hero-video-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
   }
 }
 
@@ -2459,8 +2463,7 @@ html:has(.intro-video-dialog[open]) {
     min-width: 0;
     padding-inline: 16px;
   }
-  .hero-actions .action-icon,
-  .hero-actions .hero-video-link {
+  .hero-actions .action-icon {
     flex: none;
   }
   .hero-facts {
@@ -2484,21 +2487,8 @@ html:has(.intro-video-dialog[open]) {
     top: 12px;
     left: 12px;
   }
-  /* Sous 721 px, le bouton du hero suffit : pas de bandeau sur le portrait. */
-  .intro-invite {
-    display: none;
-  }
-}
-@media (max-height: 520px) {
-  .intro-invite {
-    display: none;
-  }
 }
 @media (max-width: 720px) {
-  .intro-widget {
-    right: max(12px, env(safe-area-inset-right));
-    bottom: max(12px, env(safe-area-inset-bottom));
-  }
   .hero-kpis {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
@@ -2628,13 +2618,13 @@ html:has(.intro-video-dialog[open]) {
   html:has(.mobile-menu[open]) body::after {
     background: transparent;
   }
-  .intro-invite,
-  .intro-widget,
+  .video-fab,
+  .video-welcome,
   .intro-video-dialog {
     border: 1px solid CanvasText;
   }
-  .intro-play-mark,
-  .intro-widget-mark {
+  .video-fab-mark,
+  .video-welcome-play {
     forced-color-adjust: none;
     background: ButtonText;
     color: ButtonFace;
@@ -2660,8 +2650,8 @@ html:has(.intro-video-dialog[open]) {
   .contact-actions,
   .footer-links,
   .recommendation-link,
-  .intro-invite,
-  .intro-widget,
+  .video-fab,
+  .video-welcome,
   .intro-video-dialog {
     display: none;
   }
@@ -2767,7 +2757,8 @@ html:has(.intro-video-dialog[open]) {
     margin-top: 8px;
     font-size: var(--text-ui);
   }
-  .site-footer {
+  .site-footer,
+  body:has(.video-fab) .site-footer {
     padding-bottom: 0;
   }
 }
