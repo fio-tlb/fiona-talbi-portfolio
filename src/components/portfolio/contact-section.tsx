@@ -48,7 +48,9 @@ export function ContactSection() {
           <h2 className="section-title" id="contact-titre">
             {content.title}
           </h2>
-          <p className="contact-copy">{content.description}</p>
+          <p className="contact-copy">
+            {profile.cvPath ? content.description : content.descriptionWithoutCv}
+          </p>
         </div>
         <div className="contact-main" data-reveal data-delay="60">
           <div className="contact-email-row">

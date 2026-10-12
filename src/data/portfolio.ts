@@ -3,15 +3,13 @@ export interface PortfolioProfile {
   name: string;
   firstName: string;
   lastName: string;
-  initials: string;
   role: string;
+  /** Localisation affichée en tête du CV PDF (scripts/share-assets/cv.mjs). */
   location: string;
   email: string;
   linkedin: string;
   /** Villes du parcours, affichées sous le nom (« Paris · Londres · Dublin »). */
   places: string;
-  /** Ville affichée dans le pied de page. */
-  city: string;
   /**
    * CV en PDF dans public/ (ex. « documents/cv-fiona-talbi.pdf »), proposé au téléchargement
    * dans Contact. Remplacer le CV = écraser le fichier. `null` : aucun lien.
@@ -173,13 +171,11 @@ export const profile: PortfolioProfile = {
   name: "Fiona Talbi",
   firstName: "Fiona",
   lastName: "Talbi",
-  initials: "FT",
   role: "Marketing 360 & communication",
   location: "Paris, France",
   email: "fiona.2001@live.fr",
   linkedin: "https://www.linkedin.com/in/fiona-talbi-246407193",
   places: "Paris · Londres · Dublin",
-  city: "Paris",
   cvPath: "documents/cv-fiona-talbi.pdf",
   portrait: {
     src: "images/portrait-fiona.jpg",
@@ -315,7 +311,7 @@ export const projects: readonly Project[] = [
     category: "Communication & réseaux sociaux",
     title: "Faire connaître un réseau de lavage auto sur Instagram",
     context:
-      "CosmétiCar, réseau de franchises de lavage automobile : une marque de niche, et plus de 30 agences ouvertes dans l’année.",
+      "CosmétiCar, réseau de franchises de lavage automobile, un secteur de niche : plus de 30 agences ouvertes dans l’année.",
     action:
       "J’ai géré Facebook, Instagram et TikTok, avec un focus sur Instagram, qui a dépassé 500 abonnés en moins d’un an. J’ai aussi assuré 30 formations communication pour les nouveaux franchisés.",
     metrics: [
@@ -327,7 +323,7 @@ export const projects: readonly Project[] = [
     id: "massilia-influencer-relations",
     brand: "Massilia E-consulting",
     category: "Relations influenceurs",
-    title: "Signer 5 influenceuses en un mois, en France et en Espagne",
+    title: "Signer 5 influenceuses françaises et espagnoles en un mois",
     context:
       "Chez Massilia E-consulting, au début de la crise sanitaire : des stocks limités, donc peu de marge de manœuvre avec les influenceuses.",
     action:
@@ -336,7 +332,7 @@ export const projects: readonly Project[] = [
       {
         id: "influence-partners",
         value: "5",
-        label: "influenceuses signées en France et en Espagne",
+        label: "influenceuses signées, françaises et espagnoles",
       },
       { id: "influence-time", value: "1 mois", label: "pour signer les cinq partenariats" },
     ],
@@ -369,7 +365,7 @@ export const experiences: readonly Experience[] = [
     role: "Chargée de relations influenceurs",
     period: null,
     description:
-      "J’ai signé des influenceuses en France et en Espagne, et géré les fournisseurs chinois au début de la crise sanitaire.",
+      "J’ai signé des influenceuses françaises et espagnoles, et géré les fournisseurs chinois au début de la crise sanitaire.",
   },
 ];
 
@@ -385,7 +381,7 @@ export const education: readonly Education[] = [
     id: "education-gcu",
     period: "2023 – 2024",
     title: "MSc Luxury Marketing",
-    school: "GCU London, Londres",
+    school: "GCU London",
     institution: "GCU London",
   },
   {
@@ -502,7 +498,7 @@ export const sectionContent = {
   hero: {
     lead: "Plus de trois ans en marketing et communication, entre la marque et le terrain : category management et trade marketing chez Logitech, réseaux sociaux chez CosmétiCar, relations influenceurs chez Massilia E-consulting.",
     credentials:
-      "Diplômée d’un Master Marketing Digital & Innovation (IÉSEG) et d’un MSc Luxury Marketing (GCU Londres)",
+      "Diplômée d’un Master Marketing Digital & Innovation (IÉSEG) et d’un MSc Luxury Marketing (GCU London)",
     linkedinLabel: "LinkedIn",
     primaryAction: "Voir les projets",
     statsLabel: "Chiffres clés",
@@ -526,7 +522,7 @@ export const sectionContent = {
   },
   skills: {
     label: "Compétences",
-    title: "Du rayon aux réseaux sociaux",
+    title: "Savoir-faire, outils et certifications",
     skillsTitle: "Savoir-faire",
     toolsTitle: "Outils",
     certificationsTitle: "Certifications",
@@ -549,8 +545,10 @@ export const sectionContent = {
   contact: {
     label: "Contact",
     title: "Écrivez-moi",
+    /** Texte affiché quand `profile.cvPath` est renseigné ; sinon `descriptionWithoutCv`. */
     description:
       "Le plus simple : un e-mail. Vous trouverez aussi mon CV en PDF et mon profil LinkedIn.",
+    descriptionWithoutCv: "Le plus simple : un e-mail. Vous trouverez aussi mon profil LinkedIn.",
     linkedinLabel: "LinkedIn",
     cvLabel: "Télécharger le CV (PDF)",
     copyLabel: "Copier l’adresse e-mail",
