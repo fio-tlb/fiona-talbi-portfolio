@@ -9,6 +9,8 @@ export const getRouter = () => {
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
+    // Restore positions instantly: smooth scrolling is reserved for the visitor's own clicks.
+    scrollRestorationBehavior: "instant",
     defaultPreloadStaleTime: 0,
   });
 

@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { ArrowUp } from "lucide-react";
 import { navigation, profile, projects, sectionContent } from "@/data/portfolio";
 import { usePortfolioNavigation } from "@/hooks/use-portfolio-navigation";
@@ -22,6 +22,20 @@ export function Portfolio() {
   const mainRef = useRef<HTMLElement>(null);
   const { activeSection, progressRef } = usePortfolioNavigation(sectionIds);
   useReveal(mainRef);
+
+  useEffect(() => {
+    // Smooth anchor scrolling only after a first gesture: a shared link to #projets jumps
+    // straight to its target on load instead of animating down the whole page.
+    const root = document.documentElement;
+    const enable = () => root.classList.add("smooth-scroll");
+    const options = { once: true, capture: true } as const;
+    window.addEventListener("pointerdown", enable, options);
+    window.addEventListener("keydown", enable, options);
+    return () => {
+      window.removeEventListener("pointerdown", enable, options);
+      window.removeEventListener("keydown", enable, options);
+    };
+  }, []);
 
   return (
     <>
