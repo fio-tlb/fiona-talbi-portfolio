@@ -186,3 +186,16 @@ Textes de `seo` et `errorContent`, visibles dans les résultats Google, les aper
 | Erreur de chargement                      | This page didn't load (anglais)                                                                                                                                                         | Erreur de chargement — La page n'a pas pu se charger — Un problème est survenu pendant l'affichage. Vous pouvez réessayer ou revenir au portfolio. — Réessayer — Retour au portfolio |
 
 L'image de partage (`public/og-image-v1.jpg`, 1200 × 630) reprend « Fiona Talbi », « Marketing 360 & communication · Paris » et les chiffres +30 %, 140 et 500+. Le texte de la 404 est aussi dans `public/404.html` (page statique de GitHub Pages) : le modifier aux deux endroits.
+
+## 2e passe « Maison moderne » : hero et projets (12 octobre 2026)
+
+| Où                                          | Avant                                                              | Après                                                                                                      |
+| ------------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| Hero, pilule au-dessus du nom               | — (rôle en sous-titre sous le nom)                                 | Marketing 360 & communication · Paris (`profile.role` + ville)                                             |
+| Hero, petite carte sur le portrait          | Paris · Londres · Dublin (sous la formation, avec LinkedIn)        | Paris · Londres · Dublin (`profile.places`) ; LinkedIn reste dans Contact et le pied de page               |
+| `sectionContent.hero.cvActionPrefix/Label`  | — (absent du hero)                                                 | Télécharger le CV (« CV » sur téléphone)                                                                   |
+| `sectionContent.hero.brandsLabel`           | —                                                                  | Expériences chez (suivi des logos Logitech, CosmétiCar, Massilia E-consulting)                             |
+| `sectionContent.projects.title/titleAccent` | Quatre missions chez Logitech, CosmétiCar et Massilia              | Des projets concrets. / Des résultats mesurables. (ton titre, 2e ligne en bordeaux)                        |
+| `sectionContent.projects.description`       | Pour chacune : l'enjeu, ce que j'ai fait et les résultats obtenus. | Quatre missions chez Logitech, CosmétiCar et Massilia E-consulting. Chaque carte mène au détail du projet. |
+| `sectionContent.projects.openLabel`         | —                                                                  | Voir le projet (bas de chaque carte, qui ouvre la page du projet)                                          |
+| `sectionContent.projects.backLabel`         | —                                                                  | Tous les projets (lien de retour des pages projet)                                                         |
