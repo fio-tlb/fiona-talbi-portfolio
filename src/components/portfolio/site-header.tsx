@@ -7,6 +7,7 @@ import {
   sectionContent,
   type NavigationItem,
 } from "@/data/portfolio";
+import { HomeLink } from "./home-link";
 
 // Même seuil que le @media (max-width: 767px) de styles.css : liens en ligne dès 768 px.
 const INLINE_NAV_QUERY = "(min-width: 768px)";
@@ -62,51 +63,54 @@ export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
     };
   }, []);
 
+  // Liens vers les sections de l'accueil, valables depuis toutes les pages (home-link.tsx).
   const renderLink = (item: NavigationItem) => (
-    <a
+    <HomeLink
       key={item.id}
-      href={"#" + item.id}
+      section={item.id}
       className={activeSection === item.id ? "nav-link is-active" : "nav-link"}
       aria-current={activeSection === item.id ? "location" : undefined}
       onClick={closeMenu}
     >
       {item.label}
-    </a>
+    </HomeLink>
   );
 
   return (
     <header className="site-header">
       <div className="site-wrap header-inner">
-        <a
-          href="#accueil"
+        <HomeLink
+          section="accueil"
           className="header-brand"
           aria-label={profile.name + ", accueil"}
           onClick={closeMenu}
         >
           {profile.name}
-        </a>
+        </HomeLink>
         <nav className="desktop-nav" aria-label={content.mainLabel}>
           {items.map(renderLink)}
         </nav>
-        <a
-          className="header-contact"
-          href="#contact"
-          aria-current={activeSection === "contact" ? "location" : undefined}
-          onClick={closeMenu}
-        >
-          <span>{content.contactLabel}</span>
-          <Mail size={16} aria-hidden />
-        </a>
-        <details className="mobile-menu" ref={menuRef}>
-          <summary aria-label={content.menuLabel}>
-            <Menu className="menu-open-icon" size={20} aria-hidden />
-            <X className="menu-close-icon" size={20} aria-hidden />
-          </summary>
-          {/* Un seul niveau : les 4 sections. Contact reste dans la barre, à côté du bouton. */}
-          <nav className="mobile-nav" aria-label={content.mainLabel}>
-            {items.map(renderLink)}
-          </nav>
-        </details>
+        <div className="header-end">
+          <HomeLink
+            section="contact"
+            className="header-contact"
+            aria-current={activeSection === "contact" ? "location" : undefined}
+            onClick={closeMenu}
+          >
+            <span>{content.contactLabel}</span>
+            <Mail size={16} aria-hidden />
+          </HomeLink>
+          <details className="mobile-menu" ref={menuRef}>
+            <summary aria-label={content.menuLabel}>
+              <Menu className="menu-open-icon" size={20} aria-hidden />
+              <X className="menu-close-icon" size={20} aria-hidden />
+            </summary>
+            {/* Un seul niveau : les 4 sections. Contact reste dans la barre, à côté du bouton. */}
+            <nav className="mobile-nav" aria-label={content.mainLabel}>
+              {items.map(renderLink)}
+            </nav>
+          </details>
+        </div>
       </div>
       <div className="scroll-track" aria-hidden>
         <div className="scroll-progress" ref={progressRef} />

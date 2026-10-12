@@ -5,6 +5,7 @@
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { projects } from "./src/data/portfolio";
 
 const isGitHubPages = process.env["GITHUB_PAGES"] === "true";
 
@@ -23,7 +24,8 @@ export default defineConfig({
         autoStaticPathsDiscovery: false,
         crawlLinks: false,
       },
-      pages: [{ path: "/" }],
+      // L'accueil et une page par projet (/projets/<id>/index.html).
+      pages: [{ path: "/" }, ...projects.map((project) => ({ path: "/projets/" + project.id }))],
     }),
   },
 });

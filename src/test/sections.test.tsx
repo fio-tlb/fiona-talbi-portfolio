@@ -1,16 +1,21 @@
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
-import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Portfolio } from "@/components/portfolio";
 import {
+  brands,
   certifications,
   experiences,
+  interests,
+  languages,
   navigation,
   profile,
   recommendations,
   sectionContent,
+  tools,
 } from "@/data/portfolio";
+import { renderWithRouter } from "./render-with-router";
 
 afterEach(() => {
   cleanup();
@@ -18,13 +23,17 @@ afterEach(() => {
 });
 
 describe("Page structure", () => {
-  it("links the four menu entries and Contact to sections of the page, and keeps the sub-anchors", () => {
-    const { container } = render(<Portfolio />);
+  it("links the four menu entries and Contact to sections of the home page, and keeps the sub-anchors", async () => {
+    const { container } = await renderWithRouter(<Portfolio />);
     const nav = screen.getAllByRole("navigation", {
       name: sectionContent.navigation.mainLabel,
     })[0]!;
     const links = within(nav).getAllByRole("link");
     expect(links.map((link) => link.textContent)).toEqual(navigation.map((item) => item.label));
+    // Absolute links to the home page: they keep working from a project page.
+    links.forEach((link, index) =>
+      expect(link).toHaveAttribute("href", import.meta.env.BASE_URL + "#" + navigation[index]!.id),
+    );
     expect(navigation).toHaveLength(4);
     for (const id of [...navigation.map((item) => item.id), "contact", "formation"]) {
       expect(container.querySelector("#" + id), id).not.toBeNull();
@@ -34,11 +43,11 @@ describe("Page structure", () => {
     // Contact keeps its visible label as accessible name.
     expect(
       screen.getAllByRole("link", { name: sectionContent.navigation.contactLabel })[0],
-    ).toHaveAttribute("href", "#contact");
+    ).toHaveAttribute("href", import.meta.env.BASE_URL + "#contact");
   });
 
-  it("orders headings h2 > h3 > h4 and names each section with its h2", () => {
-    render(<Portfolio />);
+  it("orders headings h2 > h3 > h4 and names each section with its h2", async () => {
+    await renderWithRouter(<Portfolio />);
     for (const name of ["parcours", "competences", "recommandations", "contact"]) {
       const section = document.getElementById(name)!;
       const h2 = within(section).getByRole("heading", { level: 2 });
@@ -51,8 +60,8 @@ describe("Page structure", () => {
     ).toBeVisible();
   });
 
-  it("shows certifications without an invented organisation", () => {
-    render(<Portfolio />);
+  it("shows certifications without an invented organisation", async () => {
+    await renderWithRouter(<Portfolio />);
     const block = document.getElementById("certifications")!;
     expect(within(block).getAllByRole("listitem")).toHaveLength(certifications.length);
     const unknown = certifications.find((cert) => cert.organization === null)!;
@@ -61,11 +70,55 @@ describe("Page structure", () => {
   });
 });
 
+describe("Cards and logos", () => {
+  it("shows each experience as a card with its company logo next to the written name", async () => {
+    await renderWithRouter(<Portfolio />);
+    const career = document.getElementById("parcours")!;
+    const cards = career.querySelectorAll(".experience-card");
+    expect(cards).toHaveLength(experiences.length);
+    experiences.forEach((experience, index) => {
+      const logo = cards[index]!.querySelector("img")!;
+      expect(logo).toHaveAttribute(
+        "src",
+        import.meta.env.BASE_URL + brands[experience.brandId].logo.src,
+      );
+      // The company name is written in the card: the logo is decorative.
+      expect(logo).toHaveAttribute("alt", "");
+      expect(cards[index]!.textContent).toContain(experience.company);
+    });
+    for (const interest of interests) {
+      const label = interest.label.charAt(0).toUpperCase() + interest.label.slice(1);
+      expect(within(career).getByText(label).closest("li")).not.toBeNull();
+    }
+  });
+
+  it("lists every tool with its logo, or a generic icon when there is none", async () => {
+    await renderWithRouter(<Portfolio />);
+    const skills = document.getElementById("competences")!;
+    const chips = skills.querySelectorAll(".tool-chip");
+    expect(chips).toHaveLength(tools.length);
+    tools.forEach((tool, index) => {
+      const chip = chips[index]!;
+      expect(chip.textContent).toBe(tool.name);
+      if (tool.logo)
+        expect(chip.querySelector("img")).toHaveAttribute(
+          "src",
+          import.meta.env.BASE_URL + tool.logo.src,
+        );
+      else expect(chip.querySelector("svg")).not.toBeNull();
+    });
+    const languageBlock = document.getElementById("langues")!;
+    for (const language of languages) {
+      expect(languageBlock.textContent).toContain(language.name + language.level);
+    }
+  });
+});
+
 describe("Contact and footer", () => {
   it("offers the e-mail, a copy button with a fixed name, LinkedIn in a new tab and the CV", async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
-    render(<Portfolio />);
+    await renderWithRouter(<Portfolio />);
     const contact = document.getElementById("contact")!;
     expect(within(contact).getByRole("link", { name: profile.email })).toHaveAttribute(
       "href",
@@ -90,8 +143,8 @@ describe("Contact and footer", () => {
     expect(cv).toHaveAttribute("download");
   });
 
-  it("repeats the exits in the footer", () => {
-    render(<Portfolio />);
+  it("repeats the exits in the footer", async () => {
+    await renderWithRouter(<Portfolio />);
     const footer = screen.getByRole("contentinfo");
     expect(footer.textContent).toContain(sectionContent.footer.copyright);
     expect(within(footer).getByRole("link", { name: profile.email })).toBeVisible();
@@ -106,7 +159,7 @@ describe("Contact and footer", () => {
 });
 
 describe("Files in public/", () => {
-  it("exist for the CV and every recommendation letter", () => {
+  it("exist for the CV and every recommendation letter", async () => {
     const paths = [profile.cvPath, ...recommendations.map((item) => item.documentPath)];
     for (const path of paths.filter((item): item is string => Boolean(item?.trim()))) {
       expect(existsSync(resolve("public", path.trim())), path).toBe(true);

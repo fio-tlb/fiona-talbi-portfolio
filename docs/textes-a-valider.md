@@ -156,20 +156,22 @@ Les deux PDF actuels (`public/documents/recommandation-01.pdf` et `-02.pdf`) son
 
 Le CV (`public/documents/cv-fiona-talbi.pdf`) est un fichier provisoire généré uniquement à partir des données du site (`bun scripts/share-assets/cv.mjs`, à relancer après chaque correction de texte) : remplace-le par ton vrai CV (même nom de fichier).
 
-## Vidéo de présentation (lot 4)
+## Vidéo de présentation (2e passe, 12 octobre 2026)
 
-Textes nouveaux (rien n'existait avant), dans `sectionContent.introVideo` et `introVideo` :
+La vidéo est proposée dans une modale à ta première visite de l'accueil, puis reste accessible par le bouton « Voir la vidéo » en bas à droite de toutes les pages. Le bouton « Ma présentation » du hero, le bandeau « Regarder ma présentation · Plus tard » du portrait et la pastille ▶ / ✕ sont supprimés. Textes dans `sectionContent.introVideo` et `introVideo` :
 
-| Où                                                                              | Avant      | Après                                                                                  |
-| ------------------------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------- |
-| Nom de l'invitation et de la pastille pour les lecteurs d'écran (`inviteLabel`) | — (absent) | Vidéo de présentation                                                                  |
-| Hero, bouton secondaire (`heroLabel`)                                           | — (absent) | ▶ Ma présentation (rond ▶ seul sous 1000 px ; lu « Ma présentation (vidéo, 20 s) »)    |
-| Bandeau sur le portrait (`watchLabel`)                                          | — (absent) | ▶ Regarder ma présentation · 20 s — bouton « Plus tard » (`laterLabel`)                |
-| Pastille en bas à droite                                                        | — (absent) | ▶ « Regarder ma présentation (20 s) » et ✕ « Masquer la vidéo » (noms lus, sans texte) |
-| Lecteur (`introVideo.title`, `closeLabel`)                                      | — (absent) | Vidéo de test · 20 s — ✕ « Fermer la vidéo » ; le titre deviendra celui de ta vidéo    |
-| Erreur de lecture (`errorText`)                                                 | — (absent) | La vidéo ne se lance pas ici. — lien « Ouvrir le fichier vidéo » (`errorOpenLabel`)    |
+| Où                                                      | Avant (lot 4)                                                     | Après                                                                                     |
+| ------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Modale d'accueil, sur-titre (`welcomeLabel`)            | — (absent)                                                        | Vidéo de présentation                                                                     |
+| Modale d'accueil, titre (`welcomeTitle`)                | — (absent)                                                        | On dit qu'une image vaut mille mots…                                                      |
+| Modale d'accueil, phrase (`welcomeText`)                | — (absent)                                                        | …alors j'ai préféré une vidéo : mon parcours en 20 s, de vive voix. (durée réelle)        |
+| Modale d'accueil, boutons (`watchLabel`, `ignoreLabel`) | Regarder ma présentation · Plus tard (bandeau du portrait)        | Voir la vidéo · Ignorer                                                                   |
+| Bouton flottant (`fabLabel`, `fabNameSuffix`)           | Pastille ▶ « Regarder ma présentation » et ✕ « Masquer la vidéo » | ▶ Voir la vidéo (texte visible, sans croix ; lu « Voir la vidéo de présentation (20 s) ») |
+| Hero, bouton secondaire (`heroLabel`)                   | ▶ Ma présentation                                                 | Supprimé (remplacé par la modale et le bouton flottant)                                   |
+| Lecteur (`introVideo.title`, `closeLabel`)              | Vidéo de test · 20 s — ✕ « Fermer la vidéo »                      | Inchangé ; le titre deviendra celui de ta vidéo                                           |
+| Erreur de lecture (`errorText`, `errorOpenLabel`)       | La vidéo ne se lance pas ici. — Ouvrir le fichier vidéo           | Inchangé                                                                                  |
 
-La vidéo actuelle (`public/video/presentation.mp4`, 20 s, sans son) est un clip de test : fond beige, monogramme « FT », « Vidéo de test », « Format 9:16 » et un compteur. Elle est visible en ligne et titrée « Vidéo de test » jusqu'à son remplacement par ta vraie vidéo.
+« De vive voix » suppose une vidéo parlée : à ajuster si ta vidéo est sans parole. La vidéo actuelle (`public/video/presentation.mp4`, 20 s, sans son) est un clip de test : fond beige, monogramme « FT », « Vidéo de test », « Format 9:16 » et un compteur. Elle est visible en ligne et titrée « Vidéo de test » jusqu'à son remplacement par ta vraie vidéo.
 
 ## Partage, SEO et pages d'erreur (lot 5)
 
@@ -186,3 +188,47 @@ Textes de `seo` et `errorContent`, visibles dans les résultats Google, les aper
 | Erreur de chargement                      | This page didn't load (anglais)                                                                                                                                                         | Erreur de chargement — La page n'a pas pu se charger — Un problème est survenu pendant l'affichage. Vous pouvez réessayer ou revenir au portfolio. — Réessayer — Retour au portfolio |
 
 L'image de partage (`public/og-image-v1.jpg`, 1200 × 630) reprend « Fiona Talbi », « Marketing 360 & communication · Paris » et les chiffres +30 %, 140 et 500+. Le texte de la 404 est aussi dans `public/404.html` (page statique de GitHub Pages) : le modifier aux deux endroits.
+
+## 2e passe « Maison moderne » : hero et projets (12 octobre 2026)
+
+| Où                                          | Avant                                                              | Après                                                                                                      |
+| ------------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| Hero, pilule au-dessus du nom               | — (rôle en sous-titre sous le nom)                                 | Marketing 360 & communication · Paris (`profile.role` + ville)                                             |
+| Hero, petite carte sur le portrait          | Paris · Londres · Dublin (sous la formation, avec LinkedIn)        | Paris · Londres · Dublin (`profile.places`) ; LinkedIn reste dans Contact et le pied de page               |
+| `sectionContent.hero.cvActionPrefix/Label`  | — (absent du hero)                                                 | Télécharger le CV (« CV » sur téléphone)                                                                   |
+| `sectionContent.hero.brandsLabel`           | —                                                                  | Expériences chez (suivi des logos Logitech, CosmétiCar, Massilia E-consulting)                             |
+| `sectionContent.projects.title/titleAccent` | Quatre missions chez Logitech, CosmétiCar et Massilia              | Des projets concrets. / Des résultats mesurables. (ton titre, 2e ligne en bordeaux)                        |
+| `sectionContent.projects.description`       | Pour chacune : l'enjeu, ce que j'ai fait et les résultats obtenus. | Quatre missions chez Logitech, CosmétiCar et Massilia E-consulting. Chaque carte mène au détail du projet. |
+| `sectionContent.projects.openLabel`         | —                                                                  | Voir le projet (bas de chaque carte, qui ouvre la page du projet)                                          |
+| `sectionContent.projects.backLabel`         | —                                                                  | Tous les projets (lien de retour des pages projet)                                                         |
+
+## 2e passe « Maison moderne » : Parcours, Compétences, Recommandations, Contact (12 octobre 2026)
+
+Les sections passent en cartes ; les textes des données ne changent pas, sauf ceux-ci. Le titre de la section Projets (« Des projets concrets. » / « Des résultats mesurables. ») est consigné dans le tableau précédent.
+
+| Où                                             | Avant                                             | Après                                                                                                |
+| ---------------------------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `sectionContent.skills.toolboxTitle` (nouveau) | Outils (titre de la ligne des outils)             | Boîte à outils (titre de la carte des outils ; `toolsTitle` « Outils » reste celui du CV PDF)        |
+| `sectionContent.recommendations.openLabel`     | Lire la lettre (PDF)                              | Lire la lettre ↗ (la pilule « PDF » est affichée en haut de la carte)                                |
+| Parcours, centres d'intérêt (`interests`)      | En dehors du travail : voyage, lecture et dessin. | En dehors du travail — pilules « Voyage », « Lecture », « Dessin » (majuscule ajoutée à l'affichage) |
+| Contact, adresse e-mail                        | En Fraunces (serif)                               | Même texte, en Instrument Sans avec une icône d'enveloppe                                            |
+
+## 2e passe : pages projet (12 octobre 2026)
+
+Chaque carte de l'accueil mène à `/projets/<id>`. Les textes viennent de `src/data/portfolio.ts` ; rien n'est inventé : la mission et les puces reprennent les faits du brief. Le paragraphe « Action » des anciennes fiches (`project.action`) est remplacé par les puces « Ce que j'ai fait » (`project.details`), à la 1re personne. Le récit détaillé (`project.story`) est vide : à écrire par Fiona.
+
+| Où                                               | Texte                                                                                                                                                                                                                                                 |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Titres des cartes (`sectionContent.projectPage`) | Les résultats · Le contexte (entreprise, poste, lieu et description de l'expérience) · Ma mission · Ce que j'ai fait · En images                                                                                                                      |
+| Navigation entre projets                         | Projet précédent · Projet suivant                                                                                                                                                                                                                     |
+| Appel au contact                                 | Envie d'en savoir plus ? — Je vous raconte volontiers ce projet plus en détail, par e-mail ou sur LinkedIn. — M'écrire · LinkedIn                                                                                                                     |
+| Agrandissement des photos                        | « Photo 2 sur 4 » ; boutons Fermer, Photo précédente, Photo suivante ; lien « Agrandir la photo : … » (lecteurs d'écran)                                                                                                                              |
+| Logitech · Category management, mission          | Déployer nos solutions de category management dans les top stores et repenser l'agencement du rayon informatique.                                                                                                                                     |
+| Puces                                            | J'ai déployé plus de 100 solutions de category management (catman) dans nos top stores. / Ce nouvel agencement du rayon informatique a augmenté ses ventes de 30 %.                                                                                   |
+| Logitech · Trade marketing, mission              | Avec le responsable des ventes terrain, faire en sorte que la PLV soit en place dès le jour du lancement dans nos top stores.                                                                                                                         |
+| Puces                                            | J'ai managé une équipe de 7 merchandisers, aux côtés du responsable des ventes terrain. / La PLV était disponible dès le jour du lancement dans nos 140 top stores. / Pour les lancements produits comme pour les campagnes, dont les Logi Work Days. |
+| CosmétiCar, mission                              | Faire connaître le réseau sur les réseaux sociaux et accompagner en communication les franchisés des nouvelles agences.                                                                                                                               |
+| Puces                                            | J'ai géré Facebook, Instagram et TikTok, avec un focus sur Instagram. / Instagram a dépassé 500 abonnés en moins d'un an, dans un secteur de niche. / J'ai assuré 30 formations communication pour les franchisés des nouvelles agences.              |
+| Massilia E-consulting, mission                   | Nouer des partenariats avec des influenceuses françaises et espagnoles, et gérer les fournisseurs chinois.                                                                                                                                            |
+| Puces                                            | En un mois, j'ai signé 3 influenceuses françaises et 2 espagnoles. / Je gérais aussi les fournisseurs chinois, au début de la crise sanitaire. / Avec des stocks limités, il fallait composer avec peu de marge de manœuvre auprès des influenceuses. |
+| Légendes des photos (`project.gallery`)          | Neutres, elles décrivent ce que montrera la vraie photo (ex. « Le rayon informatique d'un top store, après le réagencement. ») : à ajuster avec les vraies photos, ainsi que leur texte alternatif `alt`.                                             |

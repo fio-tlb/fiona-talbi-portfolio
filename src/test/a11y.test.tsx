@@ -1,7 +1,8 @@
-import { cleanup, render } from "@testing-library/react";
+import { cleanup } from "@testing-library/react";
 import axe from "axe-core";
 import { afterEach, describe, expect, it } from "vitest";
 import { Portfolio } from "@/components/portfolio";
+import { renderWithRouter } from "./render-with-router";
 
 afterEach(() => {
   cleanup();
@@ -14,7 +15,7 @@ const options: axe.RunOptions = {
 
 describe("Accessibility (axe-core)", () => {
   it("renders the whole portfolio without any axe violation", async () => {
-    const { container } = render(<Portfolio />);
+    const { container } = await renderWithRouter(<Portfolio />);
 
     const results = await axe.run(container, options);
 
@@ -26,8 +27,8 @@ describe("Accessibility (axe-core)", () => {
     ).toEqual([]);
   });
 
-  it("keeps a single h1 and named landmarks", () => {
-    const { container } = render(<Portfolio />);
+  it("keeps a single h1 and named landmarks", async () => {
+    const { container } = await renderWithRouter(<Portfolio />);
 
     expect(container.querySelectorAll("h1")).toHaveLength(1);
     expect(container.querySelector("main")).not.toBeNull();
