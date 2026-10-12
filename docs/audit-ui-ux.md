@@ -431,16 +431,12 @@ Chaque lot se termine par `bun run test`, `bun run lint`, `tsc --noEmit`, les de
 
 ---
 
-## 11. Décisions à prendre avant d'implémenter
+## 11. Décisions prises (12 octobre 2026)
 
-1. **Direction artistique** : C « Maison » (recommandée), A « Éditorial », B « Dossier de marque », ou garder la structure actuelle en la nettoyant ?
-2. **Invitation vidéo à l'arrivée** : intégrée au hero (recommandée) ou carte flottante en bas à droite ?
-3. **Vidéo de test sur le site public** : visible seulement en développement (recommandé, rien de faux en ligne) ou visible aussi sur GitHub Pages, marquée « vidéo de test », pour pouvoir l'essayer sur ton téléphone ?
-4. **Textes** : réécriture factuelle à la 1ʳᵉ personne, à partir de ton brief, soumise à ta validation (recommandé), ou garder les textes actuels ?
+1. **Direction artistique** : C « Maison », avec les fiches projet et les étiquettes KPI de B.
+2. **Invitation vidéo** : intégrée au hero (bouton « Ma présentation », bandeau « Regarder · Plus tard » sur le portrait), puis pastille en bas à droite.
+3. **Vidéo de test** : visible aussi sur le site public, marquée « Vidéo de test », en attendant la vraie.
+4. **Textes** : réécrits de façon factuelle à la 1ʳᵉ personne ; chaque changement est listé dans [`textes-a-valider.md`](textes-a-valider.md) pour validation par Fiona.
+5. **Contenus manquants** : des fichiers provisoires branchés comme les vrais (portrait illustré, PDF des lettres, CV généré depuis les données, clip de test), sans aucun fait inventé. Pour les remplacer, voir la section « Remplacer les fichiers provisoires » du `README.md`.
 
-Décisions déjà prises par défaut, modifiables :
-
-- missions des projets **visibles** (plus d'accordéon) ;
-- **pas** de mode sombre ;
-- version anglaise **plus tard** ;
-- composants shadcn **conservés** pour Lovable.
+Décisions par défaut, toujours modifiables : missions des projets visibles, pas de mode sombre, version anglaise plus tard, composants shadcn conservés pour Lovable.
