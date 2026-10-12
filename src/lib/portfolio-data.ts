@@ -2,7 +2,15 @@ export const linkedin = 'https://www.linkedin.com/in/fiona-talbi-246407193';
 export const navigation = [
   ['Parcours', 'parcours'], ['Projets', 'projets'], ['Compétences', 'competences'],
   ['Formation', 'formation'], ['Certifications', 'certifications'],
+  ['Recommandations', 'recommandations'],
 ] as const;
+
+export const impactStats = [
+  { number: '+30 %', label: 'de ventes grâce au réagencement', company: 'Logitech · Category management' },
+  { number: '140', label: 'top stores activés day one', company: 'Logitech · Trade marketing' },
+  { number: '500+', label: 'abonnés Instagram en moins d’un an', company: 'CosmétiCar · Social media' },
+  { number: '3+ ans', label: 'en marketing & communication', company: 'Un parcours international' },
+];
 
 export const projects = [
   {

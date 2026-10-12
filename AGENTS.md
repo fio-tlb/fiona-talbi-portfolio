@@ -11,4 +11,5 @@
 
 - Keep portfolio content in browser-safe data modules and reusable presentation components; this keeps career facts separate from layout.
 - Use anchored sections on the single portfolio page; navigation scrolls between sections of one continuous narrative.
+- Keep scroll progress and active-section navigation client-side in the portfolio; use passive, frame-throttled scrolling to avoid unnecessary rendering work.
 - Recommendation PDFs must use real supplied documents; until provided, show an honest pending state rather than fabricated letters.
