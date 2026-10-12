@@ -39,7 +39,7 @@ describe("Hero", () => {
       "1122",
     );
     expect(container.querySelector('source[type="image/avif"]')?.getAttribute("srcset")).toMatch(
-      /portrait-fiona-v3-600\.avif 600w/,
+      /portrait-fiona-v5-600\.avif 600w/,
     );
     // « CV » on phones, but the accessible name stays « Télécharger le CV ».
     const cv = screen.getByRole("link", { name: "Télécharger le CV" });

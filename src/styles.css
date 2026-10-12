@@ -639,7 +639,7 @@
 }
 .hero-places {
   position: absolute;
-  top: clamp(1rem, 0.5rem + 1.5vw, 1.75rem);
+  bottom: clamp(1rem, 0.5rem + 1.5vw, 1.75rem);
   left: clamp(-1.75rem, -0.25rem - 1.5vw, -0.75rem);
   z-index: 1;
   display: flex;
@@ -2549,7 +2549,7 @@ html:has(.video-welcome[open], .intro-video-dialog[open]) {
     height: auto;
   }
   .hero-places {
-    top: 12px;
+    bottom: 12px;
     left: 12px;
   }
 }
