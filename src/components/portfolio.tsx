@@ -1,15 +1,34 @@
-import { useEffect, useState } from 'react';
-import { ArrowUpRight, ArrowDown, MapPin, Globe, Menu, X, Plus, BriefcaseBusiness, GraduationCap, Plane, BookOpen, Pencil, FileText, Mail, Linkedin } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { ArrowUpRight, ArrowDown, MapPin, Globe, Plus, BriefcaseBusiness, GraduationCap, Plane, BookOpen, Pencil, FileText, Mail, Linkedin, TrendingUp, Target, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { navigation, linkedin, projects, education, skills, tools, certifications } from '@/lib/portfolio-data';
-import deskImage from '@/assets/creative-desk.jpg';
+import { navigation, linkedin, projects, education, skills, tools, certifications, impactStats } from '@/lib/portfolio-data';
+
+const impactIcons = [TrendingUp, Target, Users, BriefcaseBusiness];
 
 function SectionHeading({ number, label, title, accent, description }: { number: string; label: string; title: string; accent?: string; description?: string }) {
   return <div className="section-heading reveal"><div><span className="section-kicker">{number} / {label}</span><h2 className="section-title">{title}{accent && <><br /><em>{accent}</em></>}</h2></div>{description && <p className="section-description">{description}</p>}</div>;
 }
 
 export function Portfolio() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('accueil');
+  const progressRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      const distance = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = distance > 0 ? Math.min(1, Math.max(0, window.scrollY / distance)) : 0;
+      if (progressRef.current) progressRef.current.style.transform = `scaleX(${progress})`;
+      const sections = Array.from(document.querySelectorAll<HTMLElement>('main section[id]'));
+      const current = sections.filter(section => section.getBoundingClientRect().top <= 160).at(-1);
+      setActiveSection(current?.id ?? 'accueil');
+      frame = 0;
+    };
+    const onScroll = () => { if (!frame) frame = window.requestAnimationFrame(update); };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); window.cancelAnimationFrame(frame); };
+  }, []);
   useEffect(() => {
     const observer = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } }), { threshold: 0.08 });
     document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
@@ -18,22 +37,20 @@ export function Portfolio() {
 
   return <>
     <header className="site-header"><div className="site-wrap header-inner">
-      <a href="#accueil" className="wordmark" aria-label="Fiona Talbi, accueil">fiona talbi<span>.</span></a>
-      <nav className="desktop-nav" aria-label="Navigation principale">{navigation.map(([label,id]) => <a key={id} className="nav-link" href={`#${id}`}>{label}</a>)}<Button asChild variant="portfolio" size="sm"><a href="#contact">On échange ? <ArrowUpRight /></a></Button></nav>
-      <Button variant="ghost" size="icon" className="mobile-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'} aria-expanded={menuOpen}>{menuOpen ? <X /> : <Menu />}</Button>
-    </div>{menuOpen && <nav className="mobile-nav" aria-label="Navigation mobile">{[...navigation, ['Recommandations','recommandations'], ['Contact','contact']].map(([label,id]) => <a key={id} href={`#${id}`} onClick={() => setMenuOpen(false)}>{label}</a>)}</nav>}</header>
+      <a href="#accueil" className="wordmark" aria-label="Fiona Talbi, accueil">Fiona <span>Talbi.</span></a>
+      <nav className="desktop-nav" aria-label="Navigation principale">{navigation.map(([label,id]) => <a key={id} className={`nav-link${activeSection === id ? ' active' : ''}`} aria-current={activeSection === id ? 'location' : undefined} href={`#${id}`}>{label}</a>)}<Button asChild variant="portfolio" size="sm"><a href="#contact">Contact <ArrowUpRight /></a></Button></nav>
+    </div><div className="scroll-track" aria-hidden="true"><div className="scroll-progress" ref={progressRef} /></div></header>
 
     <main>
       <section id="accueil" className="hero">
-        <img className="hero-photo" src={deskImage} alt="Carnet bordeaux, crayon rouge et café dans un atelier créatif" width={1440} height={1024} />
-        <div className="site-wrap hero-inner"><div className="eyebrow"><span className="status-dot" />Marketing 360 · Communication · Créativité</div>
-          <h1>Fiona<br /><span>Talbi.</span></h1><p className="hero-role">Des idées créatives.<br />Des résultats concrets.</p>
+        <div className="site-wrap hero-inner"><div className="hero-intro"><div className="eyebrow"><span className="status-dot" />Marketing 360 · Communication · Créativité</div>
+          <h1>Fiona <span>Talbi.</span></h1><p className="hero-role">Marketing à 360°.<br /><span>Créativité & impact.</span></p>
           <p className="hero-copy">Plus de 3 ans d’expérience pour faire rayonner les marques, connecter les audiences et transformer les stratégies en impact.</p>
           <div className="hero-actions"><Button asChild variant="portfolio" size="lg"><a href="#projets">Découvrir mes projets <ArrowUpRight /></a></Button><Button asChild variant="portfolioOutline" size="lg"><a href="#contact">Me contacter <ArrowUpRight /></a></Button></div>
           <div className="hero-meta"><span><MapPin size={13} /> Paris, France</span><span><Globe size={13} /> Un parcours international</span></div>
-        </div><span className="image-caption">Stratégie, créativité & un café.</span>
+        </div><div className="hero-kpis" aria-label="Mes résultats en chiffres">{impactStats.map((stat, index) => { const Icon = impactIcons[index]; return <div className={`impact-card impact-card-${index + 1}`} key={stat.label}>{Icon && <Icon size={22} strokeWidth={1.5} />}<strong className="impact-number">{stat.number}</strong><span className="impact-label">{stat.label}</span><span className="impact-company">{stat.company}</span></div>; })}</div></div>
       </section>
-      <section className="impact-strip" aria-label="Mes résultats en chiffres"><div className="site-wrap impact-grid">{[['+30 %','de ventes chez Logitech'],['140','top stores activés day one'],['500+','abonnés Instagram en < 1 an'],['3+ ans','en marketing & communication']].map(([number,label]) => <div className="impact-item" key={label}><strong className="impact-number">{number}</strong><span className="impact-label">{label}</span></div>)}</div></section>
+      <section className="career-strip"><div className="site-wrap career-inner"><div><span className="section-kicker">Parcours professionnel</span><h2>Des marques. Du terrain. De l’impact.</h2></div><div className="career-brands"><span>logitech.</span><span>CosmétiCar</span><span>Massilia</span></div></div></section>
 
       <section id="parcours" className="section site-wrap">
         <div className="about-grid"><div className="reveal"><span className="section-kicker">01 / Mon parcours</span><h2 className="section-title">La curiosité comme moteur.<br /><em>L’impact comme cap.</em></h2><div className="interest-list"><span><Plane size={15} />Voyage</span><span><BookOpen size={15} />Lecture</span><span><Pencil size={15} />Dessin</span></div></div><div className="about-copy reveal"><p>Je suis Fiona, une professionnelle du <strong>marketing 360 et de la communication</strong>, basée à Paris. J’aime comprendre les marques, imaginer des idées qui font sens et les concrétiser sur le terrain.</p><p>De la tech au luxe, en passant par les réseaux de franchises, mon parcours combine <strong>vision stratégique, créativité et coordination opérationnelle</strong>. Paris, Londres et Dublin ont nourri ma curiosité et mon ouverture internationale.</p></div></div>
@@ -41,7 +58,7 @@ export function Portfolio() {
       </section>
 
       <section id="projets" className="section project-section"><div className="site-wrap"><SectionHeading number="02" label="Mes projets" title="Des marques, des défis." accent="Et de vrais résultats." description="Quatre expériences où la stratégie rencontre le terrain, la création et la performance." />
-        <div className="projects-grid">{projects.map((project,index) => <article className="project-card reveal" key={project.category}><div className={`project-art ${project.theme}`}><span className="art-tag">{project.category}</span><span className="project-brand">{project.brand}{project.brand === 'logitech' && <span>.</span>}</span><span className="art-line" /><span className="art-number">PROJET 0{index+1}</span></div><div className="project-body"><h3>{project.title}</h3><p>{project.context}</p><span className="mission-label">Mes missions</span><p>{project.mission}</p><div className="project-metrics">{project.metrics.map(([number,label]) => <div key={label}><strong>{number}</strong><span>{label}</span></div>)}</div><details className="project-detail"><summary>Au cœur du projet <Plus size={15} /></summary><ul>{project.details.map(detail => <li key={detail}>{detail}</li>)}</ul></details></div></article>)}</div>
+        <div className="projects-grid">{projects.map((project,index) => <article className="project-card reveal" key={project.category}><div className="project-body"><div className="project-topline"><span className="project-index">0{index+1}</span><span className="art-tag">{project.category}</span></div><span className="project-brand">{project.brand}{project.brand === 'logitech' && '.'}</span><h3>{project.title}</h3><p>{project.context}</p><span className="mission-label">Mes missions</span><p>{project.mission}</p><details className="project-detail"><summary>Au cœur du projet <Plus size={15} /></summary><ul>{project.details.map(detail => <li key={detail}>{detail}</li>)}</ul></details></div><aside className="project-metrics" aria-label={`Résultats ${project.category}`}><span className="mission-label">Résultats</span>{project.metrics.map(([number,label]) => <div key={label}><strong>{number}</strong><span>{label}</span></div>)}<ArrowUpRight size={24} strokeWidth={1.2} /></aside></article>)}</div>
       </div></section>
 
       <section id="competences" className="section skills-section"><div className="site-wrap"><SectionHeading number="03" label="Compétences & outils" title="Une approche transversale." accent="Une boîte à outils créative." /><div className="skills-grid reveal">{skills.map(skill => <div className="skill-column" key={skill.title}><h3>{skill.title}</h3><ul>{skill.items.map(item => <li key={item}>{item}</li>)}</ul></div>)}</div><div className="tools reveal">{tools.map(tool => <span className="tool" key={tool}>{tool}</span>)}</div></div></section>
