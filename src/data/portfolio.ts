@@ -170,16 +170,17 @@ export interface Recommendation {
   documentPath: string | null;
 }
 /**
- * Vidéo de présentation proposée depuis le hero. Chemins relatifs à public/ (préfixés au rendu).
- * Remplacer la vidéo : écraser les fichiers, mesurer la durée (ffprobe), changer `id` pour la
- * reproposer aux visiteurs qui avaient choisi « Plus tard » ou fermé la pastille. `null` : rien.
+ * Vidéo de présentation : proposée dans une modale à la première visite de l’accueil, puis
+ * toujours disponible par le bouton flottant « Voir la vidéo » (toutes les pages). Chemins
+ * relatifs à public/ (préfixés au rendu). Remplacer la vidéo : écraser les fichiers, mesurer la
+ * durée (ffprobe), changer `id` pour reproposer la modale à tous les visiteurs. `null` : rien.
  */
 export interface IntroVideo {
   /** Clé de la mémoire du visiteur (`ft-intro-video:<id>`) : la changer à chaque nouvelle vidéo. */
   id: string;
   /** MP4 H.264 avec `+faststart`. */
   src: string;
-  /** Affiche JPEG au format de la vidéo ; une version WebP du même nom sert de vignette. */
+  /** Affiche JPEG au format de la vidéo ; une version WebP du même nom sert de vignette (modale). */
   poster: string;
   /** Sous-titres WebVTT en français, ou `null` (vidéo sans parole). */
   captions: string | null;
@@ -857,15 +858,17 @@ export const sectionContent = {
     printLinkedinLabel: "LinkedIn : ",
   },
   introVideo: {
-    /** Bouton du hero (rond seul sous 1000 px, libellé gardé pour les lecteurs d’écran). */
-    heroLabel: "Ma présentation",
-    /** Précision lue après le libellé : « Ma présentation (vidéo, 20 s) ». */
-    videoLabel: "vidéo",
-    inviteLabel: "Vidéo de présentation",
-    watchLabel: "Regarder ma présentation",
-    laterLabel: "Plus tard",
-    widgetPlayLabel: "Regarder ma présentation",
-    widgetDismissLabel: "Masquer la vidéo",
+    /** Modale d’accueil (première visite de l’accueil) : sur-titre, jeu de mots et phrase. */
+    welcomeLabel: "Vidéo de présentation",
+    welcomeTitle: "On dit qu’une image vaut mille mots…",
+    /** `{durée}` est remplacé par la durée de la vidéo (« 20 s », « 1 min 30 s »). */
+    welcomeText: "…alors j’ai préféré une vidéo : mon parcours en {durée}, de vive voix.",
+    watchLabel: "Voir la vidéo",
+    ignoreLabel: "Ignorer",
+    /** Bouton flottant en bas à droite, sur toutes les pages, texte visible même sur mobile. */
+    fabLabel: "Voir la vidéo",
+    /** Suite lue par les lecteurs d’écran : « Voir la vidéo de présentation (20 s) ». */
+    fabNameSuffix: "de présentation",
     closeLabel: "Fermer la vidéo",
     errorText: "La vidéo ne se lance pas ici.",
     errorOpenLabel: "Ouvrir le fichier vidéo",

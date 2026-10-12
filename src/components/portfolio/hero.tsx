@@ -9,7 +9,6 @@ import {
   seo,
 } from "@/data/portfolio";
 import { publicPath } from "@/lib/public-path";
-import { HeroVideoLink, IntroInvite } from "./intro-video";
 import { Logo } from "./logo";
 
 const projectIds = new Set(projects.map((project) => project.id));
@@ -72,7 +71,6 @@ export function Hero() {
               </span>
             </a>
           )}
-          <HeroVideoLink />
         </div>
         <div className="hero-brands enter enter-4">
           <p className="hero-brands-label" id="hero-brands-label">
@@ -122,7 +120,6 @@ export function Hero() {
                   decoding="async"
                 />
               </picture>
-              <IntroInvite />
             </div>
             <p className="hero-places">
               <span className="hero-places-icon" aria-hidden>

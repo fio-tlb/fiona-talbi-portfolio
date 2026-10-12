@@ -1,15 +1,15 @@
 import { useEffect, type ReactNode, type RefObject } from "react";
 import { ArrowUp, ArrowUpRight } from "lucide-react";
 import { introVideo, profile, sectionContent } from "@/data/portfolio";
-import { IntroVideoProvider } from "./portfolio/intro-video";
+import { IntroVideoLayer } from "./portfolio/intro-video";
 import { SiteHeader } from "./portfolio/site-header";
 
 type SiteShellProps = {
   /** Section mise en valeur dans le menu (« projets » sur une page projet). */
   activeSection: string;
   progressRef: RefObject<HTMLDivElement | null>;
-  /** Faux sans portrait : le bandeau vidéo n'a pas de visuel où se poser (accueil seulement). */
-  canInvite: boolean;
+  /** Vrai sur l'accueil seulement : la modale vidéo y est proposée à la première visite. */
+  offerVideoWelcome?: boolean;
   mainRef?: RefObject<HTMLElement | null>;
   mainClassName?: string;
   /** Cible du lien « Haut de page » du pied de page. */
@@ -19,13 +19,13 @@ type SiteShellProps = {
 
 /**
  * Cadre commun à toutes les pages (accueil et pages projet) : lien d'évitement, en-tête,
- * contenu, pied de page et calque vidéo (pastille, lecteur). Ajouter ici ce qui doit
- * apparaître partout, comme le bouton flottant de la vidéo.
+ * contenu, pied de page et calque vidéo (bouton flottant « Voir la vidéo », modale d'accueil,
+ * lecteur). Ajouter ici ce qui doit apparaître partout.
  */
 export function SiteShell({
   activeSection,
   progressRef,
-  canInvite,
+  offerVideoWelcome = false,
   mainRef,
   mainClassName,
   topId,
@@ -48,7 +48,7 @@ export function SiteShell({
   }, []);
 
   return (
-    <IntroVideoProvider video={introVideo} canInvite={canInvite}>
+    <>
       <a className="skip-link" href="#contenu">
         Aller au contenu
       </a>
@@ -79,6 +79,7 @@ export function SiteShell({
           </ul>
         </div>
       </footer>
-    </IntroVideoProvider>
+      <IntroVideoLayer video={introVideo} offerWelcome={offerVideoWelcome} />
+    </>
   );
 }

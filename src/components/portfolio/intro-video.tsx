@@ -1,12 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type KeyboardEvent,
-  type MouseEvent,
-  type ReactNode,
-} from "react";
+import type { MouseEvent } from "react";
 import { Play, X } from "lucide-react";
 import { sectionContent, type IntroVideo } from "@/data/portfolio";
 import { formatDuration, useIntroVideo, type IntroVideoController } from "@/hooks/use-intro-video";
@@ -14,166 +6,140 @@ import { publicPath } from "@/lib/public-path";
 
 const text = sectionContent.introVideo;
 
-type IntroVideoContextValue = { video: IntroVideo | null; controller: IntroVideoController | null };
-const IntroVideoContext = createContext<IntroVideoContextValue>({ video: null, controller: null });
-
-/** Rend la vidéo disponible au hero (bouton, bandeau) et au calque flottant (pastille, lecteur). */
-export function IntroVideoProvider({
-  video,
-  canInvite,
-  children,
-}: {
-  video: IntroVideo | null;
-  /** Faux sans portrait : le bandeau n'a pas de visuel où se poser. */
-  canInvite: boolean;
-  children: ReactNode;
-}) {
-  if (!video) {
-    return (
-      <IntroVideoContext.Provider value={{ video: null, controller: null }}>
-        {children}
-      </IntroVideoContext.Provider>
-    );
-  }
-  return (
-    <ControlledIntroVideo video={video} canInvite={canInvite}>
-      {children}
-    </ControlledIntroVideo>
-  );
-}
-
-function ControlledIntroVideo({
-  video,
-  canInvite,
-  children,
-}: {
-  video: IntroVideo;
-  canInvite: boolean;
-  children: ReactNode;
-}) {
-  const controller = useIntroVideo(video, canInvite);
-  return (
-    <IntroVideoContext.Provider value={{ video, controller }}>
-      {children}
-      <IntroWidget controller={controller} />
-      <IntroVideoDialog controller={controller} />
-    </IntroVideoContext.Provider>
-  );
-}
-
 /** « images/x.jpg » → « images/x.webp ». */
 function withExtension(path: string, extension: string) {
   return path.replace(/\.[a-z0-9]+$/i, "." + extension);
 }
 
+/** « …mon parcours en {durée}, de vive voix. » → durée réelle de la vidéo. */
+function withDuration(template: string, duration: string) {
+  return template.replace("{durée}", duration);
+}
+
 /**
- * Bouton secondaire du hero : un vrai lien vers le MP4, qui fonctionne sans JavaScript ;
- * une fois la page hydratée, il ouvre le lecteur. Rond seul sous 1000 px (styles.css).
+ * Vidéo de présentation, montée une fois pour toutes les pages (site-shell.tsx) : bouton
+ * flottant « Voir la vidéo » partout, modale d'accueil sur l'accueil (`offerWelcome`), lecteur.
+ * `video: null` : rien du tout.
  */
-export function HeroVideoLink() {
-  const { video, controller } = useContext(IntroVideoContext);
+export function IntroVideoLayer({
+  video,
+  offerWelcome,
+}: {
+  video: IntroVideo | null;
+  offerWelcome: boolean;
+}) {
   if (!video) return null;
+  return <ControlledIntroVideo video={video} offerWelcome={offerWelcome} />;
+}
+
+function ControlledIntroVideo({
+  video,
+  offerWelcome,
+}: {
+  video: IntroVideo;
+  offerWelcome: boolean;
+}) {
+  const controller = useIntroVideo(video, offerWelcome);
+  return (
+    <>
+      <VideoFab controller={controller} />
+      {controller.welcomeMounted && <WelcomeDialog controller={controller} />}
+      <IntroVideoDialog controller={controller} />
+    </>
+  );
+}
+
+/** Un clic sur le voile (hors du contenu) cible le <dialog> lui-même. */
+function closeOnBackdrop(event: MouseEvent<HTMLDialogElement>) {
+  if (event.target === event.currentTarget) event.currentTarget.close();
+}
+
+/**
+ * Bouton flottant permanent, en bas à droite, sans croix : un vrai lien vers le MP4 dans le
+ * HTML pré-rendu (il fonctionne sans JavaScript), qui ouvre le lecteur une fois la page hydratée.
+ */
+function VideoFab({ controller }: { controller: IntroVideoController }) {
+  const { video } = controller;
   const onClick = (event: MouseEvent<HTMLAnchorElement>) => {
     const modified = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
-    if (!controller?.ready || modified || event.button !== 0) return;
+    if (!controller.ready || modified || event.button !== 0) return;
     event.preventDefault();
     controller.play();
   };
   return (
     <a
-      className="action action-secondary hero-video-link"
+      ref={controller.fabRef}
+      className="video-fab"
       href={publicPath(video.src)}
       onClick={onClick}
+      data-hidden={controller.dialogOpen || controller.fabCovering || undefined}
     >
-      <Play className="hero-video-icon" size={14} fill="currentColor" aria-hidden />
-      <span className="hero-video-label">{text.heroLabel}</span>
+      <span className="video-fab-mark" aria-hidden>
+        <Play size={14} fill="currentColor" strokeWidth={0} />
+      </span>
+      {text.fabLabel}
       <span className="sr-only">
-        {" (" + text.videoLabel + ", " + formatDuration(video.durationSeconds) + ")"}
+        {" " + text.fabNameSuffix + " (" + formatDuration(video.durationSeconds) + ")"}
       </span>
     </a>
   );
 }
 
-/** Bandeau posé en bas du portrait (≥ 721 px), seulement tant qu'aucun choix n'est fait. */
-export function IntroInvite() {
-  const { controller } = useContext(IntroVideoContext);
-  if (!controller || controller.ui !== "invite") return null;
-  const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    if (event.key === "Escape") {
-      event.stopPropagation();
-      controller.later();
-    }
-  };
+/** Modale d'accueil : vignette, jeu de mots, « Voir la vidéo » ou « Ignorer ». */
+function WelcomeDialog({ controller }: { controller: IntroVideoController }) {
+  const { video, duration } = controller;
   return (
-    <aside className="intro-invite" aria-label={text.inviteLabel} onKeyDown={onKeyDown}>
-      <button
-        type="button"
-        className="intro-invite-watch"
-        aria-label={text.watchLabel + " (" + controller.duration + ")"}
-        onClick={controller.play}
-      >
-        <span className="intro-play-mark" aria-hidden>
-          <Play size={13} fill="currentColor" />
-        </span>
-        <span className="intro-invite-text">
-          {text.watchLabel}
-          <span className="intro-invite-duration">
-            <span className="intro-invite-sep">{" · "}</span>
-            {controller.duration}
+    <dialog
+      ref={controller.welcomeRef}
+      className="video-welcome"
+      aria-labelledby="video-welcome-title"
+      aria-describedby="video-welcome-text"
+      onClose={controller.onWelcomeClose}
+      onClick={closeOnBackdrop}
+    >
+      <div className="video-welcome-body">
+        {/* Raccourci souris : la vignette lance aussi la vidéo (le clavier a le bouton). */}
+        <div className="video-welcome-poster" onClick={controller.play} aria-hidden>
+          <picture>
+            <source type="image/webp" srcSet={publicPath(withExtension(video.poster, "webp"))} />
+            <img
+              src={publicPath(video.poster)}
+              alt=""
+              width={video.width}
+              height={video.height}
+              decoding="async"
+            />
+          </picture>
+          <span className="video-welcome-play">
+            <Play size={22} fill="currentColor" strokeWidth={0} />
           </span>
-        </span>
-      </button>
-      <button type="button" className="intro-invite-later" onClick={controller.later}>
-        {text.laterLabel}
-      </button>
-    </aside>
-  );
-}
-
-/** Pastille fixe en bas à droite : lecture et masquage, deux cibles de 44 px. */
-function IntroWidget({ controller }: { controller: IntroVideoController }) {
-  const [away, setAway] = useState(false);
-  const visible = controller.ui === "widget";
-
-  // Masquée au-dessus du pied de page, pour libérer « Haut de page » et les liens de contact.
-  useEffect(() => {
-    const footer = document.querySelector(".site-footer");
-    if (!visible || !footer || typeof window.IntersectionObserver !== "function") return;
-    const observer = new IntersectionObserver(([entry]) => setAway(Boolean(entry?.isIntersecting)));
-    observer.observe(footer);
-    return () => observer.disconnect();
-  }, [visible]);
-
-  if (!visible) return null;
-  const poster = controller.video.poster;
-  return (
-    <aside className="intro-widget" aria-label={text.inviteLabel} data-away={away || undefined}>
-      <button
-        ref={controller.widgetPlayRef}
-        type="button"
-        className="intro-widget-play"
-        aria-label={text.widgetPlayLabel + " (" + controller.duration + ")"}
-        title={text.widgetPlayLabel + " (" + controller.duration + ")"}
-        onClick={controller.play}
-      >
-        <picture>
-          <source type="image/webp" srcSet={publicPath(withExtension(poster, "webp"))} />
-          <img src={publicPath(poster)} alt="" width={44} height={44} decoding="async" />
-        </picture>
-        <span className="intro-widget-mark" aria-hidden>
-          <Play size={10} fill="currentColor" />
-        </span>
-      </button>
-      <button
-        type="button"
-        className="intro-widget-dismiss"
-        aria-label={text.widgetDismissLabel}
-        title={text.widgetDismissLabel}
-        onClick={controller.dismiss}
-      >
-        <X size={18} aria-hidden />
-      </button>
-    </aside>
+          <span className="video-welcome-duration">{duration}</span>
+        </div>
+        <div className="video-welcome-copy">
+          <p className="chip video-welcome-eyebrow">{text.welcomeLabel}</p>
+          <h2 id="video-welcome-title" className="video-welcome-title">
+            {text.welcomeTitle}
+          </h2>
+          <p id="video-welcome-text" className="video-welcome-text">
+            {withDuration(text.welcomeText, duration)}
+          </p>
+          <div className="video-welcome-actions">
+            <button
+              ref={controller.welcomeWatchRef}
+              type="button"
+              className="action action-primary"
+              onClick={controller.play}
+            >
+              <Play size={15} fill="currentColor" strokeWidth={0} aria-hidden />
+              {text.watchLabel}
+            </button>
+            <button type="button" className="action action-secondary" onClick={controller.ignore}>
+              {text.ignoreLabel}
+            </button>
+          </div>
+        </div>
+      </div>
+    </dialog>
   );
 }
 
@@ -182,17 +148,13 @@ function IntroVideoDialog({ controller }: { controller: IntroVideoController }) 
   const { video } = controller;
   if (!controller.ready) return null;
   const src = publicPath(video.src);
-  // Un clic sur le voile (hors du lecteur) cible le <dialog> lui-même.
-  const onClick = (event: MouseEvent<HTMLDialogElement>) => {
-    if (event.target === event.currentTarget) event.currentTarget.close();
-  };
   return (
     <dialog
       ref={controller.dialogRef}
       className="intro-video-dialog"
       aria-labelledby="intro-video-title"
       onClose={controller.onPlayerClose}
-      onClick={onClick}
+      onClick={closeOnBackdrop}
     >
       <div className="intro-video-bar">
         <p className="intro-video-title">
