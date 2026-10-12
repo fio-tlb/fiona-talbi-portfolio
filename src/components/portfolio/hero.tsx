@@ -11,7 +11,7 @@ export function Hero() {
         <div className="hero-grid">
           <div className="hero-intro">
             <p className="hero-name enter">{profile.name}</p>
-            <h1 id="hero-title" className="enter enter-1">
+            <h1 id="hero-title" className="enter-still">
               {content.title}
               <br />
               <span>{content.accent}</span>
@@ -48,8 +48,7 @@ export function Hero() {
               </div>
             ))}
           </div>
-          <div className="hero-visual enter enter-2">
-            <div className="visual-orbit" aria-hidden />
+          <div className="hero-visual enter-still enter-1">
             <figure className="hero-photo">
               <div className="hero-photo-frame">
                 <img

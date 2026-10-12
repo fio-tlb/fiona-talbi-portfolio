@@ -42,7 +42,7 @@ export function ContactSection() {
           <a className="contact-email" href={"mailto:" + profile.email}>
             {profile.email}
           </a>
-          {canCopy && (
+          {canCopy ? (
             <button
               className="copy-button"
               type="button"
@@ -55,6 +55,8 @@ export function ContactSection() {
                 <Copy size={15} aria-hidden />
               )}
             </button>
+          ) : (
+            <span className="copy-button copy-slot" aria-hidden="true" />
           )}
         </div>
         <p className="contact-status" role="status" aria-live="polite" aria-atomic="true">

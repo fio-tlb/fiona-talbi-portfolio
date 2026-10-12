@@ -34,15 +34,26 @@ export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
         menuRef.current.querySelector("summary")?.focus();
       }
     };
+    // Taps outside land on the scrim (body::after), so closing here never triggers the element below.
     const onOutsideClick = (event: PointerEvent) => {
       if (event.target instanceof Node && !menuRef.current?.contains(event.target)) closeMenu();
     };
+    // Close when keyboard focus leaves the open panel, so the focused element is never hidden under it.
+    const onFocusOut = (event: FocusEvent) => {
+      const next = event.relatedTarget;
+      if (menuRef.current?.open && next instanceof Node && !menuRef.current.contains(next)) {
+        closeMenu();
+      }
+    };
+    const menu = menuRef.current;
     document.addEventListener("keydown", onEscape);
     document.addEventListener("pointerdown", onOutsideClick);
+    menu?.addEventListener("focusout", onFocusOut);
     desktop.addEventListener("change", onDesktop);
     return () => {
       document.removeEventListener("keydown", onEscape);
       document.removeEventListener("pointerdown", onOutsideClick);
+      menu?.removeEventListener("focusout", onFocusOut);
       desktop.removeEventListener("change", onDesktop);
     };
   }, []);
@@ -61,20 +72,14 @@ export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
 
   return (
     <header className="site-header">
-      <div className="header-inner">
+      <div className="site-wrap header-inner">
         <a
           href="#accueil"
           className="header-brand"
           aria-label={profile.name + ", accueil"}
           onClick={closeMenu}
         >
-          <span className="logo-mark" aria-hidden>
-            {profile.initials.toLowerCase()}.
-          </span>
-          <span>
-            {profile.name}
-            <span className="brand-dot">.</span>
-          </span>
+          {profile.name}
         </a>
         <nav className="desktop-nav" aria-label="Navigation principale">
           {items.map(renderLink)}
