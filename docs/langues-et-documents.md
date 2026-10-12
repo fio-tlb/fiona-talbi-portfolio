@@ -40,7 +40,7 @@ en: {
 
 Le CV apparaît dans l’accueil et dans Contact. La lettre de motivation apparaît dans Contact dès que son chemin est renseigné. Chaque langue ouvre son propre fichier. `null` retire le lien de téléchargement, sans message d’indisponibilité. Les recommandations sans PDF configuré proposent une demande par e-mail dans la langue choisie.
 
-Les CV français actuel et anglais généré sont en place. Les lettres de motivation restent à ajouter : aucun texte de candidature n’est inventé. Pour les recommandations, utiliser des documents réels, avec l’accord de leurs auteurs ; ajouter les traductions anglaises aux clés correspondantes.
+Les CV français actuel et anglais généré sont en place. Les lettres de motivation restent à ajouter : aucun texte de candidature n’est inventé. Les recommandations ouvrent actuellement des PDF de démonstration FR/EN ; remplacez-les par vos lettres originales dans chaque langue, avec l’accord de leurs auteurs.
 
 Après remplacement par vos propres CV, ne relancez plus le générateur sur ces fichiers. Pour régénérer le CV anglais issu des données : `bun scripts/share-assets/cv.mjs --locale en` (Playwright requis ; `PLAYWRIGHT_MODULE` et `CHROMIUM_EXECUTABLE_PATH` permettent d’utiliser une installation existante).
 

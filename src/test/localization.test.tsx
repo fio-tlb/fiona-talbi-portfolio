@@ -156,7 +156,12 @@ describe("English content and documents", () => {
       }
     }
     expect(en.profile.cvPath).not.toBe(fr.profile.cvPath);
-    expect(en.recommendations.every((letter) => letter.documentPath === null)).toBe(true);
+    for (const letter of en.recommendations) {
+      expect(letter.documentPath).not.toBeNull();
+      expect(letter.documentPath).not.toBe(
+        fr.recommendations.find((original) => original.id === letter.id)?.documentPath,
+      );
+    }
   });
   it("uses translated metadata, language alternatives and shared media URLs", () => {
     const home = buildPageHead(en.seo, en.profile, "en");

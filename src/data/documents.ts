@@ -20,8 +20,8 @@ export const documentPaths: Readonly<Record<Locale, DocumentPaths>> = {
     cv: "documents/cv-fiona-talbi-en.pdf",
     coverLetter: null,
     recommendations: {
-      "recommendation-01": null,
-      "recommendation-02": null,
+      "recommendation-01": "documents/recommendation-01-en.pdf",
+      "recommendation-02": "documents/recommendation-02-en.pdf",
     },
   },
 };
