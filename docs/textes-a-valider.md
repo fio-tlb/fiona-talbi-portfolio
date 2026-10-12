@@ -200,6 +200,17 @@ L'image de partage (`public/og-image-v1.jpg`, 1200 × 630) reprend « Fiona Talb
 | `sectionContent.projects.openLabel`         | —                                                                  | Voir le projet (bas de chaque carte, qui ouvre la page du projet)                                          |
 | `sectionContent.projects.backLabel`         | —                                                                  | Tous les projets (lien de retour des pages projet)                                                         |
 
+## 2e passe « Maison moderne » : Parcours, Compétences, Recommandations, Contact (12 octobre 2026)
+
+Les sections passent en cartes ; les textes des données ne changent pas, sauf ceux-ci. Le titre de la section Projets (« Des projets concrets. » / « Des résultats mesurables. ») est consigné dans le tableau précédent.
+
+| Où                                             | Avant                                             | Après                                                                                                |
+| ---------------------------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `sectionContent.skills.toolboxTitle` (nouveau) | Outils (titre de la ligne des outils)             | Boîte à outils (titre de la carte des outils ; `toolsTitle` « Outils » reste celui du CV PDF)        |
+| `sectionContent.recommendations.openLabel`     | Lire la lettre (PDF)                              | Lire la lettre ↗ (la pilule « PDF » est affichée en haut de la carte)                                |
+| Parcours, centres d'intérêt (`interests`)      | En dehors du travail : voyage, lecture et dessin. | En dehors du travail — pilules « Voyage », « Lecture », « Dessin » (majuscule ajoutée à l'affichage) |
+| Contact, adresse e-mail                        | En Fraunces (serif)                               | Même texte, en Instrument Sans avec une icône d'enveloppe                                            |
+
 ## 2e passe : pages projet (12 octobre 2026)
 
 Chaque carte de l'accueil mène à `/projets/<id>`. Les textes viennent de `src/data/portfolio.ts` ; rien n'est inventé : la mission et les puces reprennent les faits du brief. Le paragraphe « Action » des anciennes fiches (`project.action`) est remplacé par les puces « Ce que j'ai fait » (`project.details`), à la 1re personne. Le récit détaillé (`project.story`) est vide : à écrire par Fiona.

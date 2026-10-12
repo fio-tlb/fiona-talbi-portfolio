@@ -127,8 +127,6 @@
   --space-section: clamp(4.5rem, 3rem + 6vw, 8rem); /* 72 → 128 */
   --space-block: clamp(2rem, 1.5rem + 2vw, 3rem); /* 32 → 48 */
   --header-h: 4.5rem; /* 72 px, 60 px sur mobile */
-  --rail: 12.5rem; /* colonne des intitulés : expériences, formation, outils… */
-  --rail-gap: clamp(2rem, 1rem + 2.5vw, 3.5rem);
   --grid-gap: clamp(0.75rem, 0.5rem + 0.9vw, 1.5rem); /* 12 → 24, entre les cartes */
 
   /* Surfaces : cartes claires sur le beige, bord très léger, ombres chaudes en couches. */
