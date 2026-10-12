@@ -956,7 +956,8 @@
   align-items: center;
   gap: 20px;
   padding: 27px;
-  border: 1px dashed oklch(0.82 0.02 285);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 22px;
 }
 .document-icon {
@@ -970,7 +971,7 @@
   flex-shrink: 0;
 }
 .recommendation-card h3 {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 650;
   line-height: 1.5;
   letter-spacing: -0.025em;
@@ -980,18 +981,6 @@
   line-height: 1.7;
   color: var(--muted-foreground);
   margin-top: 5px;
-}
-.pending-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  margin-top: 12px;
-  font-size: 12px;
-  font-weight: 650;
-  color: var(--muted-foreground);
-  padding: 5px 8px;
-  border: 1px solid var(--border);
-  border-radius: 100px;
 }
 .recommendation-link {
   display: inline-flex;
@@ -1003,22 +992,6 @@
   font-weight: 650;
   min-height: 44px;
   padding-block: 10px;
-}
-.recommendations-pending {
-  padding-block: 20px;
-}
-.pending-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  font-size: 14px;
-  line-height: 1.7;
-  color: var(--muted-foreground);
-}
-.pending-note svg {
-  flex-shrink: 0;
-  margin-top: 4px;
-  color: var(--primary);
 }
 .contact-section {
   padding-top: 12px;

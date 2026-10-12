@@ -7,7 +7,6 @@ import {
   sectionContent,
   type NavigationItem,
 } from "@/data/portfolio";
-import { isRecommendationAvailable } from "@/lib/recommendations";
 
 type SiteHeaderProps = {
   activeSection: string;
@@ -17,8 +16,9 @@ type SiteHeaderProps = {
 export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
   const menuRef = useRef<HTMLDetailsElement>(null);
   const content = sectionContent.navigation;
-  const hasRecommendations = recommendations.some(isRecommendationAvailable);
-  const items = navigation.filter((item) => item.id !== "recommandations" || hasRecommendations);
+  const items = navigation.filter(
+    (item) => item.id !== "recommandations" || recommendations.length > 0,
+  );
   const closeMenu = () => {
     if (menuRef.current) menuRef.current.open = false;
   };

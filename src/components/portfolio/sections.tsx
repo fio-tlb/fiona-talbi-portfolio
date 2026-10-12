@@ -6,6 +6,7 @@ import {
   Globe2,
   GraduationCap,
   Layers3,
+  Mail,
   Pencil,
   Plane,
   Sparkles,
@@ -17,13 +18,13 @@ import {
   experiences,
   interests,
   languages,
+  profile,
   recommendations,
   sectionContent,
   skills,
   tools,
   type Recommendation,
 } from "@/data/portfolio";
-import { isRecommendationAvailable } from "@/lib/recommendations";
 import { SectionHeading } from "./section-heading";
 
 const interestIcons = { travel: Plane, reading: BookOpen, drawing: Pencil };
@@ -183,55 +184,52 @@ export function RecommendationsSection({
   items?: readonly Recommendation[];
 } = {}) {
   const content = sectionContent.recommendations;
-  const documents = items.filter(isRecommendationAvailable);
-  if (!documents.length) {
-    return (
-      <section
-        id="recommandations"
-        className="site-wrap recommendations-pending"
-        aria-label={content.label}
-      >
-        <p className="pending-note" data-reveal>
-          <FileText size={17} aria-hidden />
-          {content.pendingNote}
-        </p>
-      </section>
-    );
-  }
+  if (!items.length) return null;
   return (
     <section id="recommandations" className="section site-wrap">
       <SectionHeading {...content} />
       <div className="recommendation-grid">
-        {documents.map((recommendation, index) => (
-          <article
-            className="recommendation-card"
-            key={recommendation.id}
-            data-reveal
-            data-delay={index * 70}
-          >
-            <span className="document-icon">
-              <FileText size={24} strokeWidth={1.4} aria-hidden />
-            </span>
-            <div>
-              <h3>{recommendation.title}</h3>
-              <p>{recommendation.description}</p>
-              <a
-                className="recommendation-link"
-                href={
-                  import.meta.env.BASE_URL + recommendation.documentPath.trim().replace(/^\/+/, "")
-                }
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={content.openLabel + " : " + recommendation.title}
-              >
-                {content.openLabel}
-                <ArrowUpRight size={14} aria-hidden />
-              </a>
-            </div>
-          </article>
-        ))}
+        {items.map((recommendation, index) => {
+          const documentPath = recommendation.documentPath?.trim();
+          const label = documentPath ? content.openLabel : content.requestLabel;
+          const href = documentPath
+            ? import.meta.env.BASE_URL + documentPath.replace(/^\/+/, "")
+            : "mailto:" +
+              profile.email +
+              "?subject=" +
+              encodeURIComponent(content.requestSubject + " : " + recommendation.title);
+          return (
+            <article
+              className="recommendation-card"
+              key={recommendation.id}
+              data-reveal
+              data-delay={index * 70}
+            >
+              <span className="document-icon">
+                <FileText size={24} strokeWidth={1.4} aria-hidden />
+              </span>
+              <div>
+                <h3>{recommendation.title}</h3>
+                {recommendation.description && <p>{recommendation.description}</p>}
+                <a
+                  className="recommendation-link"
+                  href={href}
+                  target={documentPath ? "_blank" : undefined}
+                  rel={documentPath ? "noopener noreferrer" : undefined}
+                  aria-label={label + " : " + recommendation.title}
+                >
+                  {label}
+                  {documentPath ? (
+                    <ArrowUpRight size={14} aria-hidden />
+                  ) : (
+                    <Mail size={14} aria-hidden />
+                  )}
+                </a>
+              </div>
+            </article>
+          );
+        })}
       </div>
-      {documents.length < items.length && <p className="pending-note">{content.remainingNote}</p>}
     </section>
   );
 }

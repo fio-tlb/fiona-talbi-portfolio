@@ -79,8 +79,7 @@ export interface Interest {
 export interface Recommendation {
   id: string;
   title: string;
-  status: "pending" | "available";
-  description: string;
+  description?: string;
   documentPath: string | null;
 }
 export interface Brand {
@@ -417,15 +416,11 @@ export const recommendations: readonly Recommendation[] = [
   {
     id: "recommendation-01",
     title: "Lettre de recommandation 01",
-    status: "pending",
-    description: "Document à venir",
     documentPath: null,
   },
   {
     id: "recommendation-02",
     title: "Lettre de recommandation 02",
-    status: "pending",
-    description: "Document à venir",
     documentPath: null,
   },
 ];
@@ -440,7 +435,7 @@ export const sectionContent = {
   navigation: {
     contactLabel: "Contact",
     menuLabel: "Menu de navigation",
-    secondaryLabel: "Formation & qualifications",
+    secondaryLabel: "Pour aller plus loin",
   },
   hero: {
     eyebrow: "Marketing 360 · Communication · Créativité",
@@ -505,10 +500,9 @@ export const sectionContent = {
     label: "Recommandations",
     title: "La confiance se construit.",
     description: "Les regards de celles et ceux avec qui j’ai eu le plaisir de travailler.",
-    pendingLabel: "Bientôt disponible en PDF",
-    pendingNote: "Les lettres de recommandation ne sont pas encore disponibles.",
-    remainingNote: "Les autres lettres ne sont pas encore disponibles.",
     openLabel: "Ouvrir le document",
+    requestLabel: "Demander la lettre",
+    requestSubject: "Demande de recommandation",
   },
   contact: {
     number: "07",
