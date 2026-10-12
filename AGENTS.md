@@ -8,3 +8,7 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep portfolio content in browser-safe data modules and reusable presentation components; this keeps career facts separate from layout.
+- Use anchored sections on the single portfolio page; navigation scrolls between sections of one continuous narrative.
+- Recommendation PDFs must use real supplied documents; until provided, show an honest pending state rather than fabricated letters.
