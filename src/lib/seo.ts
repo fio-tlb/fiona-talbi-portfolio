@@ -1,6 +1,7 @@
 // Balises de partage et données structurées de la page, calculées uniquement à partir des données.
-// Fonctions pures : testées dans src/test/seo.test.ts, appelées par src/routes/index.tsx.
-import type { Education, PortfolioProfile, PortfolioSeo } from "@/data/portfolio";
+// Fonctions pures : testées dans src/test/seo.test.ts, appelées par src/routes/index.tsx
+// (accueil) et src/routes/projets.$projectId.tsx (pages projet).
+import type { Education, PortfolioProfile, PortfolioSeo, Project } from "@/data/portfolio";
 
 type MetaTag =
   { title: string } | { name: string; content: string } | { property: string; content: string };
@@ -41,6 +42,56 @@ export function buildPageHead(seo: PortfolioSeo, profile: PortfolioProfile): Pag
       { name: "twitter:image:alt", content: seo.ogImageAlt },
     ],
     links: [{ rel: "canonical", href: seo.siteUrl }],
+  };
+}
+
+/** Adresse publique d'une page projet, avec la barre finale (fichier projets/<id>/index.html). */
+export function projectUrl(projectId: string, siteUrl: string): string {
+  return absoluteUrl("projets/" + projectId + "/", siteUrl);
+}
+
+/**
+ * Balises d'une page projet : titre « <projet> — Fiona Talbi », description tirée du contexte,
+ * adresse canonique propre à la page et couverture du projet comme image de partage
+ * (image du site à défaut).
+ */
+export function buildProjectHead(
+  seo: PortfolioSeo,
+  profile: PortfolioProfile,
+  project: Project,
+  titleSuffix: string,
+): PageHead {
+  const url = projectUrl(project.id, seo.siteUrl);
+  const title = project.title + titleSuffix;
+  const cover = project.gallery[0];
+  const image = cover
+    ? { src: cover.src, width: cover.width, height: cover.height, alt: cover.alt }
+    : { src: seo.ogImage, width: seo.ogImageWidth, height: seo.ogImageHeight, alt: seo.ogImageAlt };
+  const imageUrl = absoluteUrl(image.src, seo.siteUrl);
+
+  return {
+    meta: [
+      { title },
+      { name: "description", content: project.context },
+      { name: "author", content: profile.name },
+      { property: "og:type", content: "article" },
+      { property: "og:site_name", content: profile.name },
+      { property: "og:locale", content: seo.locale },
+      { property: "og:url", content: url },
+      { property: "og:title", content: title },
+      { property: "og:description", content: project.context },
+      { property: "og:image", content: imageUrl },
+      { property: "og:image:type", content: "image/jpeg" },
+      { property: "og:image:width", content: String(image.width) },
+      { property: "og:image:height", content: String(image.height) },
+      { property: "og:image:alt", content: image.alt },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: project.context },
+      { name: "twitter:image", content: imageUrl },
+      { name: "twitter:image:alt", content: image.alt },
+    ],
+    links: [{ rel: "canonical", href: url }],
   };
 }
 

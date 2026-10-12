@@ -66,13 +66,25 @@ export interface Brand {
   name: string;
   logo: LogoImage;
 }
-/** Image de la galerie d'un projet (public/images/projets/<id>/) ; la 1re sert de couverture. */
+/**
+ * Photo de la galerie d'un projet, dans public/images/projets/<id>/. `src` est le JPEG de 1600 px
+ * de large ; les variantes portent le même nom : `.avif`, `-800.jpg` et `-800.avif` (800 px).
+ * Remplacer une photo = écraser ses 4 fichiers (mêmes noms) et mettre à jour `width`/`height`
+ * si les proportions changent. La 1re photo sert de couverture (accueil et haut de la page projet).
+ */
 export interface ProjectImage {
   src: string;
+  /** Ce que montre la photo, pour les lecteurs d'écran. */
   alt: string;
+  /** Légende affichée sous la photo et dans l'agrandissement. */
   caption: string;
   width: number;
   height: number;
+}
+/** Partie du récit détaillé d'un projet : un intertitre et ses paragraphes. */
+export interface ProjectStorySection {
+  heading: string;
+  paragraphs: readonly string[];
 }
 export interface Project {
   /**
@@ -87,9 +99,16 @@ export interface Project {
   title: string;
   /** Enjeu : le contexte en une phrase. */
   context: string;
-  /** Action : ce que j'ai fait, à la 1re personne. */
-  action: string;
+  /** Ma mission (page projet) : l'objectif, en une phrase. */
+  mission: string;
+  /** Ce que j'ai fait (page projet), à la 1re personne : une puce par action ou résultat concret. */
+  details: readonly string[];
   metrics: readonly Metric[];
+  /**
+   * Récit détaillé de la page projet, affiché après « Ce que j'ai fait » : une carte par partie.
+   * Vide par défaut (rien ne s'affiche) ; à compléter pour détailler le projet en profondeur.
+   */
+  story: readonly ProjectStorySection[];
   /** Photos du projet (3 à 5). Vide : la carte de l'accueil affiche un visuel de repli sobre. */
   gallery: readonly ProjectImage[];
 }
@@ -339,6 +358,21 @@ export const impactStats: readonly ImpactStat[] = [
   },
 ];
 
+// Photos des pages projet : illustrations PROVISOIRES (aplats aux couleurs du site), à remplacer
+// par les vraies photos en écrasant les fichiers de public/images/projets/<id>/ (voir ProjectImage).
+const projectPhoto = (
+  projectId: string,
+  name: string,
+  alt: string,
+  caption: string,
+): ProjectImage => ({
+  src: "images/projets/" + projectId + "/" + name + ".jpg",
+  alt,
+  caption,
+  width: 1600,
+  height: 1000,
+});
+
 export const projects: readonly Project[] = [
   {
     id: "logitech-category-management",
@@ -348,8 +382,12 @@ export const projects: readonly Project[] = [
     title: "Réagencer le rayon informatique des top stores",
     context:
       "Chez Logitech, rendre l’offre plus lisible dans le rayon informatique de nos top stores.",
-    action:
-      "J’ai déployé plus de 100 solutions de category management (catman) dans nos top stores. Le nouvel agencement du rayon informatique a augmenté les ventes de 30 %.",
+    mission:
+      "Déployer nos solutions de category management dans les top stores et repenser l’agencement du rayon informatique.",
+    details: [
+      "J’ai déployé plus de 100 solutions de category management (catman) dans nos top stores.",
+      "Ce nouvel agencement du rayon informatique a augmenté ses ventes de 30 %.",
+    ],
     metrics: [
       {
         id: "catman-solutions",
@@ -358,7 +396,33 @@ export const projects: readonly Project[] = [
       },
       { id: "catman-sales", value: "+30 %", label: "de ventes sur le rayon informatique" },
     ],
-    gallery: [],
+    story: [],
+    gallery: [
+      projectPhoto(
+        "logitech-category-management",
+        "rayon",
+        "Rayon informatique d’un top store : souris, claviers, webcams et casques",
+        "Le rayon informatique d’un top store, après le réagencement.",
+      ),
+      projectPhoto(
+        "logitech-category-management",
+        "plan",
+        "Plan d’implantation du rayon informatique",
+        "Le plan d’implantation du rayon.",
+      ),
+      projectPhoto(
+        "logitech-category-management",
+        "allee",
+        "Allée d’un magasin bordée de rayons",
+        "Une allée du magasin, vue d’ensemble.",
+      ),
+      projectPhoto(
+        "logitech-category-management",
+        "accessoires",
+        "Accessoires informatiques présentés sur crochets, avec leurs étiquettes",
+        "Les accessoires en présentation sur crochets.",
+      ),
+    ],
   },
   {
     id: "logitech-trade-marketing",
@@ -368,13 +432,44 @@ export const projects: readonly Project[] = [
     title: "La PLV en place dès le jour du lancement, dans 140 top stores",
     context:
       "Chez Logitech, rendre visibles en magasin les lancements produits et les campagnes comme les Logi Work Days.",
-    action:
-      "Aux côtés du responsable des ventes terrain, j’ai managé une équipe de 7 merchandisers. La PLV était disponible dès le jour du lancement dans nos 140 top stores, pour les lancements produits comme pour les Logi Work Days.",
+    mission:
+      "Avec le responsable des ventes terrain, faire en sorte que la PLV soit en place dès le jour du lancement dans nos top stores.",
+    details: [
+      "J’ai managé une équipe de 7 merchandisers, aux côtés du responsable des ventes terrain.",
+      "La PLV était disponible dès le jour du lancement dans nos 140 top stores.",
+      "Pour les lancements produits comme pour les campagnes, dont les Logi Work Days.",
+    ],
     metrics: [
       { id: "trade-stores", value: "140", label: "top stores équipés dès le lancement" },
       { id: "trade-merchandisers", value: "7", label: "merchandisers managés sur le terrain" },
     ],
-    gallery: [],
+    story: [],
+    gallery: [
+      projectPhoto(
+        "logitech-trade-marketing",
+        "presentoir",
+        "Présentoir de PLV avec fronton, garni de produits",
+        "Un présentoir de PLV installé pour un lancement produit.",
+      ),
+      projectPhoto(
+        "logitech-trade-marketing",
+        "kit-plv",
+        "Éléments de PLV : affiche, réglette, stop-rayon, stickers et étiquettes",
+        "Les éléments de PLV d’une campagne.",
+      ),
+      projectPhoto(
+        "logitech-trade-marketing",
+        "tete-de-gondole",
+        "Tête de gondole avec bannière suspendue et sticker au sol",
+        "Une tête de gondole aux couleurs d’une campagne.",
+      ),
+      projectPhoto(
+        "logitech-trade-marketing",
+        "deploiement",
+        "Cartons de PLV empilés sur une palette",
+        "La PLV conditionnée avant son déploiement dans les top stores.",
+      ),
+    ],
   },
   {
     id: "cosmeticar-social-media",
@@ -384,13 +479,44 @@ export const projects: readonly Project[] = [
     title: "Faire connaître un réseau de lavage auto sur Instagram",
     context:
       "CosmétiCar, réseau de franchises de lavage automobile, un secteur de niche : plus de 30 agences ouvertes dans l’année.",
-    action:
-      "J’ai géré Facebook, Instagram et TikTok, avec un focus sur Instagram, qui a dépassé 500 abonnés en moins d’un an. J’ai aussi assuré 30 formations communication pour les nouveaux franchisés.",
+    mission:
+      "Faire connaître le réseau sur les réseaux sociaux et accompagner en communication les franchisés des nouvelles agences.",
+    details: [
+      "J’ai géré Facebook, Instagram et TikTok, avec un focus sur Instagram.",
+      "Instagram a dépassé 500 abonnés en moins d’un an, dans un secteur de niche.",
+      "J’ai assuré 30 formations communication pour les franchisés des nouvelles agences.",
+    ],
     metrics: [
       { id: "social-followers", value: "500+", label: "abonnés Instagram en moins d’un an" },
       { id: "social-training", value: "30", label: "formations communication pour les franchisés" },
     ],
-    gallery: [],
+    story: [],
+    gallery: [
+      projectPhoto(
+        "cosmeticar-social-media",
+        "instagram",
+        "Profil Instagram sur un téléphone, avec sa grille de publications",
+        "Le compte Instagram, au cœur de la stratégie réseaux sociaux.",
+      ),
+      projectPhoto(
+        "cosmeticar-social-media",
+        "publications",
+        "Une publication et une story affichées sur deux téléphones",
+        "Exemples de publication et de story.",
+      ),
+      projectPhoto(
+        "cosmeticar-social-media",
+        "formation",
+        "Écran de présentation et carnets sur une table de formation",
+        "Une formation communication pour les franchisés d’une nouvelle agence.",
+      ),
+      projectPhoto(
+        "cosmeticar-social-media",
+        "lavage",
+        "Voiture sous un portique de lavage, couverte de mousse",
+        "Le métier du réseau : le lavage automobile.",
+      ),
+    ],
   },
   {
     id: "massilia-influencer-relations",
@@ -400,8 +526,13 @@ export const projects: readonly Project[] = [
     title: "Signer 5 influenceuses françaises et espagnoles en un mois",
     context:
       "Chez Massilia E-consulting, au début de la crise sanitaire : des stocks limités, donc peu de marge de manœuvre avec les influenceuses.",
-    action:
-      "En un mois, j’ai signé 3 influenceuses françaises et 2 espagnoles. Je gérais aussi les fournisseurs chinois.",
+    mission:
+      "Nouer des partenariats avec des influenceuses françaises et espagnoles, et gérer les fournisseurs chinois.",
+    details: [
+      "En un mois, j’ai signé 3 influenceuses françaises et 2 espagnoles.",
+      "Je gérais aussi les fournisseurs chinois, au début de la crise sanitaire.",
+      "Avec des stocks limités, il fallait composer avec peu de marge de manœuvre auprès des influenceuses.",
+    ],
     metrics: [
       {
         id: "influence-partners",
@@ -410,7 +541,33 @@ export const projects: readonly Project[] = [
       },
       { id: "influence-time", value: "1 mois", label: "pour signer les cinq partenariats" },
     ],
-    gallery: [],
+    story: [],
+    gallery: [
+      projectPhoto(
+        "massilia-influencer-relations",
+        "france-espagne",
+        "Carte de la France et de l’Espagne avec cinq repères",
+        "Des partenariats des deux côtés des Pyrénées.",
+      ),
+      projectPhoto(
+        "massilia-influencer-relations",
+        "influenceuses",
+        "Cinq fiches de profils d’influenceuses",
+        "Les cinq influenceuses signées en un mois.",
+      ),
+      projectPhoto(
+        "massilia-influencer-relations",
+        "contrats",
+        "Contrats de partenariat signés, avec un stylo",
+        "Les contrats de partenariat.",
+      ),
+      projectPhoto(
+        "massilia-influencer-relations",
+        "fournisseurs",
+        "Colis empilés, prêts à l’expédition",
+        "Les commandes passées auprès des fournisseurs.",
+      ),
+    ],
   },
 ];
 
@@ -632,6 +789,33 @@ export const sectionContent = {
     /** Appel en bas de chaque carte (lien interne : flèche droite, pas ↗). */
     openLabel: "Voir le projet",
     backLabel: "Tous les projets",
+  },
+  /** Page d'un projet (/projets/<id>). */
+  projectPage: {
+    resultsTitle: "Les résultats",
+    contextTitle: "Le contexte",
+    missionTitle: "Ma mission",
+    detailsTitle: "Ce que j’ai fait",
+    companyLabel: "Entreprise",
+    roleLabel: "Poste",
+    locationLabel: "Lieu",
+    fieldLabel: "Domaine",
+    galleryTitle: "En images",
+    /** Nom des photos-liens : « Agrandir la photo : <texte alternatif> ». */
+    enlargeLabel: "Agrandir la photo",
+    lightboxLabel: "Photos du projet",
+    closeLabel: "Fermer",
+    previousPhotoLabel: "Photo précédente",
+    nextPhotoLabel: "Photo suivante",
+    /** « Photo 2 sur 4 ». */
+    photoCounter: { prefix: "Photo ", separator: " sur " },
+    pagerLabel: "Autres projets",
+    previousLabel: "Projet précédent",
+    nextLabel: "Projet suivant",
+    contactTitle: "Envie d’en savoir plus ?",
+    contactText: "Je vous raconte volontiers ce projet plus en détail, par e-mail ou sur LinkedIn.",
+    contactEmailLabel: "M’écrire",
+    contactLinkedinLabel: "LinkedIn",
   },
   skills: {
     label: "Compétences",

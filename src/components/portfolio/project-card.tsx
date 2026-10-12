@@ -1,8 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { brands, sectionContent, type Project } from "@/data/portfolio";
-import { publicPath } from "@/lib/public-path";
 import { Logo } from "./logo";
+import { ProjectPicture } from "./project-picture";
+
+// Cartes sur 2 colonnes dès 900 px (≈ 600 px de large au plus), pleine largeur en dessous.
+const coverSizes = "(min-width: 900px) min(600px, 50vw), 100vw";
 
 /**
  * Carte-lien d'un projet sur l'accueil : couverture, entreprise, catégorie, titre, contexte et
@@ -19,14 +22,7 @@ export function ProjectCard({ project }: { project: Project }) {
     <article id={project.id} className="project-card" aria-labelledby={titleId} data-reveal>
       <div className="project-cover">
         {cover ? (
-          <img
-            src={publicPath(cover.src)}
-            alt=""
-            width={cover.width}
-            height={cover.height}
-            loading="lazy"
-            decoding="async"
-          />
+          <ProjectPicture image={cover} alt="" sizes={coverSizes} />
         ) : (
           <div className="project-cover-fallback">
             <Logo logo={brand.logo} alt="" />

@@ -7,6 +7,7 @@
 @import "@fontsource-variable/fraunces/opsz.css";
 @import "@fontsource-variable/instrument-sans/wght.css";
 @import "./styles/error-screen.css";
+@import "./styles/project-page.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -1181,7 +1182,11 @@ html:has(.intro-video-dialog[open]) {
   border-radius: calc(var(--radius-card) - 6px);
   background: var(--sky-soft);
 }
-.project-cover > img {
+.project-cover picture {
+  display: block;
+  height: 100%;
+}
+.project-cover img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1284,49 +1289,6 @@ html:has(.intro-video-dialog[open]) {
 }
 .project-cta-arrow svg {
   transition: translate var(--motion-base) var(--ease-out);
-}
-
-/* Page projet (version minimale, complétée avec le récit et la galerie). */
-.project-page {
-  max-width: 52rem;
-  padding-block: clamp(1.5rem, 1rem + 2vw, 3rem) var(--space-section);
-}
-.project-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  margin-bottom: clamp(1.5rem, 1rem + 2vw, 2.5rem);
-  font-size: var(--text-ui);
-  font-weight: 600;
-  color: var(--bordeaux);
-}
-.project-page .project-meta {
-  justify-content: flex-start;
-}
-.project-page-title {
-  margin-top: 20px;
-  font-family: var(--font-sans);
-  font-size: var(--text-h2);
-  font-weight: var(--weight-heading);
-  line-height: var(--leading-heading);
-  letter-spacing: var(--tracking-heading);
-  text-wrap: balance;
-}
-.project-page-lead {
-  margin-top: 16px;
-  font-size: var(--text-lead);
-  line-height: 1.6;
-  color: var(--ink-soft);
-}
-.project-page .project-stats {
-  margin-top: 28px;
-}
-.project-page-text {
-  max-width: var(--measure);
-  margin-top: 28px;
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
 }
 
 /* Bandes alternées : Parcours et Recommandations sur --paper-deep, le reste sur --paper. */
@@ -1921,7 +1883,7 @@ html:has(.intro-video-dialog[open]) {
   .hero-kpi:hover .lucide-arrow-down {
     translate: 0 var(--nudge);
   }
-  .project-card:hover .project-cover > img,
+  .project-card:hover .project-cover img,
   .project-card:hover .project-cover-fallback .brand-logo {
     scale: 1.03;
   }
