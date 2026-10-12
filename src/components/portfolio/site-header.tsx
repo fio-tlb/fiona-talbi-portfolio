@@ -9,8 +9,8 @@ import {
 } from "@/data/portfolio";
 import { HomeLink } from "./home-link";
 
-// Même seuil que le @media (max-width: 767px) de styles.css : liens en ligne dès 768 px.
-const INLINE_NAV_QUERY = "(min-width: 768px)";
+// Même seuil que le @media (max-width: 1023px) de styles.css : six liens en ligne dès 1024 px.
+const INLINE_NAV_QUERY = "(min-width: 1024px)";
 
 type SiteHeaderProps = {
   activeSection: string;
@@ -105,7 +105,7 @@ export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
               <Menu className="menu-open-icon" size={20} aria-hidden />
               <X className="menu-close-icon" size={20} aria-hidden />
             </summary>
-            {/* Un seul niveau : les 4 sections. Contact reste dans la barre, à côté du bouton. */}
+            {/* Un seul niveau pour toutes les rubriques. Contact reste visible dans la barre. */}
             <nav className="mobile-nav" aria-label={content.mainLabel}>
               {items.map(renderLink)}
             </nav>

@@ -67,8 +67,8 @@ const toolIcons: Record<string, LucideIcon> = {
 
 const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 
-/** Parcours : présentation à la 1re personne, expériences et formation (#formation) en cartes. */
-export function JourneySection() {
+/** Expériences professionnelles ; l’ancre historique #parcours reste stable. */
+export function ExperienceSection() {
   const content = sectionContent.about;
   return (
     <section id="parcours" className="section band-deep" aria-labelledby="parcours-titre">
@@ -78,86 +78,81 @@ export function JourneySection() {
           <KeepTogether text={content.intro} />
         </p>
 
-        <div className="career-grid">
-          <div className="career-column">
-            <div>
-              <h3 className="block-title" data-reveal>
-                {content.experiencesTitle}
-              </h3>
-              <ul className="career-list" role="list">
-                {experiences.map((experience, index) => {
-                  const brand = brands[experience.brandId];
-                  return (
-                    <li
-                      className="experience-card"
-                      key={experience.id}
-                      data-reveal
-                      data-delay={index * 70}
-                    >
-                      <div className="experience-head">
-                        <span className="logo-tile">
-                          <Logo logo={brand.logo} alt="" />
-                        </span>
-                        {experience.period && <p className="chip">{experience.period}</p>}
-                      </div>
-                      <h4 className="experience-role">{experience.role}</h4>
-                      <p className="experience-company">
-                        <KeepTogether text={experience.company} />
-                        {experience.location && " · " + experience.location}
-                      </p>
-                      <p className="experience-text">
-                        <KeepTogether text={experience.description} />
-                      </p>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </div>
-
-          <div className="career-column">
-            <div id="formation">
-              <h3 className="block-title" data-reveal>
-                {content.educationTitle}
-              </h3>
-              <ul className="career-list" role="list">
-                {education.map((item, index) => (
-                  <li className="education-card" key={item.id} data-reveal data-delay={index * 60}>
-                    <span className="icon-tile" aria-hidden>
-                      <GraduationCap size={20} strokeWidth={1.75} />
-                    </span>
-                    <div className="education-body">
-                      {item.period && <p className="education-period">{item.period}</p>}
-                      <p className="education-title">{item.title}</p>
-                      <p className="education-school">{item.school}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="interests-card" data-reveal>
-              <h3 className="interests-title">{content.interestsLabel}</h3>
-              <ul className="chip-list" role="list">
-                {interests.map((interest) => {
-                  const Icon = interestIcons[interest.id];
-                  return (
-                    <li className="chip chip-outline chip-lg" key={interest.id}>
-                      {Icon && <Icon size={16} strokeWidth={1.75} aria-hidden />}
-                      {capitalize(interest.label)}
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </div>
-        </div>
+        <ul className="career-list" role="list">
+          {experiences.map((experience, index) => {
+            const brand = brands[experience.brandId];
+            return (
+              <li
+                className="experience-card"
+                key={experience.id}
+                data-reveal
+                data-delay={index * 70}
+              >
+                <div className="experience-head">
+                  <span className="logo-tile">
+                    <Logo logo={brand.logo} alt="" />
+                  </span>
+                  {experience.period && <p className="chip">{experience.period}</p>}
+                </div>
+                <h3 className="experience-role">{experience.role}</h3>
+                <p className="experience-company">
+                  <KeepTogether text={experience.company} />
+                  {experience.location && " · " + experience.location}
+                </p>
+                <p className="experience-text">
+                  <KeepTogether text={experience.description} />
+                </p>
+              </li>
+            );
+          })}
+        </ul>
+        <aside className="interests-card" aria-labelledby="interets-titre" data-reveal>
+          <h3 className="interests-title" id="interets-titre">
+            {content.interestsLabel}
+          </h3>
+          <ul className="chip-list" role="list">
+            {interests.map((interest) => {
+              const Icon = interestIcons[interest.id];
+              return (
+                <li className="chip chip-outline chip-lg" key={interest.id}>
+                  {Icon && <Icon size={16} strokeWidth={1.75} aria-hidden />}
+                  {capitalize(interest.label)}
+                </li>
+              );
+            })}
+          </ul>
+        </aside>
       </div>
     </section>
   );
 }
 
-/** Compétences : trois cartes de savoir-faire, boîte à outils, langues (#langues) et certifications (#certifications). */
+/** Formation académique, distincte des expériences et des certifications. */
+export function EducationSection() {
+  return (
+    <section id="formation" className="section" aria-labelledby="formation-titre">
+      <div className="site-wrap">
+        <SectionHeading id="formation-titre" {...sectionContent.education} />
+        <ul className="education-list" role="list">
+          {education.map((item, index) => (
+            <li className="education-card" key={item.id} data-reveal data-delay={(index % 2) * 60}>
+              <span className="icon-tile" aria-hidden>
+                <GraduationCap size={20} strokeWidth={1.75} />
+              </span>
+              <div className="education-body">
+                {item.period && <p className="education-period">{item.period}</p>}
+                <h3 className="education-title">{item.title}</h3>
+                <p className="education-school">{item.school}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+/** Compétences : savoir-faire, boîte à outils et langues (#langues). */
 export function SkillsSection() {
   const content = sectionContent.skills;
   return (
@@ -223,33 +218,42 @@ export function SkillsSection() {
             </ul>
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
 
-        <div className="skills-block" id="certifications">
-          <h3 className="block-title" data-reveal>
-            {content.certificationsTitle}
-          </h3>
-          <ul className="cert-grid" role="list">
-            {certifications.map((cert, index) => (
-              <li className="cert-card" key={cert.id} data-reveal data-delay={index * 50}>
-                {cert.logo ? (
-                  <span className="logo-tile is-square">
-                    <Logo logo={cert.logo} alt="" loading="lazy" />
-                  </span>
-                ) : (
-                  <span className="icon-tile" aria-hidden>
-                    <Award size={20} strokeWidth={1.75} />
-                  </span>
-                )}
-                <span className="cert-text">
-                  <span className="cert-name">{cert.name}</span>
-                  <span className="cert-meta">
-                    {[cert.organization, cert.year].filter(Boolean).join(" · ")}
-                  </span>
+/** Certifications professionnelles, avec leur propre titre et leur entrée de navigation. */
+export function CertificationsSection() {
+  return (
+    <section
+      id="certifications"
+      className="section band-deep"
+      aria-labelledby="certifications-titre"
+    >
+      <div className="site-wrap">
+        <SectionHeading id="certifications-titre" {...sectionContent.certifications} />
+        <ul className="cert-grid" role="list">
+          {certifications.map((cert, index) => (
+            <li className="cert-card" key={cert.id} data-reveal data-delay={index * 50}>
+              {cert.logo ? (
+                <span className="logo-tile is-square">
+                  <Logo logo={cert.logo} alt="" loading="lazy" />
                 </span>
-              </li>
-            ))}
-          </ul>
-        </div>
+              ) : (
+                <span className="icon-tile" aria-hidden>
+                  <Award size={20} strokeWidth={1.75} />
+                </span>
+              )}
+              <div className="cert-text">
+                <h3 className="cert-name">{cert.name}</h3>
+                <p className="cert-meta">
+                  {[cert.organization, cert.year].filter(Boolean).join(" · ")}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

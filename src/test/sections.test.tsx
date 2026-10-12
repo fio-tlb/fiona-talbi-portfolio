@@ -6,6 +6,7 @@ import { Portfolio } from "@/components/portfolio";
 import {
   brands,
   certifications,
+  education,
   experiences,
   interests,
   languages,
@@ -23,7 +24,7 @@ afterEach(() => {
 });
 
 describe("Page structure", () => {
-  it("links the four menu entries and Contact to sections of the home page, and keeps the sub-anchors", async () => {
+  it("links the six menu entries and Contact to sections of the home page, and keeps the language anchor", async () => {
     const { container } = await renderWithRouter(<Portfolio />);
     const nav = screen.getAllByRole("navigation", {
       name: sectionContent.navigation.mainLabel,
@@ -34,8 +35,15 @@ describe("Page structure", () => {
     links.forEach((link, index) =>
       expect(link).toHaveAttribute("href", import.meta.env.BASE_URL + "#" + navigation[index]!.id),
     );
-    expect(navigation).toHaveLength(4);
-    for (const id of [...navigation.map((item) => item.id), "contact", "formation"]) {
+    expect(links.map((link) => link.textContent)).toEqual([
+      "Projets",
+      "Expériences",
+      "Compétences",
+      "Formation",
+      "Certifications",
+      "Recommandations",
+    ]);
+    for (const id of [...navigation.map((item) => item.id), "contact"]) {
       expect(container.querySelector("#" + id), id).not.toBeNull();
     }
     expect(container.querySelector("#certifications")).not.toBeNull();
@@ -48,16 +56,34 @@ describe("Page structure", () => {
 
   it("orders headings h2 > h3 > h4 and names each section with its h2", async () => {
     await renderWithRouter(<Portfolio />);
-    for (const name of ["parcours", "competences", "recommandations", "contact"]) {
+    for (const name of [
+      "parcours",
+      "competences",
+      "formation",
+      "certifications",
+      "recommandations",
+      "contact",
+    ]) {
       const section = document.getElementById(name)!;
       const h2 = within(section).getByRole("heading", { level: 2 });
       expect(section).toHaveAccessibleName(h2.textContent!);
     }
     const career = document.getElementById("parcours")!;
-    expect(within(career).getAllByRole("heading", { level: 4 })).toHaveLength(experiences.length);
-    expect(
-      within(career).getByRole("heading", { level: 3, name: sectionContent.about.educationTitle }),
-    ).toBeVisible();
+    for (const experience of experiences) {
+      expect(
+        within(career).getByRole("heading", { level: 3, name: experience.role }),
+      ).toBeVisible();
+    }
+    const formation = document.getElementById("formation")!;
+    for (const item of education) {
+      expect(within(formation).getByRole("heading", { level: 3, name: item.title })).toBeVisible();
+    }
+    // Each career category has its own section, rather than sitting inside another category.
+    for (const id of ["parcours", "formation", "certifications"]) {
+      expect(document.getElementById(id)!.parentElement).toBe(document.getElementById("contenu"));
+    }
+    expect(career.querySelector("#formation")).toBeNull();
+    expect(document.getElementById("competences")!.querySelector("#certifications")).toBeNull();
   });
 
   it("shows certifications without an invented organisation", async () => {

@@ -6,7 +6,13 @@ import { ContactSection } from "./portfolio/contact-section";
 import { Hero } from "./portfolio/hero";
 import { ProjectCard } from "./portfolio/project-card";
 import { SectionHeading } from "./portfolio/section-heading";
-import { JourneySection, RecommendationsSection, SkillsSection } from "./portfolio/sections";
+import {
+  CertificationsSection,
+  EducationSection,
+  ExperienceSection,
+  RecommendationsSection,
+  SkillsSection,
+} from "./portfolio/sections";
 import { SiteShell } from "./site-shell";
 
 const sectionIds = ["accueil", ...navigation.map((item) => item.id), "contact"];
@@ -35,8 +41,10 @@ export function Portfolio() {
           ))}
         </ul>
       </section>
-      <JourneySection />
+      <ExperienceSection />
       <SkillsSection />
+      <EducationSection />
+      <CertificationsSection />
       <RecommendationsSection />
       <ContactSection />
     </SiteShell>

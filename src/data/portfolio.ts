@@ -319,12 +319,14 @@ export const brands: Readonly<Record<BrandId, Brand>> = {
   },
 };
 
-// Formation, certifications et langues sont des sous-parties (#formation, #certifications, #langues)
-// de Parcours et Compétences : leurs ancres restent valables, sans entrée de menu dédiée.
+// Sections autonomes, dans l’ordre de lecture. #parcours reste l’ancre des expériences
+// pour préserver les liens existants et le chiffre « 3+ ans » du hero.
 export const navigation: readonly NavigationItem[] = [
   { id: "projets", label: "Projets" },
-  { id: "parcours", label: "Parcours" },
+  { id: "parcours", label: "Expériences" },
   { id: "competences", label: "Compétences" },
+  { id: "formation", label: "Formation" },
+  { id: "certifications", label: "Certifications" },
   { id: "recommandations", label: "Recommandations" },
 ];
 
@@ -333,28 +335,28 @@ export const impactStats: readonly ImpactStat[] = [
     id: "sales-growth",
     value: "+30 %",
     label: "de ventes sur le rayon informatique",
-    source: "Logitech · Category management",
+    source: "Logitech · Category management",
     targetId: "logitech-category-management",
   },
   {
     id: "stores-activated",
     value: "140",
     label: "top stores équipés en PLV dès le lancement",
-    source: "Logitech · Trade marketing",
+    source: "Logitech · Trade marketing",
     targetId: "logitech-trade-marketing",
   },
   {
     id: "instagram-community",
     value: "500+",
     label: "abonnés Instagram en moins d’un an",
-    source: "CosmétiCar · Réseaux sociaux",
+    source: "CosmétiCar · Réseaux sociaux",
     targetId: "cosmeticar-social-media",
   },
   {
     id: "marketing-experience",
     value: "3+ ans",
     label: "en marketing et communication",
-    source: "Logitech · CosmétiCar · Massilia",
+    source: "Logitech · CosmétiCar · Massilia",
     targetId: "parcours",
   },
 ];
@@ -763,13 +765,23 @@ export const sectionContent = {
     statsLabel: "Chiffres clés",
   },
   about: {
-    label: "Parcours",
-    title: "Expériences et formation",
+    label: "Expériences",
+    title: "Expériences professionnelles",
     intro:
-      "Je suis Fiona, basée à Paris, avec plus de trois ans d’expérience en marketing 360 et en communication. J’ai travaillé dans la tech chez Logitech, dans un réseau de franchises chez CosmétiCar et en relations influenceurs chez Massilia E-consulting. Je me suis formée entre Paris, Londres et Dublin : marketing digital à l’IÉSEG, marketing du luxe à GCU London.",
+      "Je suis Fiona, basée à Paris, avec plus de trois ans d’expérience en marketing 360 et en communication. J’ai travaillé dans la tech chez Logitech, dans un réseau de franchises chez CosmétiCar et en relations influenceurs chez Massilia E-consulting.",
     interestsLabel: "En dehors du travail",
     experiencesTitle: "Expériences",
     educationTitle: "Formation",
+  },
+  education: {
+    label: "Formation",
+    title: "Mon parcours académique",
+    description:
+      "Je me suis formée entre Paris, Londres et Dublin : marketing digital à l’IÉSEG, marketing du luxe à GCU London.",
+  },
+  certifications: {
+    label: "Certifications",
+    title: "Certifications professionnelles",
   },
   projects: {
     label: "Projets",
@@ -810,7 +822,7 @@ export const sectionContent = {
   },
   skills: {
     label: "Compétences",
-    title: "Savoir-faire, outils et certifications",
+    title: "Savoir-faire, outils et langues",
     skillsTitle: "Savoir-faire",
     /** Intitulé des outils dans le CV PDF (scripts/share-assets/cv.mjs). */
     toolsTitle: "Outils",
