@@ -46,9 +46,42 @@ export interface ImpactStat extends Metric {
   /** Ancre de destination sur la page : l'id d'un projet, ou « parcours ». */
   targetId: string;
 }
+/**
+ * Logo SVG monochrome dans public/logos (couleur encre intégrée au fichier).
+ * `width`/`height` reprennent la viewBox du fichier : le rendu fixe la hauteur, la largeur suit.
+ */
+export interface LogoImage {
+  src: string;
+  width: number;
+  height: number;
+  /**
+   * Correction optique de la hauteur affichée (1 par défaut) : un mot-symbole sur deux lignes ou
+   * un logo avec jambage paraît plus petit qu'un mot d'une ligne à hauteur de boîte égale.
+   */
+  scale?: number;
+}
+export type BrandId = "logitech" | "cosmeticar" | "massilia";
+export interface Brand {
+  id: BrandId;
+  name: string;
+  logo: LogoImage;
+}
+/** Image de la galerie d'un projet (public/images/projets/<id>/) ; la 1re sert de couverture. */
+export interface ProjectImage {
+  src: string;
+  alt: string;
+  caption: string;
+  width: number;
+  height: number;
+}
 export interface Project {
-  /** Sert aussi d'ancre (#id) : ne pas le modifier, les chiffres clés du hero y mènent. */
+  /**
+   * Sert d'ancre (#id) sur l'accueil et d'adresse de la page projet (/projets/<id>) :
+   * ne pas le modifier, les chiffres clés du hero et les liens partagés y mènent.
+   */
   id: string;
+  brandId: BrandId;
+  /** Nom de l'entreprise, tel qu'affiché (repris dans le CV PDF). */
   brand: string;
   category: string;
   title: string;
@@ -57,9 +90,12 @@ export interface Project {
   /** Action : ce que j'ai fait, à la 1re personne. */
   action: string;
   metrics: readonly Metric[];
+  /** Photos du projet (3 à 5). Vide : la carte de l'accueil affiche un visuel de repli sobre. */
+  gallery: readonly ProjectImage[];
 }
 export interface Experience {
   id: string;
+  brandId: BrandId;
   company: string;
   location: string | null;
   /** Intitulé du poste (à confirmer par Fiona, tel qu'il figure sur LinkedIn). */
@@ -85,6 +121,8 @@ export interface SkillGroup {
 export interface Tool {
   id: string;
   name: string;
+  /** Logo de l'outil s'il existe (Simple Icons, CC0) ; sinon `null` et une icône générique. */
+  logo: LogoImage | null;
 }
 export interface Certification {
   id: string;
@@ -92,6 +130,8 @@ export interface Certification {
   /** Organisme qui délivre la certification ; `null` tant qu'il n'est pas confirmé (seule l'année s'affiche). */
   organization: string | null;
   year: string | null;
+  /** Logo de l'organisme s'il existe ; sinon `null` et une tuile d'icône. */
+  logo: LogoImage | null;
 }
 export interface Language {
   id: string;
@@ -137,6 +177,8 @@ export interface SectionHeadingContent {
   /** Sur-titre court, en casse normale. */
   label?: string;
   title: string;
+  /** Seconde ligne du titre, en bordeaux (« Des résultats mesurables. »). */
+  titleAccent?: string;
   description?: string;
 }
 
@@ -232,6 +274,31 @@ export const errorContent = {
   documentTitleSuffix: string;
 };
 
+// Logos : SVG monochromes dans public/logos. Logitech et les outils viennent de Simple Icons (CC0 ;
+// les marques appartiennent à leurs propriétaires). CosmétiCar et Massilia E-consulting : mots-symboles
+// PROVISOIRES (nom en Instrument Sans converti en tracés), à remplacer par les logos officiels en
+// écrasant le fichier puis en reportant ici sa viewBox (width/height).
+const toolLogo = (file: string): LogoImage => ({ src: "logos/" + file, width: 24, height: 24 });
+const googleLogo = toolLogo("google.svg");
+
+export const brands: Readonly<Record<BrandId, Brand>> = {
+  logitech: {
+    id: "logitech",
+    name: "Logitech",
+    logo: { src: "logos/logitech.svg", width: 240, height: 165, scale: 1.3 },
+  },
+  cosmeticar: {
+    id: "cosmeticar",
+    name: "CosmétiCar",
+    logo: { src: "logos/cosmeticar.svg", width: 552, height: 75, scale: 0.78 },
+  },
+  massilia: {
+    id: "massilia",
+    name: "Massilia E-consulting",
+    logo: { src: "logos/massilia-e-consulting.svg", width: 360, height: 151, scale: 1.3 },
+  },
+};
+
 // Formation, certifications et langues sont des sous-parties (#formation, #certifications, #langues)
 // de Parcours et Compétences : leurs ancres restent valables, sans entrée de menu dédiée.
 export const navigation: readonly NavigationItem[] = [
@@ -275,6 +342,7 @@ export const impactStats: readonly ImpactStat[] = [
 export const projects: readonly Project[] = [
   {
     id: "logitech-category-management",
+    brandId: "logitech",
     brand: "Logitech",
     category: "Category management",
     title: "Réagencer le rayon informatique des top stores",
@@ -290,9 +358,11 @@ export const projects: readonly Project[] = [
       },
       { id: "catman-sales", value: "+30 %", label: "de ventes sur le rayon informatique" },
     ],
+    gallery: [],
   },
   {
     id: "logitech-trade-marketing",
+    brandId: "logitech",
     brand: "Logitech",
     category: "Trade marketing",
     title: "La PLV en place dès le jour du lancement, dans 140 top stores",
@@ -304,9 +374,11 @@ export const projects: readonly Project[] = [
       { id: "trade-stores", value: "140", label: "top stores équipés dès le lancement" },
       { id: "trade-merchandisers", value: "7", label: "merchandisers managés sur le terrain" },
     ],
+    gallery: [],
   },
   {
     id: "cosmeticar-social-media",
+    brandId: "cosmeticar",
     brand: "CosmétiCar",
     category: "Communication & réseaux sociaux",
     title: "Faire connaître un réseau de lavage auto sur Instagram",
@@ -318,9 +390,11 @@ export const projects: readonly Project[] = [
       { id: "social-followers", value: "500+", label: "abonnés Instagram en moins d’un an" },
       { id: "social-training", value: "30", label: "formations communication pour les franchisés" },
     ],
+    gallery: [],
   },
   {
     id: "massilia-influencer-relations",
+    brandId: "massilia",
     brand: "Massilia E-consulting",
     category: "Relations influenceurs",
     title: "Signer 5 influenceuses françaises et espagnoles en un mois",
@@ -336,12 +410,14 @@ export const projects: readonly Project[] = [
       },
       { id: "influence-time", value: "1 mois", label: "pour signer les cinq partenariats" },
     ],
+    gallery: [],
   },
 ];
 
 export const experiences: readonly Experience[] = [
   {
     id: "experience-logitech",
+    brandId: "logitech",
     company: "Logitech",
     location: "France",
     role: "Marketing Manager Assistant",
@@ -351,6 +427,7 @@ export const experiences: readonly Experience[] = [
   },
   {
     id: "experience-cosmeticar",
+    brandId: "cosmeticar",
     company: "CosmétiCar",
     location: "France",
     role: "Chargée de communication",
@@ -360,6 +437,7 @@ export const experiences: readonly Experience[] = [
   },
   {
     id: "experience-massilia",
+    brandId: "massilia",
     company: "Massilia E-consulting",
     location: null,
     role: "Chargée de relations influenceurs",
@@ -427,28 +505,53 @@ export const skills: readonly SkillGroup[] = [
 ];
 
 export const tools: readonly Tool[] = [
-  { id: "google-workspace", name: "Google Workspace" },
-  { id: "canva", name: "Canva" },
-  { id: "mailchimp", name: "Mailchimp" },
-  { id: "capcut", name: "CapCut" },
-  { id: "trello", name: "Trello" },
-  { id: "notion", name: "Notion" },
-  { id: "photoshop", name: "Photoshop" },
-  { id: "premiere-pro", name: "Premiere Pro" },
-  { id: "imovie", name: "iMovie" },
+  { id: "google-workspace", name: "Google Workspace", logo: googleLogo },
+  { id: "canva", name: "Canva", logo: toolLogo("canva.svg") },
+  { id: "mailchimp", name: "Mailchimp", logo: toolLogo("mailchimp.svg") },
+  { id: "capcut", name: "CapCut", logo: null },
+  { id: "trello", name: "Trello", logo: toolLogo("trello.svg") },
+  { id: "notion", name: "Notion", logo: toolLogo("notion.svg") },
+  { id: "photoshop", name: "Photoshop", logo: toolLogo("adobe-photoshop.svg") },
+  { id: "premiere-pro", name: "Premiere Pro", logo: toolLogo("adobe-premiere-pro.svg") },
+  { id: "imovie", name: "iMovie", logo: null },
 ];
 
 // Du plus récent au plus ancien. Le TOEIC est présenté une seule fois, dans les langues.
 export const certifications: readonly Certification[] = [
-  { id: "web-development", name: "Web Development", organization: "Le Wagon", year: "2026" },
-  { id: "ai-product-building", name: "AI Product Building", organization: null, year: "2026" },
-  { id: "ai-proficiency", name: "AI Proficiency", organization: "Section", year: "2026" },
-  { id: "google-ads-search", name: "Google Ads Search", organization: "Google", year: "2025" },
+  {
+    id: "web-development",
+    name: "Web Development",
+    organization: "Le Wagon",
+    year: "2026",
+    logo: null,
+  },
+  {
+    id: "ai-product-building",
+    name: "AI Product Building",
+    organization: null,
+    year: "2026",
+    logo: null,
+  },
+  {
+    id: "ai-proficiency",
+    name: "AI Proficiency",
+    organization: "Section",
+    year: "2026",
+    logo: null,
+  },
+  {
+    id: "google-ads-search",
+    name: "Google Ads Search",
+    organization: "Google",
+    year: "2025",
+    logo: googleLogo,
+  },
   {
     id: "google-ads-analytics",
     name: "Google Ads Analytics",
     organization: "Google",
     year: "2025",
+    logo: googleLogo,
   },
 ];
 
@@ -501,6 +604,11 @@ export const sectionContent = {
       "Diplômée d’un Master Marketing Digital & Innovation (IÉSEG) et d’un MSc Luxury Marketing (GCU London)",
     linkedinLabel: "LinkedIn",
     primaryAction: "Voir les projets",
+    /** Bouton du CV : « Télécharger le » est masqué sur téléphone (« CV »), le nom lu reste complet. */
+    cvActionPrefix: "Télécharger le ",
+    cvActionLabel: "CV",
+    /** Rangée de logos sous les boutons. */
+    brandsLabel: "Expériences chez",
     statsLabel: "Chiffres clés",
   },
   about: {
@@ -514,11 +622,16 @@ export const sectionContent = {
   },
   projects: {
     label: "Projets",
-    title: "Quatre missions chez Logitech, CosmétiCar et Massilia",
-    description: "Pour chacune : l’enjeu, ce que j’ai fait et les résultats obtenus.",
+    title: "Des projets concrets.",
+    titleAccent: "Des résultats mesurables.",
+    description:
+      "Quatre missions chez Logitech, CosmétiCar et Massilia E-consulting. Chaque carte mène au détail du projet.",
     contextLabel: "Enjeu",
     actionLabel: "Action",
     resultsLabel: "Résultats",
+    /** Appel en bas de chaque carte (lien interne : flèche droite, pas ↗). */
+    openLabel: "Voir le projet",
+    backLabel: "Tous les projets",
   },
   skills: {
     label: "Compétences",
