@@ -1,6 +1,8 @@
 # Modifier un projet
 
-Chaque projet possède son fichier dans `src/data/projects/` :
+Chaque projet possède son fichier français dans `src/data/projects/` et sa traduction dans `src/data/projects/en/`. Mettre à jour les deux langues après un changement de texte ; les photos et chiffres restent partagés (voir [Langues et documents](langues-et-documents.md)).
+
+Fichiers français :
 
 | Projet                            | Fichier                            |
 | --------------------------------- | ---------------------------------- |

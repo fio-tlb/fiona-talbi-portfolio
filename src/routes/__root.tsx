@@ -3,6 +3,7 @@ import {
   Outlet,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
   type ErrorComponentProps,
@@ -14,9 +15,13 @@ import frauncesLatin from "@fontsource-variable/fraunces/files/fraunces-latin-op
 import instrumentSansLatin from "@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2?url";
 import { ErrorScreen } from "../components/error-screen";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { errorContent, seo } from "@/data/portfolio";
+import { seo } from "@/data/portfolio";
+import { usePortfolio } from "@/hooks/use-portfolio";
+import { localeBootstrap, localeFromPath, sitePath } from "@/i18n/locale";
+import { LocaleProvider } from "@/i18n/locale-provider";
 
 function NotFoundComponent() {
+  const { errorContent } = usePortfolio();
   const content = errorContent.notFound;
 
   return (
@@ -30,6 +35,7 @@ function NotFoundComponent() {
 }
 
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
+  const { errorContent } = usePortfolio();
   console.error(error);
   const router = useRouter();
   useEffect(() => {
@@ -56,6 +62,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  validateSearch: (search: Record<string, unknown>) => search,
   // Réglages communs à toutes les pages. Titre, description, partage et JSON-LD : routes/index.tsx.
   head: () => ({
     meta: [
@@ -102,13 +109,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const locale = localeFromPath(pathname);
   return (
-    <html lang="fr">
+    <html lang={locale}>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: localeBootstrap(import.meta.env.BASE_URL) }} />
         <HeadContent />
       </head>
       <body>
-        {children}
+        <LocaleProvider locale={locale}>{children}</LocaleProvider>
         <Scripts />
       </body>
     </html>
@@ -125,7 +135,11 @@ function RootComponent() {
   useEffect(
     () =>
       router.subscribe("onResolved", ({ fromLocation, toLocation, pathChanged }) => {
-        if (fromLocation && pathChanged && toLocation.pathname.startsWith("/projets/"))
+        if (
+          fromLocation &&
+          pathChanged &&
+          /^\/(?:en\/)?projets\//.test(sitePath(toLocation.pathname))
+        )
           document.getElementById("contenu")?.focus({ preventScroll: true });
       }),
     [router],

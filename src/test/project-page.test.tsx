@@ -44,7 +44,9 @@ describe("Project route", () => {
     const url = seo.siteUrl + "projets/" + project.id + "/";
     expect(head.meta[0]).toEqual({ title: project.title + " — Fiona Talbi" });
     expect(meta("description")?.content).toBe(project.context);
-    expect(head.links).toEqual([{ rel: "canonical", href: url }]);
+    expect(head.links.filter((link) => link.rel === "canonical")).toEqual([
+      { rel: "canonical", href: url },
+    ]);
     expect(meta("og:url")?.content).toBe(url);
     expect(meta("og:image")?.content).toBe(seo.siteUrl + project.gallery[0]!.src);
     expect(meta("twitter:image")?.content).toBe(meta("og:image")?.content);

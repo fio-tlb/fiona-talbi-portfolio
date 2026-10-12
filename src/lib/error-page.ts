@@ -1,4 +1,5 @@
-import { errorContent, profile } from "@/data/portfolio";
+import { getPortfolio } from "@/data/localized";
+import { localizedPath, type Locale } from "@/i18n/locale";
 
 // Page de secours renvoyée par src/server.ts quand le rendu serveur échoue (aperçu Lovable,
 // serveur Node) : HTML autonome, sans JavaScript ni police à charger, aux couleurs du site.
@@ -9,13 +10,14 @@ const escapeHtml = (value: string) =>
       ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]!,
   );
 
-export function renderErrorPage(): string {
+export function renderErrorPage(locale: Locale = "fr"): string {
+  const { errorContent, profile } = getPortfolio(locale);
   const content = errorContent.error;
-  const home = escapeHtml(import.meta.env.BASE_URL || "/");
+  const home = escapeHtml(localizedPath("/", locale));
   const email = escapeHtml(profile.email);
 
   return `<!doctype html>
-<html lang="fr">
+<html lang="${locale}">
   <head>
     <meta charset="utf-8" />
     <title>${escapeHtml(content.title + errorContent.documentTitleSuffix)}</title>

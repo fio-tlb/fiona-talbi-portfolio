@@ -10,11 +10,10 @@ import {
 } from "react";
 import { flushSync } from "react-dom";
 import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
-import { sectionContent, type ProjectImage } from "@/data/portfolio";
+import type { ProjectImage } from "@/data/portfolio";
+import { usePortfolio } from "@/hooks/use-portfolio";
 import { publicPath } from "@/lib/public-path";
 import { ProjectPicture } from "./project-picture";
-
-const text = sectionContent.projectPage;
 
 export type Lightbox = {
   dialogRef: RefObject<HTMLDialogElement | null>;
@@ -84,6 +83,7 @@ export function PhotoLink({
   className,
   children,
 }: PhotoLinkProps) {
+  const text = usePortfolio().sectionContent.projectPage;
   const onClick = (event: MouseEvent<HTMLAnchorElement>) => {
     const modified = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
     if (modified || event.button !== 0) return;
@@ -114,6 +114,7 @@ export function GalleryLightbox({
   images: readonly ProjectImage[];
   lightbox: Lightbox;
 }) {
+  const text = usePortfolio().sectionContent.projectPage;
   const { dialogRef, index, show, close, onClosed } = lightbox;
   const swipeRef = useRef<{ x: number; y: number } | null>(null);
   const image = index === null ? null : images[index];

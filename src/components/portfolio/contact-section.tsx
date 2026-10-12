@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Check, Download, Linkedin, Mail } from "lucide-react";
-import { profile, sectionContent } from "@/data/portfolio";
+import { usePortfolio } from "@/hooks/use-portfolio";
 import { publicPath } from "@/lib/public-path";
 
 export function ContactSection() {
+  const { profile, sectionContent, documents } = usePortfolio();
   const content = sectionContent.contact;
   const emailRef = useRef<HTMLAnchorElement>(null);
   const [canCopy, setCanCopy] = useState(false);
@@ -92,6 +93,18 @@ export function ContactSection() {
                   >
                     <Download size={16} aria-hidden />
                     {content.cvLabel}
+                  </a>
+                </li>
+              )}
+              {documents.coverLetter && (
+                <li>
+                  <a
+                    className="action action-light document-action"
+                    href={publicPath(documents.coverLetter)}
+                    download
+                  >
+                    <Download size={16} aria-hidden />
+                    {content.coverLetterLabel}
                   </a>
                 </li>
               )}

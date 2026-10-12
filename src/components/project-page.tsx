@@ -1,14 +1,9 @@
 import { useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Check, Mail } from "lucide-react";
-import {
-  brands,
-  experiences,
-  profile,
-  projects,
-  sectionContent,
-  type Project,
-} from "@/data/portfolio";
+import type { Project } from "@/data/portfolio";
+import { useLocale, usePortfolio } from "@/hooks/use-portfolio";
+import { projectRoute } from "@/i18n/locale";
 import { usePortfolioNavigation } from "@/hooks/use-portfolio-navigation";
 import { useReveal } from "@/hooks/use-reveal";
 import { HomeLink } from "./portfolio/home-link";
@@ -18,7 +13,6 @@ import { ProjectPicture } from "./portfolio/project-picture";
 import { SiteShell } from "./site-shell";
 
 const noSections: readonly string[] = [];
-const text = sectionContent.projectPage;
 
 // Largeurs affichées des photos (attribut sizes) : couverture sur toute la largeur du contenu,
 // galerie sur 2 colonnes dès 640 px, vignettes de la navigation entre projets.
@@ -28,7 +22,7 @@ const wideGallerySizes = coverSizes;
 const pagerSizes = "160px";
 
 /** Projets voisins dans l'ordre de l'accueil (le premier et le dernier se suivent). */
-function neighbours(project: Project) {
+function neighbours(project: Project, projects: readonly Project[]) {
   const index = projects.findIndex((item) => item.id === project.id);
   const count = projects.length;
   return {
@@ -43,6 +37,9 @@ function neighbours(project: Project) {
  * projets voisins et contact. Mêmes en-tête, pied de page et calque vidéo que l'accueil.
  */
 export function ProjectPage({ project }: { project: Project }) {
+  const { brands, experiences, profile, projects, sectionContent } = usePortfolio();
+  const locale = useLocale();
+  const text = sectionContent.projectPage;
   const mainRef = useRef<HTMLElement>(null);
   const { progressRef } = usePortfolioNavigation(noSections);
   useReveal(mainRef, { includeVisible: true });
@@ -51,7 +48,7 @@ export function ProjectPage({ project }: { project: Project }) {
   const brand = brands[project.brandId];
   const experience = experiences.find((item) => item.brandId === project.brandId);
   const [cover, ...photos] = project.gallery;
-  const { previous, next } = neighbours(project);
+  const { previous, next } = neighbours(project, projects);
   const facts: { label: string; value: string | null }[] = [
     { label: text.companyLabel, value: brand.name },
     { label: text.roleLabel, value: experience?.role ?? null },
@@ -223,7 +220,8 @@ export function ProjectPage({ project }: { project: Project }) {
             return (
               <Link
                 key={item.rel}
-                to="/projets/$projectId"
+                to={projectRoute(locale)}
+                search={(previous) => previous}
                 params={{ projectId: item.project.id }}
                 rel={item.rel}
                 className={item.isNext ? "pager-card is-next" : "pager-card"}

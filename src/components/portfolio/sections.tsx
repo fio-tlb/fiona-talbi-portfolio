@@ -15,20 +15,9 @@ import {
   Wrench,
   type LucideIcon,
 } from "lucide-react";
-import {
-  brands,
-  certifications,
-  education,
-  experiences,
-  interests,
-  languages,
-  profile,
-  recommendations,
-  sectionContent,
-  skills,
-  tools,
-  type Recommendation,
-} from "@/data/portfolio";
+import type { Recommendation } from "@/data/portfolio";
+import type { PortfolioData } from "@/data/localized";
+import { usePortfolio } from "@/hooks/use-portfolio";
 import { publicPath } from "@/lib/public-path";
 import { Logo } from "./logo";
 import { SectionHeading } from "./section-heading";
@@ -69,6 +58,7 @@ const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1
 
 /** Expériences professionnelles ; l’ancre historique #parcours reste stable. */
 export function ExperienceSection() {
+  const { brands, experiences, interests, sectionContent } = usePortfolio();
   const content = sectionContent.about;
   return (
     <section id="parcours" className="section band-deep" aria-labelledby="parcours-titre">
@@ -129,6 +119,7 @@ export function ExperienceSection() {
 
 /** Formation académique, distincte des expériences et des certifications. */
 export function EducationSection() {
+  const { education, sectionContent } = usePortfolio();
   return (
     <section id="formation" className="section" aria-labelledby="formation-titre">
       <div className="site-wrap">
@@ -154,6 +145,7 @@ export function EducationSection() {
 
 /** Compétences : savoir-faire, boîte à outils et langues (#langues). */
 export function SkillsSection() {
+  const { skills, tools, languages, sectionContent } = usePortfolio();
   const content = sectionContent.skills;
   return (
     <section id="competences" className="section" aria-labelledby="competences-titre">
@@ -225,6 +217,7 @@ export function SkillsSection() {
 
 /** Certifications professionnelles, avec leur propre titre et leur entrée de navigation. */
 export function CertificationsSection() {
+  const { certifications, sectionContent } = usePortfolio();
   return (
     <section
       id="certifications"
@@ -259,8 +252,10 @@ export function CertificationsSection() {
   );
 }
 
-function recommendationsDescription(items: readonly Recommendation[]) {
-  const content = sectionContent.recommendations;
+function recommendationsDescription(
+  items: readonly Recommendation[],
+  content: PortfolioData["sectionContent"]["recommendations"],
+) {
   const withDocument = items.filter((item) => item.documentPath?.trim()).length;
   if (withDocument === items.length) return content.documentsDescription;
   if (withDocument === 0) return content.requestDescription;
@@ -268,10 +263,12 @@ function recommendationsDescription(items: readonly Recommendation[]) {
 }
 
 export function RecommendationsSection({
-  items = recommendations,
+  items: providedItems,
 }: {
   items?: readonly Recommendation[];
 } = {}) {
+  const { recommendations, profile, sectionContent } = usePortfolio();
+  const items = providedItems ?? recommendations;
   const content = sectionContent.recommendations;
   if (!items.length) return null;
   return (
@@ -285,7 +282,7 @@ export function RecommendationsSection({
           id="recommandations-titre"
           label={content.label}
           title={content.title}
-          description={recommendationsDescription(items)}
+          description={recommendationsDescription(items, content)}
         />
         <ul className="recommendation-list" role="list">
           {items.map((recommendation, index) => {

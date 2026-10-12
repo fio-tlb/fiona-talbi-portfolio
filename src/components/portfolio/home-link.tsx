@@ -1,5 +1,7 @@
 import type { ComponentProps, MouseEvent } from "react";
 import { useRouter } from "@tanstack/react-router";
+import { useLocale } from "@/hooks/use-portfolio";
+import { homeRoute, localizedPath, sitePath } from "@/i18n/locale";
 
 type HomeLinkProps = Omit<ComponentProps<"a">, "href"> & {
   /** Id d'une section de l'accueil (« projets », « contact »…). */
@@ -18,13 +20,18 @@ type HomeLinkProps = Omit<ComponentProps<"a">, "href"> & {
  */
 export function HomeLink({ section, onClick, ...props }: HomeLinkProps) {
   const router = useRouter({ warn: false });
+  const locale = useLocale();
+  const home = homeRoute(locale);
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
     onClick?.(event);
     const modified = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
     if (event.defaultPrevented || modified || event.button !== 0 || !router) return;
     event.preventDefault();
-    if (router.state.location.pathname !== "/") {
-      void router.navigate({ to: "/", hash: section });
+    if (
+      (sitePath(router.state.location.pathname).replace(/\/$/, "") || "/") !==
+      (home.replace(/\/$/, "") || "/")
+    ) {
+      void router.navigate({ to: home, hash: section, search: (previous) => previous });
     } else if (window.location.hash === "#" + section) {
       document.getElementById(section)?.scrollIntoView();
     } else {
@@ -32,5 +39,12 @@ export function HomeLink({ section, onClick, ...props }: HomeLinkProps) {
       window.location.hash = section;
     }
   };
-  return <a {...props} href={import.meta.env.BASE_URL + "#" + section} onClick={handleClick} />;
+  const search = router?.state.location.searchStr ?? "";
+  return (
+    <a
+      {...props}
+      href={localizedPath("/", locale) + search + "#" + section}
+      onClick={handleClick}
+    />
+  );
 }

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import type { ErrorScreenContent } from "@/data/portfolio";
-import { profile } from "@/data/portfolio";
+import { useLocale, usePortfolio } from "@/hooks/use-portfolio";
+import { localizedPath } from "@/i18n/locale";
 
 interface ErrorScreenProps {
   content: ErrorScreenContent;
@@ -11,7 +12,8 @@ interface ErrorScreenProps {
 // Écran sobre aux couleurs du site pour la 404 et les erreurs de rendu. Le retour passe par
 // un vrai lien vers la base du site : il fonctionne sans JavaScript et sous /fiona-talbi-portfolio/.
 export function ErrorScreen({ content, primaryAction }: ErrorScreenProps) {
-  const home = import.meta.env.BASE_URL;
+  const { profile } = usePortfolio();
+  const home = localizedPath("/", useLocale());
 
   return (
     <div className="error-screen">

@@ -405,16 +405,91 @@
 }
 .header-inner {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 24px;
   height: var(--header-h);
+}
+.header-identity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.header-logo {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+.header-name {
+  white-space: nowrap;
+}
+.language-switcher {
+  position: relative;
+  flex-shrink: 0;
+}
+.language-switcher > summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 44px;
+  min-height: 44px;
+  list-style: none;
+  cursor: pointer;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--text-meta);
+  font-weight: 600;
+}
+.language-switcher > summary::-webkit-details-marker {
+  display: none;
+}
+.language-switcher[open] > summary {
+  background: var(--sky-soft);
+}
+.language-options {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 160px;
+  padding: 6px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border-soft);
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
+}
+.language-options a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding-inline: 12px;
+  border-radius: var(--radius-control);
+  color: var(--ink);
+  font-size: var(--text-ui);
+}
+.language-options a[aria-current] {
+  background: var(--sky-soft);
+}
+.document-action {
+  white-space: normal;
+}
+@media (max-width: 720px) {
+  .header-name {
+    display: none;
+  }
 }
 .header-brand {
   justify-self: start;
   display: inline-flex;
   align-items: center;
   min-height: 44px;
+  min-width: 44px;
+  justify-content: center;
+  gap: 8px;
   font-size: 1.125rem;
   font-weight: 650;
   line-height: 1;
@@ -427,6 +502,7 @@
 }
 /* Navigation en capsule : les liens sont des pilules, la section affichée est surlignée. */
 .desktop-nav {
+  justify-self: center;
   display: flex;
   align-items: center;
   gap: 2px;
@@ -2336,8 +2412,8 @@ html:has(.video-welcome[open], .intro-video-dialog[open]) {
   }
 }
 
-/* ---------- Mobile et tablette : menu à un niveau (liens en ligne dès 1024 px, cf. site-header.tsx) ---------- */
-@media (max-width: 1023px) {
+/* ---------- Mobile et tablette : menu à un niveau (liens en ligne dès 1280 px, cf. site-header.tsx) ---------- */
+@media (max-width: 1279px) {
   .header-inner {
     grid-template-columns: minmax(0, 1fr) auto;
   }
@@ -2438,7 +2514,7 @@ html:has(.video-welcome[open], .intro-video-dialog[open]) {
     left: -12px;
   }
 }
-@media (hover: hover) and (pointer: fine) and (max-width: 1023px) {
+@media (hover: hover) and (pointer: fine) and (max-width: 1279px) {
   .mobile-menu > summary:hover,
   .mobile-nav .nav-link:hover {
     background: var(--paper-deep);
@@ -2466,7 +2542,7 @@ html:has(.video-welcome[open], .intro-video-dialog[open]) {
   }
 }
 /* Tablette : panneau compact aligné sur le bord droit de la grille. */
-@media (min-width: 561px) and (max-width: 1023px) {
+@media (min-width: 561px) and (max-width: 1279px) {
   .mobile-nav {
     left: auto;
     right: calc((100% - min(var(--content), 100% - 2 * var(--gutter))) / 2);
@@ -2564,6 +2640,9 @@ html:has(.video-welcome[open], .intro-video-dialog[open]) {
   }
   .hero-kpi-value {
     font-size: 1.875rem;
+  }
+  html[lang="en"] .hero-kpi.is-tenure .hero-kpi-value {
+    font-size: clamp(1.5rem, 7vw, 1.875rem);
   }
   .hero-kpi-label {
     margin-top: 6px;

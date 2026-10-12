@@ -1,7 +1,7 @@
 <!doctype html>
 <!--
   Page 404 de GitHub Pages (servie pour toute adresse inconnue sous fio-tlb.github.io/fiona-talbi-portfolio/).
-  HTML autonome : ni JavaScript ni police à télécharger. Les liens sont absolus et suivent la base
+  HTML autonome, avec une traduction anglaise progressive ; aucune police à télécharger. Les liens sont absolus et suivent la base
   du site (/fiona-talbi-portfolio/) : à modifier si le site change d'adresse (domaine personnel).
   Textes repris de errorContent.notFound dans src/data/portfolio.ts.
 -->
@@ -163,5 +163,49 @@
         Ou écrivez-moi&nbsp;: <a href="mailto:fiona.2001@live.fr">fiona.2001@live.fr</a>
       </p>
     </main>
+    <script>
+      (function () {
+        try {
+          var language = new URL(location.href).searchParams.get("lang");
+          if (language !== "fr" && language !== "en") {
+            if (location.pathname.indexOf("/fiona-talbi-portfolio/en/") === 0) language = "en";
+            else {
+              try {
+                language = localStorage.getItem("ft-language");
+              } catch (_) {}
+              if (language !== "fr" && language !== "en") {
+                language = "fr";
+                var languages = navigator.languages || [navigator.language];
+                for (var i = 0; i < languages.length; i++) {
+                  var code = String(languages[i]).toLowerCase().split(/[-_]/)[0];
+                  if (code === "fr" || code === "en") {
+                    language = code;
+                    break;
+                  }
+                }
+              }
+            }
+          }
+          if (language === "en") {
+            document.documentElement.lang = "en";
+            document.title = "Page not found — Fiona Talbi";
+            document.querySelector(".eyebrow").textContent = "Error 404";
+            document.querySelector("h1").textContent = "Page not found";
+            document.querySelector(".text").textContent =
+              "This page does not exist or has moved. You can still explore my portfolio.";
+            var action = document.querySelector(".action");
+            action.textContent = "Back to my portfolio";
+            action.href = "/fiona-talbi-portfolio/en/";
+            document.querySelector(".brand").href = action.href;
+            document.querySelector(".contact").firstChild.textContent = "Or email me: ";
+          }
+        } catch (_) {}
+      })();
+    </script>
+    <noscript
+      ><p class="wrap" lang="en">
+        Page not found. <a href="/fiona-talbi-portfolio/en/">Explore the English portfolio</a>.
+      </p></noscript
+    >
   </body>
 </html>

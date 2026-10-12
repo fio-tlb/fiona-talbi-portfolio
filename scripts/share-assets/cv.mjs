@@ -8,10 +8,15 @@
 // Le jour où Fiona fournit son vrai CV, écraser simplement le PDF et ne plus lancer ce script.
 import { readFileSync, statSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import * as d from "../../src/data/portfolio.ts";
+import { getPortfolio } from "../../src/data/localized.ts";
+const localeIndex = process.argv.indexOf("--locale");
+const locale = localeIndex >= 0 ? process.argv[localeIndex + 1] : "fr";
+if (locale !== "fr" && locale !== "en") throw new Error("Use --locale fr or --locale en");
+const d = getPortfolio(locale);
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
-const output = root + "public/documents/cv-fiona-talbi.pdf";
+if (!d.profile.cvPath) throw new Error("Set the CV path in src/data/documents.ts first");
+const output = root + "public/" + d.profile.cvPath;
 const b64 = (f) =>
   "data:font/woff2;base64," +
   readFileSync(root + "node_modules/@fontsource-variable/" + f).toString("base64");
@@ -26,9 +31,9 @@ html{background:var(--paper-light);color:var(--ink);font-family:"Instrument Sans
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const p = d.profile;
 const c = d.sectionContent;
-const siteUrl = d.seo.siteUrl;
+const siteUrl = d.seo.siteUrl + (locale === "en" ? "en/" : "");
 
-const cv = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>CV — ${esc(p.name)}</title><style>${fonts}
+const cv = `<!doctype html><html lang="${locale}"><head><meta charset="utf-8"><title>CV — ${esc(p.name)}</title><style>${fonts}
 @page{size:A4;margin:0}
 body{width:210mm;height:297mm;padding:11mm 15mm 8mm;display:flex;flex-direction:column;font-size:9pt;line-height:1.42}
 header{display:grid;grid-template-columns:1fr auto;align-items:end;gap:6mm;padding-bottom:5mm;border-bottom:1.5pt solid var(--ink)}
@@ -79,7 +84,10 @@ footer{margin-top:auto;padding-top:2.5mm;border-top:.6pt solid var(--line);font-
 </body></html>`;
 
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ?? "playwright");
-const browser = await chromium.launch();
+const executablePath = process.env.CHROMIUM_EXECUTABLE_PATH;
+const browser = await chromium.launch(
+  executablePath ? { executablePath, args: ["--no-sandbox"] } : {},
+);
 try {
   const page = await browser.newPage({ viewport: { width: 794, height: 1123 } });
   await page.setContent(cv, { waitUntil: "load" });
@@ -92,4 +100,6 @@ try {
 } finally {
   await browser.close();
 }
-console.log(`cv-fiona-talbi.pdf : ${(statSync(output).size / 1024).toFixed(1)} Ko`);
+console.log(
+  `${d.profile.cvPath.split("/").at(-1)} : ${(statSync(output).size / 1024).toFixed(1)} Ko`,
+);

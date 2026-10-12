@@ -1,5 +1,6 @@
 import { useRef } from "react";
-import { navigation, projects, sectionContent } from "@/data/portfolio";
+import { navigation } from "@/data/portfolio";
+import { usePortfolio } from "@/hooks/use-portfolio";
 import { usePortfolioNavigation } from "@/hooks/use-portfolio-navigation";
 import { useReveal } from "@/hooks/use-reveal";
 import { ContactSection } from "./portfolio/contact-section";
@@ -18,6 +19,7 @@ import { SiteShell } from "./site-shell";
 const sectionIds = ["accueil", ...navigation.map((item) => item.id), "contact"];
 
 export function Portfolio() {
+  const { projects, sectionContent } = usePortfolio();
   const mainRef = useRef<HTMLElement>(null);
   const { activeSection, progressRef } = usePortfolioNavigation(sectionIds);
   useReveal(mainRef);

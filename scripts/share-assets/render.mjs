@@ -5,40 +5,54 @@
 //   npm install --no-save playwright && npx playwright install chromium
 // ou PLAYWRIGHT_MODULE=/chemin/vers/playwright/index.mjs pour une installation existante.
 import { readFileSync, statSync } from "node:fs";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { fileURLToPath } from "node:url";
 
 const here = fileURLToPath(new URL(".", import.meta.url));
 const publicDir = fileURLToPath(new URL("../../public/", import.meta.url));
 const ogName = process.argv[2] ?? "og-image-v1.jpg";
+const english = process.argv.includes("--en");
 
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ?? "playwright");
-const browser = await chromium.launch();
+const executablePath = process.env.CHROMIUM_EXECUTABLE_PATH;
+const browser = await chromium.launch(
+  executablePath ? { executablePath, args: ["--no-sandbox"] } : {},
+);
 
 try {
   const og = await browser.newPage({
     viewport: { width: 1200, height: 630 },
     deviceScaleFactor: 1,
   });
-  await og.goto(pathToFileURL(here + "og-image.html").href);
+  const template = readFileSync(here + (english ? "og-image-en.html" : "og-image.html"), "utf8");
+  const html = template.replace(
+    /url\("\.\.\/\.\.\/node_modules\/([^\"]+)"\)/g,
+    (_, filename) =>
+      'url("data:font/woff2;base64,' +
+      readFileSync(new URL("../../node_modules/" + filename, import.meta.url)).toString("base64") +
+      '")',
+  );
+  await og.setContent(html, { waitUntil: "load" });
   await og.evaluate(() => document.fonts.ready);
   await og.screenshot({ path: publicDir + ogName, type: "jpeg", quality: 88 });
 
   // Icône iOS : fond plein (iOS arrondit lui-même les angles), monogramme du favicon centré.
-  const favicon = readFileSync(publicDir + "favicon.svg", "utf8");
-  const icon = await browser.newPage({
-    viewport: { width: 180, height: 180 },
-    deviceScaleFactor: 1,
-  });
-  await icon.setContent(
-    `<body style="margin:0;width:180px;height:180px;display:grid;place-items:center;background:#f7efe4">
+  if (!english) {
+    const favicon = readFileSync(publicDir + "favicon.svg", "utf8");
+    const icon = await browser.newPage({
+      viewport: { width: 180, height: 180 },
+      deviceScaleFactor: 1,
+    });
+    await icon.setContent(
+      `<body style="margin:0;width:180px;height:180px;display:grid;place-items:center;background:#f7efe4">
       <img alt="" width="152" height="152" src="data:image/svg+xml;base64,${Buffer.from(favicon).toString("base64")}">
     </body>`,
-  );
-  await icon.screenshot({ path: publicDir + "apple-touch-icon.png", type: "png" });
+    );
+    await icon.screenshot({ path: publicDir + "apple-touch-icon.png", type: "png" });
+  }
 } finally {
   await browser.close();
 }
 
-for (const name of [ogName, "apple-touch-icon.png"]) {
+for (const name of english ? [ogName] : [ogName, "apple-touch-icon.png"]) {
   console.log(`${name}: ${(statSync(publicDir + name).size / 1024).toFixed(1)} Ko`);
 }

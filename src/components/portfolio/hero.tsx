@@ -1,13 +1,6 @@
 import { ArrowDown, Download, GraduationCap, MapPin } from "lucide-react";
-import {
-  brands,
-  experiences,
-  impactStats,
-  profile,
-  projects,
-  sectionContent,
-  seo,
-} from "@/data/portfolio";
+import { brands, experiences, projects } from "@/data/portfolio";
+import { usePortfolio } from "@/hooks/use-portfolio";
 import { publicPath } from "@/lib/public-path";
 import { Logo } from "./logo";
 import { ResponsiveImage } from "./responsive-image";
@@ -22,6 +15,7 @@ const heroBrands = [...new Set(experiences.map((experience) => experience.brandI
 const portraitSizes = "(max-width: 720px) calc(100vw - 32px), (max-width: 980px) 19rem, 24rem";
 
 export function Hero() {
+  const { impactStats, profile, sectionContent, seo } = usePortfolio();
   const content = sectionContent.hero;
   const portrait = profile.portrait;
 

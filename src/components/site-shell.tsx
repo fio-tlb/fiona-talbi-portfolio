@@ -1,6 +1,6 @@
 import { useEffect, type ReactNode, type RefObject } from "react";
 import { ArrowUp, ArrowUpRight } from "lucide-react";
-import { introVideo, profile, sectionContent } from "@/data/portfolio";
+import { usePortfolio } from "@/hooks/use-portfolio";
 import { IntroVideoLayer } from "./portfolio/intro-video";
 import { SiteHeader } from "./portfolio/site-header";
 
@@ -31,6 +31,7 @@ export function SiteShell({
   topId,
   children,
 }: SiteShellProps) {
+  const { introVideo, profile, sectionContent } = usePortfolio();
   const footer = sectionContent.footer;
 
   useEffect(() => {
@@ -50,7 +51,7 @@ export function SiteShell({
   return (
     <>
       <a className="skip-link" href="#contenu">
-        Aller au contenu
+        {sectionContent.skipLabel}
       </a>
       <SiteHeader activeSection={activeSection} progressRef={progressRef} />
       <main id="contenu" ref={mainRef} className={mainClassName} tabIndex={-1}>

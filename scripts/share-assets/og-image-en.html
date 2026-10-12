@@ -1,0 +1,139 @@
+<!doctype html>
+<!--
+  Gabarit de l'image de partage (LinkedIn, e-mail, messageries) : 1200 × 630 px.
+  Rendu par scripts/share-assets/render.mjs, jamais au build. Textes et chiffres repris de
+  src/data/portfolio.ts : les mettre à jour ici aussi s'ils changent, puis incrémenter le nom
+  du fichier (og-image-v2.jpg…) et seo.ogImage, car LinkedIn garde l'aperçu en cache par URL.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Share image — Fiona Talbi</title>
+    <style>
+      @font-face {
+        font-family: "Fraunces";
+        src: url("../../node_modules/@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2")
+          format("woff2");
+        font-weight: 100 900;
+      }
+      @font-face {
+        font-family: "Instrument Sans";
+        src: url("../../node_modules/@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2")
+          format("woff2");
+        font-weight: 400 700;
+      }
+      :root {
+        /* Mêmes tokens que :root dans src/styles.css */
+        --paper: oklch(0.955 0.017 78);
+        --ink: oklch(0.25 0.035 22);
+        --ink-soft: oklch(0.48 0.032 32);
+        --bordeaux: oklch(0.39 0.125 17);
+        --sky-soft: oklch(0.95 0.022 232);
+        --line: oklch(0.86 0.02 68);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+      }
+      body {
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Instrument Sans", sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .identity {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 60px 60px 40px;
+      }
+      h1 {
+        margin: 0;
+        font-family: "Fraunces", serif;
+        font-size: 132px;
+        font-weight: 400;
+        line-height: 1;
+        letter-spacing: -0.025em;
+      }
+      .role {
+        margin: 26px 0 0;
+        font-family: "Fraunces", serif;
+        font-size: 44px;
+        font-weight: 400;
+        line-height: 1.15;
+        letter-spacing: -0.01em;
+        color: var(--bordeaux);
+      }
+      .role span {
+        color: var(--ink-soft);
+      }
+      ul {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 48px;
+        margin: 0;
+        padding: 34px 60px 44px;
+        list-style: none;
+        background: var(--sky-soft);
+        border-top: 2px solid var(--ink);
+      }
+      li {
+        display: flex;
+        flex-direction: column;
+      }
+      strong {
+        font-family: "Fraunces", serif;
+        font-size: 84px;
+        font-weight: 400;
+        line-height: 1;
+        letter-spacing: -0.02em;
+        color: var(--bordeaux);
+        white-space: nowrap;
+      }
+      .label {
+        margin-top: 14px;
+        font-size: 30px;
+        font-weight: 500;
+        line-height: 1.2;
+      }
+      .source {
+        margin-top: 4px;
+        font-size: 25px;
+        line-height: 1.2;
+        color: var(--ink-soft);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="identity">
+      <h1>Fiona Talbi</h1>
+      <p class="role">360° marketing &amp; communications <span>· Paris</span></p>
+    </div>
+    <ul>
+      <li>
+        <strong>+30%</strong>
+        <span class="label">sales growth</span>
+        <span class="source">Logitech</span>
+      </li>
+      <li>
+        <strong>140</strong>
+        <span class="label">top stores equipped</span>
+        <span class="source">Logitech</span>
+      </li>
+      <li>
+        <strong>500+</strong>
+        <span class="label">Instagram followers</span>
+        <span class="source">CosmétiCar</span>
+      </li>
+    </ul>
+  </body>
+</html>

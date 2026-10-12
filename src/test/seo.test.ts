@@ -15,7 +15,9 @@ function metaContent(key: string): string | undefined {
 describe("Page head", () => {
   it("uses an absolute https site URL as canonical and og:url", () => {
     expect(seo.siteUrl).toMatch(/^https:\/\/.+\/$/);
-    expect(head.links).toEqual([{ rel: "canonical", href: seo.siteUrl }]);
+    expect(head.links.filter((link) => link.rel === "canonical")).toEqual([
+      { rel: "canonical", href: seo.siteUrl },
+    ]);
     expect(metaContent("og:url")).toBe(seo.siteUrl);
   });
 

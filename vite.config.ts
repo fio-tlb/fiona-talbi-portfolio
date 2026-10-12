@@ -24,8 +24,15 @@ export default defineConfig({
         autoStaticPathsDiscovery: false,
         crawlLinks: false,
       },
-      // L'accueil et une page par projet (/projets/<id>/index.html).
-      pages: [{ path: "/" }, ...projects.map((project) => ({ path: "/projets/" + project.id }))],
+      // Chaque langue existe en HTML statique, avec les mêmes identifiants de projet.
+      pages: [
+        { path: "/" },
+        { path: "/en/" },
+        ...projects.flatMap((project) => [
+          { path: "/projets/" + project.id },
+          { path: "/en/projets/" + project.id },
+        ]),
+      ],
     }),
   },
 });

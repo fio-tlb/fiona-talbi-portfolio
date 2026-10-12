@@ -20,6 +20,7 @@ import type {
 } from "./types";
 import { projects } from "./projects";
 import { jpegWithAvif } from "./media";
+import { documentPaths } from "./documents";
 export { projects } from "./projects";
 export type * from "./types";
 
@@ -32,7 +33,7 @@ export const profile: PortfolioProfile = {
   email: "fiona.2001@live.fr",
   linkedin: "https://www.linkedin.com/in/fiona-talbi-246407193",
   places: "Paris · Londres · Dublin",
-  cvPath: "documents/cv-fiona-talbi.pdf",
+  cvPath: documentPaths.fr.cv,
   portrait: {
     ...jpegWithAvif("images/portrait-fiona-v5.jpg", 1122, 1402, [600, 900, 1122]),
     alt: "Portrait de Fiona Talbi",
@@ -309,12 +310,12 @@ export const recommendations: readonly Recommendation[] = [
   {
     id: "recommendation-01",
     title: "Lettre de recommandation 01",
-    documentPath: "documents/recommandation-01.pdf",
+    documentPath: documentPaths.fr.recommendations["recommendation-01"] ?? null,
   },
   {
     id: "recommendation-02",
     title: "Lettre de recommandation 02",
-    documentPath: "documents/recommandation-02.pdf",
+    documentPath: documentPaths.fr.recommendations["recommendation-02"] ?? null,
   },
 ];
 
@@ -332,6 +333,8 @@ export const introVideo: IntroVideo | null = {
 
 export const sectionContent = {
   navigation: {
+    homeLabel: "accueil",
+    languageLabel: "Langue",
     contactLabel: "Contact",
     menuLabel: "Menu de navigation",
     mainLabel: "Navigation principale",
@@ -439,6 +442,7 @@ export const sectionContent = {
     descriptionWithoutCv: "Le plus simple : un e-mail. Vous trouverez aussi mon profil LinkedIn.",
     linkedinLabel: "LinkedIn",
     cvLabel: "Télécharger le CV (PDF)",
+    coverLetterLabel: "Lettre de motivation (PDF)",
     copyLabel: "Copier l’adresse e-mail",
     copyVisibleLabel: "Copier",
     copiedVisibleLabel: "Copiée",
@@ -469,9 +473,13 @@ export const sectionContent = {
     topLabel: "Haut de page",
   },
   newTabLabel: " (nouvel onglet)",
+  skipLabel: "Aller au contenu",
 } as const;
 
 export const portfolio = {
+  brands,
+  errorContent,
+  documents: documentPaths.fr,
   profile,
   seo,
   navigation,

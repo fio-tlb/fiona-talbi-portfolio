@@ -46,7 +46,7 @@ function canWelcome() {
   return (
     !window.location.hash &&
     window.scrollY < WELCOME_MAX_SCROLL &&
-    !document.querySelector("dialog[open], .mobile-menu[open]")
+    !document.querySelector("dialog[open], .mobile-menu[open], .language-switcher[open]")
   );
 }
 

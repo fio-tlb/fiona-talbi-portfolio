@@ -1,10 +1,9 @@
 import type { MouseEvent } from "react";
 import { Play, X } from "lucide-react";
-import { sectionContent, type IntroVideo } from "@/data/portfolio";
+import type { IntroVideo } from "@/data/portfolio";
+import { usePortfolio } from "@/hooks/use-portfolio";
 import { formatDuration, useIntroVideo, type IntroVideoController } from "@/hooks/use-intro-video";
 import { publicPath } from "@/lib/public-path";
-
-const text = sectionContent.introVideo;
 
 /** « images/x.jpg » → « images/x.webp ». */
 function withExtension(path: string, extension: string) {
@@ -59,6 +58,7 @@ function closeOnBackdrop(event: MouseEvent<HTMLDialogElement>) {
  * HTML pré-rendu (il fonctionne sans JavaScript), qui ouvre le lecteur une fois la page hydratée.
  */
 function VideoFab({ controller }: { controller: IntroVideoController }) {
+  const text = usePortfolio().sectionContent.introVideo;
   const { video } = controller;
   const onClick = (event: MouseEvent<HTMLAnchorElement>) => {
     const modified = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
@@ -90,6 +90,7 @@ function VideoFab({ controller }: { controller: IntroVideoController }) {
 
 /** Modale d'accueil : vignette, jeu de mots, « Voir la vidéo » ou « Ignorer ». */
 function WelcomeDialog({ controller }: { controller: IntroVideoController }) {
+  const text = usePortfolio().sectionContent.introVideo;
   const { video, duration } = controller;
   return (
     <dialog
@@ -148,6 +149,7 @@ function WelcomeDialog({ controller }: { controller: IntroVideoController }) {
 
 /** Lecteur : <dialog> natif (top layer, Échap, page inerte), vidéo créée au premier clic. */
 function IntroVideoDialog({ controller }: { controller: IntroVideoController }) {
+  const text = usePortfolio().sectionContent.introVideo;
   const { video } = controller;
   if (!controller.ready) return null;
   const src = publicPath(video.src);

@@ -2,13 +2,14 @@
 // Fonctions pures : testées dans src/test/seo.test.ts, appelées par src/routes/index.tsx
 // (accueil) et src/routes/projets.$projectId.tsx (pages projet).
 import type { Education, PortfolioProfile, PortfolioSeo, Project } from "@/data/portfolio";
+import type { Locale } from "@/i18n/locale";
 
 type MetaTag =
   { title: string } | { name: string; content: string } | { property: string; content: string };
 
 export interface PageHead {
   meta: MetaTag[];
-  links: { rel: string; href: string }[];
+  links: { rel: string; href: string; hrefLang?: string }[];
 }
 
 /** URL absolue d'un fichier de public/ : les robots de LinkedIn ou Slack ignorent les chemins relatifs. */
@@ -16,8 +17,22 @@ export function absoluteUrl(path: string, siteUrl: string): string {
   return new URL(path.replace(/^\/+/, ""), siteUrl).href;
 }
 
-export function buildPageHead(seo: PortfolioSeo, profile: PortfolioProfile): PageHead {
+function languageLinks(siteUrl: string, projectId?: string) {
+  const path = projectId ? "projets/" + projectId + "/" : "";
+  return [
+    { rel: "alternate", hrefLang: "fr", href: absoluteUrl(path, siteUrl) },
+    { rel: "alternate", hrefLang: "en", href: absoluteUrl("en/" + path, siteUrl) },
+    { rel: "alternate", hrefLang: "x-default", href: absoluteUrl(path, siteUrl) },
+  ];
+}
+
+export function buildPageHead(
+  seo: PortfolioSeo,
+  profile: PortfolioProfile,
+  locale: Locale = "fr",
+): PageHead {
   const image = absoluteUrl(seo.ogImage, seo.siteUrl);
+  const url = locale === "en" ? absoluteUrl("en/", seo.siteUrl) : seo.siteUrl;
 
   return {
     meta: [
@@ -27,7 +42,7 @@ export function buildPageHead(seo: PortfolioSeo, profile: PortfolioProfile): Pag
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: profile.name },
       { property: "og:locale", content: seo.locale },
-      { property: "og:url", content: seo.siteUrl },
+      { property: "og:url", content: url },
       { property: "og:title", content: seo.socialTitle },
       { property: "og:description", content: seo.socialDescription },
       { property: "og:image", content: image },
@@ -41,13 +56,13 @@ export function buildPageHead(seo: PortfolioSeo, profile: PortfolioProfile): Pag
       { name: "twitter:image", content: image },
       { name: "twitter:image:alt", content: seo.ogImageAlt },
     ],
-    links: [{ rel: "canonical", href: seo.siteUrl }],
+    links: [{ rel: "canonical", href: url }, ...languageLinks(seo.siteUrl)],
   };
 }
 
 /** Adresse publique d'une page projet, avec la barre finale (fichier projets/<id>/index.html). */
-export function projectUrl(projectId: string, siteUrl: string): string {
-  return absoluteUrl("projets/" + projectId + "/", siteUrl);
+export function projectUrl(projectId: string, siteUrl: string, locale: Locale = "fr"): string {
+  return absoluteUrl((locale === "en" ? "en/" : "") + "projets/" + projectId + "/", siteUrl);
 }
 
 /**
@@ -60,8 +75,9 @@ export function buildProjectHead(
   profile: PortfolioProfile,
   project: Project,
   titleSuffix: string,
+  locale: Locale = "fr",
 ): PageHead {
-  const url = projectUrl(project.id, seo.siteUrl);
+  const url = projectUrl(project.id, seo.siteUrl, locale);
   const title = project.title + titleSuffix;
   const cover = project.gallery[0];
   const image = cover
@@ -91,7 +107,7 @@ export function buildProjectHead(
       { name: "twitter:image", content: imageUrl },
       { name: "twitter:image:alt", content: image.alt },
     ],
-    links: [{ rel: "canonical", href: url }],
+    links: [{ rel: "canonical", href: url }, ...languageLinks(seo.siteUrl, project.id)],
   };
 }
 
@@ -103,6 +119,7 @@ export function buildPersonJsonLd(
   seo: PortfolioSeo,
   profile: PortfolioProfile,
   education: readonly Education[],
+  locale: Locale = "fr",
 ) {
   const schools = [...new Set(education.map((item) => item.institution.trim()))].filter(Boolean);
 
@@ -113,7 +130,7 @@ export function buildPersonJsonLd(
     givenName: profile.firstName,
     familyName: profile.lastName,
     jobTitle: profile.role,
-    url: seo.siteUrl,
+    url: locale === "en" ? absoluteUrl("en/", seo.siteUrl) : seo.siteUrl,
     sameAs: [profile.linkedin],
     address: {
       "@type": "PostalAddress",

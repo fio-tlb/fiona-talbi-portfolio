@@ -1,16 +1,13 @@
 import { useEffect, useRef, type RefObject } from "react";
 import { Mail, Menu, X } from "lucide-react";
-import {
-  navigation,
-  profile,
-  recommendations,
-  sectionContent,
-  type NavigationItem,
-} from "@/data/portfolio";
+import type { NavigationItem } from "@/data/portfolio";
+import { usePortfolio } from "@/hooks/use-portfolio";
+import { publicPath } from "@/lib/public-path";
+import { LanguageSwitcher } from "./language-switcher";
 import { HomeLink } from "./home-link";
 
-// Même seuil que le @media (max-width: 1023px) de styles.css : six liens en ligne dès 1024 px.
-const INLINE_NAV_QUERY = "(min-width: 1024px)";
+// Même seuil que le @media (max-width: 1279px) de styles.css : six liens en ligne dès 1280 px.
+const INLINE_NAV_QUERY = "(min-width: 1280px)";
 
 type SiteHeaderProps = {
   activeSection: string;
@@ -18,6 +15,7 @@ type SiteHeaderProps = {
 };
 
 export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
+  const { navigation, profile, recommendations, sectionContent } = usePortfolio();
   const menuRef = useRef<HTMLDetailsElement>(null);
   const content = sectionContent.navigation;
   const items = navigation.filter(
@@ -79,14 +77,24 @@ export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
   return (
     <header className="site-header">
       <div className="site-wrap header-inner">
-        <HomeLink
-          section="accueil"
-          className="header-brand"
-          aria-label={profile.name + ", accueil"}
-          onClick={closeMenu}
-        >
-          {profile.name}
-        </HomeLink>
+        <div className="header-identity">
+          <HomeLink
+            section="accueil"
+            className="header-brand"
+            aria-label={profile.name + ", " + content.homeLabel}
+            onClick={closeMenu}
+          >
+            <img
+              className="header-logo"
+              src={publicPath("favicon.svg")}
+              width={36}
+              height={36}
+              alt=""
+            />
+            <span className="header-name">{profile.name}</span>
+          </HomeLink>
+          <LanguageSwitcher activeSection={activeSection} />
+        </div>
         <nav className="desktop-nav" aria-label={content.mainLabel}>
           {items.map(renderLink)}
         </nav>

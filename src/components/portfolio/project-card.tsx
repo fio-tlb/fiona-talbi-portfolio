@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import { brands, sectionContent, type Project } from "@/data/portfolio";
+import type { Project } from "@/data/portfolio";
+import { useLocale, usePortfolio } from "@/hooks/use-portfolio";
+import { projectRoute } from "@/i18n/locale";
 import { Logo } from "./logo";
 import { ProjectPicture } from "./project-picture";
 
@@ -13,6 +15,8 @@ const coverSizes = "(min-width: 900px) min(600px, 50vw), 100vw";
  * L'article garde l'id du projet : les chiffres clés du hero y mènent (#id).
  */
 export function ProjectCard({ project }: { project: Project }) {
+  const { brands, sectionContent } = usePortfolio();
+  const locale = useLocale();
   const content = sectionContent.projects;
   const brand = brands[project.brandId];
   const cover = project.gallery[0];
@@ -36,7 +40,8 @@ export function ProjectCard({ project }: { project: Project }) {
         </div>
         <h3 className="project-title" id={titleId}>
           <Link
-            to="/projets/$projectId"
+            to={projectRoute(locale)}
+            search={(previous) => previous}
             params={{ projectId: project.id }}
             className="project-card-link"
           >
