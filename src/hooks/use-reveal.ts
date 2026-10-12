@@ -1,4 +1,5 @@
 import { useEffect, type RefObject } from "react";
+import { MOTION } from "@/lib/motion";
 
 export function useReveal(rootRef: RefObject<HTMLElement | null>): void {
   useEffect(() => {
@@ -14,7 +15,12 @@ export function useReveal(rootRef: RefObject<HTMLElement | null>): void {
       return;
     }
 
-    const pending = new Set(elements);
+    // Blocks already painted on screen at mount (reload mid-page, deep link) stay as they are:
+    // only content still below the fold fades in, so nothing visible blinks after hydration.
+    const viewportHeight = window.innerHeight;
+    const pending = new Set(
+      elements.filter((element) => element.getBoundingClientRect().top >= viewportHeight),
+    );
     const animations = new Set<Animation>();
     const motionPreference =
       typeof window.matchMedia === "function"
@@ -69,9 +75,9 @@ export function useReveal(rootRef: RefObject<HTMLElement | null>): void {
                     { opacity: 1, transform: "translateY(0)" },
                   ],
                   {
-                    duration: 400,
+                    duration: MOTION.slow,
                     delay,
-                    easing: "cubic-bezier(0.2, 0.65, 0.3, 1)",
+                    easing: MOTION.easeOut,
                     fill: "both",
                   },
                 );

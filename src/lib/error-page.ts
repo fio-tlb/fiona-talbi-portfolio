@@ -1,30 +1,52 @@
+import { errorContent, profile } from "@/data/portfolio";
+
+// Page de secours renvoyée par src/server.ts quand le rendu serveur échoue (aperçu Lovable,
+// serveur Node) : HTML autonome, sans JavaScript ni police à charger, aux couleurs du site.
+const escapeHtml = (value: string) =>
+  value.replace(
+    /[&<>"']/g,
+    (character) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]!,
+  );
+
 export function renderErrorPage(): string {
+  const content = errorContent.error;
+  const home = escapeHtml(import.meta.env.BASE_URL || "/");
+  const email = escapeHtml(profile.email);
+
   return `<!doctype html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="utf-8" />
-    <title>This page didn't load</title>
+    <title>${escapeHtml(content.title + errorContent.documentTitleSuffix)}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#f7efe4" />
     <style>
-      body { font: 15px/1.5 system-ui, -apple-system, sans-serif; background: #fafafa; color: #111; display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 1.5rem; }
-      .card { max-width: 28rem; width: 100%; text-align: center; padding: 2rem; }
-      h1 { font-size: 1.25rem; margin: 0 0 0.5rem; }
-      p { color: #4b5563; margin: 0 0 1.5rem; }
-      .actions { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
-      a, button { padding: 0.5rem 1rem; border-radius: 0.375rem; font: inherit; cursor: pointer; text-decoration: none; border: 1px solid transparent; }
-      .primary { background: #111; color: #fff; }
-      .secondary { background: #fff; color: #111; border-color: #d1d5db; }
+      body { margin: 0; min-height: 100vh; background: #f7efe4; color: #311b1a; font: 17px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+      main { width: min(36rem, 100% - 40px); margin: 0 auto; padding: 18vh 0 64px; }
+      .eyebrow { margin: 0 0 12px; font-size: 15px; font-weight: 600; color: #6f5752; }
+      h1 { margin: 0; font: 400 clamp(34px, 6vw, 52px)/1.1 Georgia, "Times New Roman", serif; letter-spacing: -0.02em; }
+      p { margin: 16px 0 0; color: #6f5752; }
+      .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+      .actions a, .actions button { display: inline-flex; align-items: center; min-height: 48px; padding: 0 20px; border-radius: 8px; border: 1px solid #7a1e2c; font-family: inherit; font-size: 15px; font-weight: 600; line-height: 1; text-decoration: none; cursor: pointer; }
+      .primary { background: #7a1e2c; color: #fcf9f3; }
+      .secondary { background: transparent; color: #311b1a; border-color: #c0b4ab; }
+      .contact a { color: #7a1e2c; text-underline-offset: 3px; }
+      :focus-visible { outline: 2px solid #7a1e2c; outline-offset: 3px; }
     </style>
   </head>
   <body>
-    <div class="card">
-      <h1>This page didn't load</h1>
-      <p>Something went wrong on our end. You can try refreshing or head back home.</p>
+    <main>
+      <p class="eyebrow">${escapeHtml(content.eyebrow)}</p>
+      <h1>${escapeHtml(content.title)}</h1>
+      <p>${escapeHtml(content.description)}</p>
       <div class="actions">
-        <button class="primary" onclick="location.reload()">Try again</button>
-        <a class="secondary" href="/">Go home</a>
+        <button type="button" class="primary" onclick="location.reload()">${escapeHtml(errorContent.retryLabel)}</button>
+        <a class="secondary" href="${home}">${escapeHtml(content.homeLabel)}</a>
       </div>
-    </div>
+      <p class="contact">${escapeHtml(content.contactLabel)} <a href="mailto:${email}">${email}</a></p>
+    </main>
   </body>
 </html>`;
 }

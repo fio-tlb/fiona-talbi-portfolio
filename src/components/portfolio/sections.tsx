@@ -1,17 +1,4 @@
-import {
-  ArrowUpRight,
-  BookOpen,
-  BriefcaseBusiness,
-  FileText,
-  Globe2,
-  GraduationCap,
-  Layers3,
-  Mail,
-  Pencil,
-  Plane,
-  Sparkles,
-  Target,
-} from "lucide-react";
+import { ArrowUpRight, FileText, Mail } from "lucide-react";
 import {
   certifications,
   education,
@@ -25,157 +12,144 @@ import {
   tools,
   type Recommendation,
 } from "@/data/portfolio";
+import { listInFrench, publicPath } from "@/lib/public-path";
 import { SectionHeading } from "./section-heading";
 
-const interestIcons = { travel: Plane, reading: BookOpen, drawing: Pencil };
-const skillIcons = [Target, Sparkles, Layers3];
+// Noms composés à ne jamais couper en fin de ligne (« Massilia E- / consulting »).
+const unbreakable = /(E-consulting)/;
 
+function KeepTogether({ text }: { text: string }) {
+  return text.split(unbreakable).map((part, index) =>
+    index % 2 ? (
+      <span className="nowrap" key={index}>
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  );
+}
+
+/** Parcours : présentation à la 1re personne, expériences, puis formation (#formation). */
 export function JourneySection() {
   const content = sectionContent.about;
   return (
-    <section id="parcours" className="section about-section">
-      <div className="site-wrap about-grid">
-        <div>
-          <SectionHeading {...content} />
-          <div className="about-copy" data-reveal>
-            {content.paragraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </div>
-          <div className="interest-list" data-reveal>
-            {interests.map((interest) => {
-              const Icon = interestIcons[interest.id as keyof typeof interestIcons] ?? Sparkles;
-              return (
-                <span className="interest-pill" key={interest.id}>
-                  <Icon size={13} aria-hidden />
-                  {interest.label}
-                </span>
-              );
-            })}
-          </div>
+    <section id="parcours" className="section band-deep" aria-labelledby="parcours-titre">
+      <div className="site-wrap">
+        <SectionHeading id="parcours-titre" label={content.label} title={content.title} />
+        <div className="about-intro" data-reveal>
+          <p className="about-lead">
+            <KeepTogether text={content.intro} />
+          </p>
+          <p className="about-interests">
+            {content.interestsLabel + " : " + listInFrench(interests.map((i) => i.label)) + "."}
+          </p>
         </div>
-        <div data-reveal data-delay="80">
-          <h3 className="timeline-title">
-            <BriefcaseBusiness size={16} aria-hidden />
-            {content.experiencesTitle}
-          </h3>
-          <div className="timeline">
+
+        <div className="info-row" data-reveal>
+          <h3 className="info-row-title">{content.experiencesTitle}</h3>
+          <ul className="entry-list" role="list">
             {experiences.map((experience) => (
-              <article className="timeline-item" key={experience.id}>
-                <div className="timeline-meta">
+              <li className="experience" key={experience.id}>
+                {experience.period && <p className="entry-period">{experience.period}</p>}
+                <h4 className="experience-role">{experience.role}</h4>
+                <p className="experience-company">
                   {experience.company}
                   {experience.location && " · " + experience.location}
-                </div>
-                <h3>{experience.role}</h3>
-                <p>{experience.description}</p>
-              </article>
+                </p>
+                <p className="experience-text">
+                  <KeepTogether text={experience.description} />
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="info-row" id="formation" data-reveal>
+          <h3 className="info-row-title">{content.educationTitle}</h3>
+          <ul className="entry-list" role="list">
+            {education.map((item) => (
+              <li className="education-item" key={item.id}>
+                {item.period && <p className="entry-period">{item.period}</p>}
+                <p className="education-title">{item.title}</p>
+                <p className="education-school">{item.school}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** Compétences : trois domaines en texte, outils, certifications (#certifications) et langues (#langues). */
+export function SkillsSection() {
+  const content = sectionContent.skills;
+  return (
+    <section id="competences" className="section" aria-labelledby="competences-titre">
+      <div className="site-wrap">
+        <SectionHeading id="competences-titre" label={content.label} title={content.title} />
+        <div className="info-row" data-reveal>
+          <h3 className="info-row-title">{content.skillsTitle}</h3>
+          <div className="skill-columns">
+            {skills.map((group) => (
+              <div className="skill-group" key={group.id}>
+                <h4 className="skill-title">{group.title}</h4>
+                <ul className="skill-items" role="list">
+                  {group.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
             ))}
           </div>
         </div>
-      </div>
-    </section>
-  );
-}
 
-export function SkillsSection() {
-  return (
-    <section id="competences" className="section site-wrap">
-      <SectionHeading {...sectionContent.skills} />
-      <div className="skills-grid">
-        {skills.map((skill, index) => {
-          const Icon = skillIcons[index] ?? Target;
-          return (
-            <article className="skill-card" key={skill.id} data-reveal data-delay={index * 60}>
-              <div className="skill-card-heading">
-                <span className="skill-icon">
-                  <Icon size={18} strokeWidth={1.6} aria-hidden />
+        <div className="info-row" data-reveal>
+          <h3 className="info-row-title">{content.toolsTitle}</h3>
+          <ul className="tool-line" role="list">
+            {tools.map((tool) => (
+              <li key={tool.id}>{tool.name}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="info-row" id="certifications" data-reveal>
+          <h3 className="info-row-title">{content.certificationsTitle}</h3>
+          <ul className="cert-badges" role="list">
+            {certifications.map((cert) => (
+              <li className="cert-badge" key={cert.id}>
+                <span className="cert-name">{cert.name}</span>
+                <span className="cert-meta">
+                  {[cert.organization, cert.year].filter(Boolean).join(" · ")}
                 </span>
-                <h3>{skill.title}</h3>
-              </div>
-              <ul>
-                {skill.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </article>
-          );
-        })}
-      </div>
-      <div className="tools-bar" data-reveal>
-        <p className="tools-label">{sectionContent.skills.toolsLabel}</p>
-        <div className="tool-list">
-          {tools.map((tool) => (
-            <span className="tool-pill" key={tool.id}>
-              {tool.name}
-            </span>
-          ))}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="info-row" id="langues" data-reveal>
+          <h3 className="info-row-title">{content.languagesTitle}</h3>
+          <ul className="language-list" role="list">
+            {languages.map((language) => (
+              <li key={language.id}>
+                <span className="language-name">{language.name}</span>
+                <span className="language-level">{language.level}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>
   );
 }
 
-export function EducationSection() {
-  return (
-    <section id="formation" className="section education-section site-wrap">
-      <SectionHeading {...sectionContent.education} />
-      <div className="education-grid">
-        {education.map((item, index) => (
-          <article
-            className="education-card"
-            key={item.id}
-            data-reveal
-            data-delay={(index % 2) * 70}
-          >
-            <GraduationCap className="education-icon" size={22} strokeWidth={1.6} aria-hidden />
-            <div>
-              <p className="education-date">{item.date}</p>
-              <h3>{item.title}</h3>
-              <p className="education-school">{item.school}</p>
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-export function CredentialsSection() {
-  return (
-    <section id="certifications" className="section credentials-section">
-      <div className="site-wrap">
-        <SectionHeading {...sectionContent.certifications} />
-        <div className="cert-grid">
-          {certifications.map((cert, index) => (
-            <article className="cert-card" key={cert.id} data-reveal data-delay={(index % 3) * 45}>
-              <span className="cert-mark" aria-hidden>
-                {cert.mark === "ETS" ? <GraduationCap size={21} /> : cert.mark}
-              </span>
-              <div>
-                <h3>{cert.name}</h3>
-                <p>
-                  {cert.organization}
-                  {cert.year && " · " + cert.year}
-                </p>
-              </div>
-            </article>
-          ))}
-        </div>
-        <div className="language-grid" id="langues" data-reveal>
-          <h3 className="language-intro">
-            <Globe2 size={18} aria-hidden />
-            {sectionContent.languages.title}
-          </h3>
-          {languages.map((language) => (
-            <div key={language.id}>
-              <p className="language-name">{language.name}</p>
-              <p className="language-level">{language.level}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+function recommendationsDescription(items: readonly Recommendation[]) {
+  const content = sectionContent.recommendations;
+  const withDocument = items.filter((item) => item.documentPath?.trim()).length;
+  if (withDocument === items.length) return content.documentsDescription;
+  if (withDocument === 0) return content.requestDescription;
+  return content.mixedDescription;
 }
 
 export function RecommendationsSection({
@@ -186,49 +160,74 @@ export function RecommendationsSection({
   const content = sectionContent.recommendations;
   if (!items.length) return null;
   return (
-    <section id="recommandations" className="section site-wrap">
-      <SectionHeading {...content} />
-      <div className="recommendation-grid">
-        {items.map((recommendation, index) => {
-          const documentPath = recommendation.documentPath?.trim();
-          const label = documentPath ? content.openLabel : content.requestLabel;
-          const href = documentPath
-            ? import.meta.env.BASE_URL + documentPath.replace(/^\/+/, "")
-            : "mailto:" +
-              profile.email +
-              "?subject=" +
-              encodeURIComponent(content.requestSubject + " : " + recommendation.title);
-          return (
-            <article
-              className="recommendation-card"
-              key={recommendation.id}
-              data-reveal
-              data-delay={index * 70}
-            >
-              <span className="document-icon">
-                <FileText size={24} strokeWidth={1.4} aria-hidden />
-              </span>
-              <div>
-                <h3>{recommendation.title}</h3>
-                {recommendation.description && <p>{recommendation.description}</p>}
-                <a
-                  className="recommendation-link"
-                  href={href}
-                  target={documentPath ? "_blank" : undefined}
-                  rel={documentPath ? "noopener noreferrer" : undefined}
-                  aria-label={label + " : " + recommendation.title}
-                >
-                  {label}
-                  {documentPath ? (
-                    <ArrowUpRight size={14} aria-hidden />
-                  ) : (
-                    <Mail size={14} aria-hidden />
-                  )}
-                </a>
-              </div>
-            </article>
-          );
-        })}
+    <section
+      id="recommandations"
+      className="section band-deep"
+      aria-labelledby="recommandations-titre"
+    >
+      <div className="site-wrap">
+        <SectionHeading
+          id="recommandations-titre"
+          label={content.label}
+          title={content.title}
+          description={recommendationsDescription(items)}
+        />
+        <ul className="recommendation-list" role="list">
+          {items.map((recommendation, index) => {
+            const documentPath = recommendation.documentPath?.trim();
+            const titleId = recommendation.id + "-titre";
+            return (
+              <li
+                className="recommendation-card"
+                key={recommendation.id}
+                data-reveal
+                data-delay={index * 70}
+              >
+                {documentPath && (
+                  <p className="recommendation-kind">
+                    <FileText size={16} strokeWidth={1.75} aria-hidden />
+                    {content.documentLabel}
+                  </p>
+                )}
+                <h3 className="recommendation-title" id={titleId}>
+                  {recommendation.title}
+                </h3>
+                {recommendation.description && (
+                  <p className="recommendation-text">{recommendation.description}</p>
+                )}
+                {documentPath ? (
+                  <a
+                    className="text-link recommendation-link"
+                    href={publicPath(documentPath)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-describedby={titleId}
+                  >
+                    {content.openLabel}
+                    <ArrowUpRight size={15} aria-hidden />
+                    <span className="sr-only">{sectionContent.newTabLabel}</span>
+                  </a>
+                ) : (
+                  <a
+                    className="text-link recommendation-link"
+                    href={
+                      "mailto:" +
+                      profile.email +
+                      "?subject=" +
+                      encodeURIComponent(content.requestSubject + recommendation.title) +
+                      "&body=" +
+                      encodeURIComponent(content.requestBody)
+                    }
+                    aria-describedby={titleId}
+                  >
+                    {content.requestLabel}
+                    <Mail size={15} aria-hidden />
+                  </a>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </section>
   );

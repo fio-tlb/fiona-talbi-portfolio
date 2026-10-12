@@ -38,9 +38,15 @@ export function usePortfolioNavigation(sectionIds: readonly string[]): Portfolio
           currentSection = section.id;
         }
       }
-      // The final section may never reach the header when the document ends.
+      // The final section may never reach the header when the document ends. Keep the section
+      // the visitor asked for (URL hash) when it is visible in the upper half of the screen.
       if (distance > 0 && distance - scrollPosition <= 2) {
-        currentSection = sections.at(-1)?.id ?? currentSection;
+        const requested = sections.find((section) => "#" + section.id === window.location.hash);
+        const top = requested?.getBoundingClientRect().top ?? -1;
+        currentSection =
+          requested && top >= 0 && top < window.innerHeight / 2
+            ? requested.id
+            : (sections.at(-1)?.id ?? currentSection);
       }
 
       if (currentSection !== activeSectionRef.current) {
