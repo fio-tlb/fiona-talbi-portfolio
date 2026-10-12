@@ -150,3 +150,17 @@ Les deux PDF actuels (`public/documents/recommandation-01.pdf` et `-02.pdf`) son
 | Pied de page                         | © Fiona Talbi · Marketing 360 & Communication — Imaginé avec curiosité, à Paris. — Retour en haut     | © 2026 Fiona Talbi · Paris — e-mail — LinkedIn ↗ — Haut de page ↑                                    |
 
 Le CV (`public/documents/cv-fiona-talbi.pdf`) est un fichier provisoire généré uniquement à partir des données du site : remplace-le par ton vrai CV (même nom de fichier).
+
+## Vidéo de présentation (lot 4)
+
+Textes nouveaux (rien n'existait avant), dans `sectionContent.introVideo` et `introVideo` :
+
+| Où                                         | Avant      | Après                                                                                  |
+| ------------------------------------------ | ---------- | -------------------------------------------------------------------------------------- |
+| Hero, bouton secondaire (`heroLabel`)      | — (absent) | ▶ Ma présentation (rond ▶ seul sous 1000 px ; lu « Ma présentation (vidéo, 20 s) »)    |
+| Bandeau sur le portrait (`watchLabel`)     | — (absent) | ▶ Regarder ma présentation · 20 s — bouton « Plus tard » (`laterLabel`)                |
+| Pastille en bas à droite                   | — (absent) | ▶ « Regarder ma présentation (20 s) » et ✕ « Masquer la vidéo » (noms lus, sans texte) |
+| Lecteur (`introVideo.title`, `closeLabel`) | — (absent) | Vidéo de test · 20 s — ✕ « Fermer la vidéo » ; le titre deviendra celui de ta vidéo    |
+| Erreur de lecture (`errorText`)            | — (absent) | La vidéo ne se lance pas ici. — lien « Ouvrir le fichier vidéo » (`errorOpenLabel`)    |
+
+La vidéo actuelle (`public/video/presentation.mp4`, 20 s, sans son) est un clip de test : fond beige, monogramme « FT », « Vidéo de test », « Format 9:16 » et un compteur. Elle est visible en ligne et titrée « Vidéo de test » jusqu'à son remplacement par ta vraie vidéo.
