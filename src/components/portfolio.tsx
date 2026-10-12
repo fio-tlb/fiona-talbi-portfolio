@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
 import { ArrowUp, ArrowUpRight } from "lucide-react";
-import { navigation, profile, projects, sectionContent } from "@/data/portfolio";
+import { introVideo, navigation, profile, projects, sectionContent } from "@/data/portfolio";
 import { usePortfolioNavigation } from "@/hooks/use-portfolio-navigation";
 import { useReveal } from "@/hooks/use-reveal";
 import { ContactSection } from "./portfolio/contact-section";
 import { Hero } from "./portfolio/hero";
+import { IntroVideoProvider } from "./portfolio/intro-video";
 import { ProjectCard } from "./portfolio/project-card";
 import { SectionHeading } from "./portfolio/section-heading";
 import { JourneySection, RecommendationsSection, SkillsSection } from "./portfolio/sections";
@@ -33,7 +34,7 @@ export function Portfolio() {
   }, []);
 
   return (
-    <>
+    <IntroVideoProvider video={introVideo} canInvite={profile.portrait !== null}>
       <a className="skip-link" href="#contenu">
         Aller au contenu
       </a>
@@ -76,6 +77,6 @@ export function Portfolio() {
           </ul>
         </div>
       </footer>
-    </>
+    </IntroVideoProvider>
   );
 }

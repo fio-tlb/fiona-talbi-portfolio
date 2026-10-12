@@ -1,6 +1,7 @@
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { impactStats, profile, projects, sectionContent } from "@/data/portfolio";
 import { publicPath } from "@/lib/public-path";
+import { HeroVideoLink, IntroInvite } from "./intro-video";
 
 const projectIds = new Set(projects.map((project) => project.id));
 
@@ -56,6 +57,7 @@ export function Hero() {
             {content.primaryAction}
             <ArrowDown size={16} aria-hidden />
           </a>
+          <HeroVideoLink />
         </div>
         <ul className="hero-kpis enter enter-4" aria-label={content.statsLabel}>
           {impactStats.map((stat) => (
@@ -88,6 +90,7 @@ export function Hero() {
                 decoding="async"
               />
             </picture>
+            <IntroInvite />
           </div>
         )}
       </div>
