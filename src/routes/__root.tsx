@@ -14,7 +14,7 @@ import appCss from "../styles.css?url";
 import frauncesLatin from "@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2?url";
 import instrumentSansLatin from "@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { profile, seo } from "@/data/portfolio";
+import { seo } from "@/data/portfolio";
 
 function NotFoundComponent() {
   return (
@@ -77,17 +77,13 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  // Réglages communs à toutes les pages. Titre, description, partage et JSON-LD : routes/index.tsx.
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: seo.title },
-      { name: "description", content: seo.description },
-      { name: "author", content: profile.name },
-      { property: "og:title", content: seo.socialTitle },
-      { property: "og:description", content: seo.socialDescription },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { name: "theme-color", content: seo.themeColor },
+      { name: "color-scheme", content: "light" },
     ],
     links: [
       {
@@ -113,6 +109,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "icon",
         href: `${import.meta.env.BASE_URL}favicon.svg`,
         type: "image/svg+xml",
+      },
+      {
+        rel: "apple-touch-icon",
+        href: `${import.meta.env.BASE_URL}apple-touch-icon.png`,
       },
     ],
   }),
