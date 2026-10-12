@@ -116,6 +116,13 @@ export interface PortfolioSeo {
   addressLocality: string;
   addressCountry: string;
 }
+export interface ErrorScreenContent {
+  eyebrow: string;
+  title: string;
+  description: string;
+  homeLabel: string;
+  contactLabel: string;
+}
 
 export const profile: PortfolioProfile = {
   name: "Fiona Talbi",
@@ -147,6 +154,33 @@ export const seo: PortfolioSeo = {
   themeColor: "#f7efe4",
   addressLocality: "Paris",
   addressCountry: "FR",
+};
+
+// Écrans d’erreur de l’application (404 et erreur de chargement). public/404.html reprend
+// le texte « Page introuvable » en HTML statique pour GitHub Pages : le modifier aux deux endroits.
+export const errorContent = {
+  notFound: {
+    eyebrow: "Erreur 404",
+    title: "Page introuvable",
+    description: "Cette page n’existe pas ou a été déplacée. Le portfolio, lui, est toujours là.",
+    homeLabel: "Retour au portfolio",
+    contactLabel: "Ou écrivez-moi :",
+  },
+  error: {
+    eyebrow: "Erreur de chargement",
+    title: "La page n’a pas pu se charger",
+    description:
+      "Un problème est survenu pendant l’affichage. Vous pouvez réessayer ou revenir au portfolio.",
+    homeLabel: "Retour au portfolio",
+    contactLabel: "Ou écrivez-moi :",
+  },
+  retryLabel: "Réessayer",
+  documentTitleSuffix: " — Fiona Talbi",
+} as const satisfies {
+  notFound: ErrorScreenContent;
+  error: ErrorScreenContent;
+  retryLabel: string;
+  documentTitleSuffix: string;
 };
 
 export const navigation: readonly NavigationItem[] = [

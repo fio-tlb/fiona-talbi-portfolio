@@ -6,6 +6,7 @@
 @import "tw-animate-css";
 @import "@fontsource-variable/fraunces/opsz.css";
 @import "@fontsource-variable/instrument-sans/wght.css";
+@import "./styles/error-screen.css";
 
 @custom-variant dark (&:is(.dark *));
 
