@@ -1,0 +1,75 @@
+/* Écrans « Page introuvable » et « La page n'a pas pu se charger » (src/components/error-screen.tsx).
+   Mêmes tokens, marque et boutons que le portfolio ; public/404.html en reprend l'allure en CSS autonome. */
+.error-screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--paper);
+}
+.error-screen-header {
+  border-bottom: 1px solid var(--line);
+}
+.error-screen-header .site-wrap {
+  display: flex;
+  align-items: center;
+  height: var(--header-h);
+}
+.error-screen-main {
+  flex: 1;
+  padding-block: clamp(2.5rem, 14vh, 10rem) var(--space-section);
+}
+.error-screen-eyebrow {
+  margin: 0 0 16px;
+  font-size: var(--text-ui);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+.error-screen h1 {
+  margin: 0;
+  max-width: 16ch;
+  font-size: var(--text-h2);
+  line-height: var(--leading-heading);
+  text-wrap: balance;
+}
+.error-screen-text {
+  max-width: var(--measure);
+  margin: 20px 0 0;
+  font-size: var(--text-lead);
+  line-height: 1.55;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+.error-screen-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 36px;
+}
+.error-screen-contact {
+  margin: 28px 0 0;
+  font-size: var(--text-ui);
+  color: var(--ink-soft);
+}
+.error-screen-contact a {
+  color: var(--bordeaux);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklch, currentColor 40%, transparent);
+  text-underline-offset: 4px;
+  overflow-wrap: anywhere;
+  transition: text-decoration-color var(--motion-base) var(--ease-out);
+}
+.error-screen-contact a:active {
+  opacity: 0.7;
+}
+@media (hover: hover) and (pointer: fine) {
+  .error-screen-contact a:hover {
+    text-decoration-color: currentColor;
+  }
+}
+@media (max-width: 480px) {
+  .error-screen-actions .action {
+    flex: 1 1 100%;
+  }
+}

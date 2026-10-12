@@ -76,6 +76,8 @@ export interface Education {
   period: string | null;
   title: string;
   school: string;
+  /** Nom exact de l’établissement, repris tel quel dans les données structurées (JSON-LD). */
+  institution: string;
 }
 export interface SkillGroup {
   id: string;
@@ -141,10 +143,30 @@ export interface SectionHeadingContent {
 }
 
 export interface PortfolioSeo {
+  /** Adresse publique canonique, avec la barre finale : base des URL absolues (og:url, og:image…). */
+  siteUrl: string;
+  locale: string;
   title: string;
+  /** 160 caractères au plus : au-delà, Google tronque la description. */
   description: string;
   socialTitle: string;
   socialDescription: string;
+  /** Fichier de public/ ; changer de nom (v2, v3…) à chaque nouvelle image, LinkedIn la garde en cache. */
+  ogImage: string;
+  ogImageAlt: string;
+  ogImageWidth: number;
+  ogImageHeight: number;
+  /** Couleur de la barre du navigateur mobile : hex de --paper. */
+  themeColor: string;
+  addressLocality: string;
+  addressCountry: string;
+}
+export interface ErrorScreenContent {
+  eyebrow: string;
+  title: string;
+  description: string;
+  homeLabel: string;
+  contactLabel: string;
 }
 
 export const profile: PortfolioProfile = {
@@ -169,12 +191,49 @@ export const profile: PortfolioProfile = {
 };
 
 export const seo: PortfolioSeo = {
-  title: "Fiona Talbi — Portfolio Marketing 360 & Communication",
+  siteUrl: "https://fio-tlb.github.io/fiona-talbi-portfolio/",
+  locale: "fr_FR",
+  title: "Fiona Talbi — Portfolio marketing 360 & communication",
   description:
-    "Fiona Talbi, professionnelle du marketing 360 et de la communication à Paris. Découvrez mes projets chez Logitech, CosmétiCar et Massilia, mes résultats et mon parcours international.",
-  socialTitle: "Fiona Talbi — Marketing, créativité & impact",
+    "Portfolio de Fiona Talbi, marketing 360 et communication à Paris : projets Logitech, CosmétiCar et Massilia, résultats chiffrés et parcours international.",
+  socialTitle: "Fiona Talbi — Marketing 360 & communication, Paris",
   socialDescription:
-    "Plus de 3 ans d’expérience, +30 % de ventes et 140 top stores activés : découvrez le portfolio de Fiona Talbi.",
+    "Projets Logitech, CosmétiCar et Massilia : +30 % de ventes, 140 top stores équipés dès le lancement et 500+ abonnés Instagram en moins d’un an.",
+  ogImage: "og-image-v1.jpg",
+  ogImageAlt:
+    "Fiona Talbi, marketing 360 et communication à Paris : +30 % de ventes et 140 top stores équipés chez Logitech, 500+ abonnés Instagram pour CosmétiCar.",
+  ogImageWidth: 1200,
+  ogImageHeight: 630,
+  themeColor: "#f7efe4",
+  addressLocality: "Paris",
+  addressCountry: "FR",
+};
+
+// Écrans d’erreur de l’application (404 et erreur de chargement). public/404.html reprend
+// le texte « Page introuvable » en HTML statique pour GitHub Pages : le modifier aux deux endroits.
+export const errorContent = {
+  notFound: {
+    eyebrow: "Erreur 404",
+    title: "Page introuvable",
+    description: "Cette page n’existe pas ou a été déplacée. Le portfolio, lui, est toujours là.",
+    homeLabel: "Retour au portfolio",
+    contactLabel: "Ou écrivez-moi :",
+  },
+  error: {
+    eyebrow: "Erreur de chargement",
+    title: "La page n’a pas pu se charger",
+    description:
+      "Un problème est survenu pendant l’affichage. Vous pouvez réessayer ou revenir au portfolio.",
+    homeLabel: "Retour au portfolio",
+    contactLabel: "Ou écrivez-moi :",
+  },
+  retryLabel: "Réessayer",
+  documentTitleSuffix: " — Fiona Talbi",
+} as const satisfies {
+  notFound: ErrorScreenContent;
+  error: ErrorScreenContent;
+  retryLabel: string;
+  documentTitleSuffix: string;
 };
 
 // Formation, certifications et langues sont des sous-parties (#formation, #certifications, #langues)
@@ -320,24 +379,28 @@ export const education: readonly Education[] = [
     period: "2024 – 2026",
     title: "Master Marketing Digital & Innovation",
     school: "IÉSEG School of Management, Paris",
+    institution: "IÉSEG School of Management",
   },
   {
     id: "education-gcu",
     period: "2023 – 2024",
     title: "MSc Luxury Marketing",
     school: "GCU London, Londres",
+    institution: "GCU London",
   },
   {
     id: "education-essca",
     period: "2019 – 2022",
     title: "Bachelor International Management, spécialisation marketing",
     school: "ESSCA",
+    institution: "ESSCA",
   },
   {
     id: "education-dorset",
     period: null,
     title: "Semestre d’échange",
     school: "Dorset College, Dublin",
+    institution: "Dorset College",
   },
 ];
 
