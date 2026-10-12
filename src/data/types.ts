@@ -72,6 +72,8 @@ export interface Brand {
   id: BrandId;
   name: string;
   logo: LogoImage;
+  /** Variante lisible dans les tuiles étroites, sans changer le logo horizontal du hero. */
+  compactLogo?: LogoImage;
 }
 /** La première photo sert de couverture. Une seule image suffit ; les variantes sont facultatives. */
 export interface ProjectImage extends ImageAsset {

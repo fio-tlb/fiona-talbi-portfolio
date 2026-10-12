@@ -64,4 +64,4 @@ Si l'adresse du site change (nom de domaine personnel), mettre à jour `seo.site
 
 ## Français et anglais
 
-Le sélecteur FR/EN est près du logo. La langue du navigateur est détectée à la première visite ; un choix manuel est mémorisé. La version anglaise est accessible à `/en/`. Les textes, projets et PDF utilisent la langue choisie. Pour ajouter vos CV, lettres de motivation et recommandations FR/EN, voir [Langues et documents](docs/langues-et-documents.md) et renseigner `src/data/documents.ts`.
+La navbar garde uniquement le logo. Le sélecteur FR/EN est entre Contact et le menu sur mobile, tout à droite sur tablette et ordinateur. La langue du navigateur est détectée à la première visite ; un choix manuel est mémorisé. La version anglaise est accessible à `/en/`. Les textes, projets et PDF utilisent la langue choisie. Pour ajouter vos CV, lettres de motivation et recommandations FR/EN, voir [Langues et documents](docs/langues-et-documents.md) et renseigner `src/data/documents.ts`.

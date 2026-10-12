@@ -80,7 +80,7 @@ export function ExperienceSection() {
               >
                 <div className="experience-head">
                   <span className="logo-tile">
-                    <Logo logo={brand.logo} alt="" />
+                    <Logo logo={brand.compactLogo ?? brand.logo} alt="" />
                   </span>
                   {experience.period && <p className="chip">{experience.period}</p>}
                 </div>

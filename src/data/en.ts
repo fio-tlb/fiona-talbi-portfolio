@@ -3,6 +3,13 @@ import { documentPaths } from "./documents";
 import { projects } from "./projects/en";
 import type { PortfolioData } from "./localized";
 
+/** Une nouvelle entrée doit être traduite explicitement : aucun repli français silencieux. */
+function requiredTranslation<T>(translations: Readonly<Record<string, T>>, id: string): T {
+  const translation = translations[id];
+  if (translation === undefined) throw new Error("Missing English translation: " + id);
+  return translation;
+}
+
 const english: PortfolioData = {
   ...original,
   documents: documentPaths.en,
@@ -66,7 +73,7 @@ const english: PortfolioData = {
       },
       "marketing-experience": { value: "3+ years", label: "in marketing and communications" },
     };
-    return { ...stat, ...translations[stat.id] };
+    return { ...stat, ...requiredTranslation(translations, stat.id) };
   }),
   experiences: original.experiences.map((item) => {
     const translations: Record<string, { role: string; description: string }> = {
@@ -86,7 +93,7 @@ const english: PortfolioData = {
           "I signed French and Spanish influencers and managed relationships with Chinese suppliers at the start of the pandemic.",
       },
     };
-    return { ...item, ...translations[item.id] };
+    return { ...item, ...requiredTranslation(translations, item.id) };
   }),
   education: original.education.map((item) => {
     const titles: Record<string, string> = {
@@ -95,7 +102,7 @@ const english: PortfolioData = {
       "education-essca": "Bachelor’s in International Management, Marketing specialisation",
       "education-dorset": "Exchange semester",
     };
-    return { ...item, title: titles[item.id] ?? item.title };
+    return { ...item, title: requiredTranslation(titles, item.id) };
   }),
   skills: [
     {
@@ -144,6 +151,7 @@ const english: PortfolioData = {
     navigation: {
       homeLabel: "home",
       languageLabel: "Language",
+      languageTitle: "Site language",
       contactLabel: "Contact",
       menuLabel: "Navigation menu",
       mainLabel: "Main navigation",

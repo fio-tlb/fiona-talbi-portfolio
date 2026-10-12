@@ -103,10 +103,11 @@ describe("Cards and logos", () => {
     const cards = career.querySelectorAll(".experience-card");
     expect(cards).toHaveLength(experiences.length);
     experiences.forEach((experience, index) => {
+      const brand = brands[experience.brandId];
       const logo = cards[index]!.querySelector("img")!;
       expect(logo).toHaveAttribute(
         "src",
-        import.meta.env.BASE_URL + brands[experience.brandId].logo.src,
+        import.meta.env.BASE_URL + (brand.compactLogo ?? brand.logo).src,
       );
       // The company name is written in the card: the logo is decorative.
       expect(logo).toHaveAttribute("alt", "");

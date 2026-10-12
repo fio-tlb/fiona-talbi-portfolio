@@ -73,7 +73,7 @@ export function ProjectPage({ project }: { project: Project }) {
             <div className="project-hero-text enter">
               <div className="project-hero-meta">
                 <span className="project-logo-tile">
-                  <Logo logo={brand.logo} alt={brand.name} />
+                  <Logo logo={brand.compactLogo ?? brand.logo} alt={brand.name} />
                 </span>
                 <p className="chip">{project.category}</p>
               </div>

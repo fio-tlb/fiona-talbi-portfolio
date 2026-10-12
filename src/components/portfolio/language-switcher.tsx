@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useRouter } from "@tanstack/react-router";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, Globe2 } from "lucide-react";
 import { useLocale, usePortfolio } from "@/hooks/use-portfolio";
 import {
   homeRoute,
@@ -17,6 +17,7 @@ const names: Record<Locale, string> = { fr: "Français", en: "English" };
 export function LanguageSwitcher({ activeSection }: { activeSection: string }) {
   const locale = useLocale();
   const { sectionContent } = usePortfolio();
+  const content = sectionContent.navigation;
   const router = useRouter({ warn: false });
   const ref = useRef<HTMLDetailsElement>(null);
   const location = router?.state.location;
@@ -65,30 +66,42 @@ export function LanguageSwitcher({ activeSection }: { activeSection: string }) {
   return (
     <details className="language-switcher" ref={ref}>
       <summary
-        aria-label={sectionContent.navigation.languageLabel + ": " + names[locale]}
-        title={sectionContent.navigation.languageLabel}
+        aria-label={content.languageLabel + ": " + names[locale]}
+        title={content.languageLabel}
       >
-        <span>{locale.toUpperCase()}</span>
-        <ChevronDown size={12} aria-hidden />
+        <Globe2 className="language-globe" size={16} strokeWidth={1.75} aria-hidden />
+        <span className="language-code">{locale.toUpperCase()}</span>
+        <ChevronDown className="language-chevron" size={14} aria-hidden />
       </summary>
-      <nav className="language-options" aria-label={sectionContent.navigation.languageLabel}>
-        {locales.map((next) => (
-          <a
-            key={next}
-            href={href(next)}
-            lang={next}
-            hrefLang={next}
-            aria-current={next === locale ? "true" : undefined}
-            onClick={() => {
-              rememberLocale(next);
-              if (ref.current) ref.current.open = false;
-            }}
-          >
-            <span>{names[next]}</span>
-            {next === locale && <Check size={16} aria-hidden />}
-          </a>
-        ))}
-      </nav>
+      <div className="language-options">
+        <p className="language-options-title">{content.languageTitle}</p>
+        <nav aria-label={content.languageLabel}>
+          {locales.map((next) => (
+            <a
+              key={next}
+              href={href(next)}
+              hrefLang={next}
+              aria-current={next === locale ? "true" : undefined}
+              onClick={() => {
+                rememberLocale(next);
+                if (ref.current) ref.current.open = false;
+              }}
+            >
+              <span className="language-option-code" aria-hidden>
+                {next.toUpperCase()}
+              </span>
+              <span className="language-option-name" lang={next}>
+                {names[next]}
+              </span>
+              {next === locale && (
+                <span className="language-option-check" aria-hidden>
+                  <Check size={15} strokeWidth={2.25} />
+                </span>
+              )}
+            </a>
+          ))}
+        </nav>
+      </div>
     </details>
   );
 }

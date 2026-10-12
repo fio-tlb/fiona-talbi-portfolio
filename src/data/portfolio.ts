@@ -108,6 +108,12 @@ export const brands: Readonly<Record<BrandId, Brand>> = {
     id: "massilia",
     name: "Massilia E-consulting",
     logo: { src: "logos/massilia-e-consulting.svg", width: 970, height: 96, scale: 0.92 },
+    compactLogo: {
+      src: "logos/massilia-e-consulting-stacked.svg",
+      width: 364,
+      height: 169,
+      scale: 1.9,
+    },
   },
 };
 
@@ -335,6 +341,7 @@ export const sectionContent = {
   navigation: {
     homeLabel: "accueil",
     languageLabel: "Langue",
+    languageTitle: "Langue du site",
     contactLabel: "Contact",
     menuLabel: "Menu de navigation",
     mainLabel: "Navigation principale",

@@ -4,7 +4,7 @@
 
 - Français : `/`. Anglais : `/en/`. Les quatre projets existent dans les deux langues ; leurs identifiants et leurs ancres restent stables.
 - À la première visite, la langue du navigateur choisit français ou anglais. Si aucune langue prise en charge n’est trouvée, le français est utilisé.
-- Le bouton FR/EN, près du logo, permet de choisir explicitement. Ce choix est conservé dans `localStorage["ft-language"]`. Le paramètre `?lang=fr` ou `?lang=en` protège aussi le choix quand le stockage est bloqué.
+- Le bouton FR/EN permet de choisir explicitement : entre Contact et le menu sur mobile, tout à droite sur tablette et ordinateur. La navbar affiche uniquement le logo. Ce choix est conservé dans `localStorage["ft-language"]`. Le paramètre `?lang=fr` ou `?lang=en` protège aussi le choix quand le stockage est bloqué.
 - Une adresse `/en/…` partagée s’ouvre en anglais. Le changement de langue conserve le projet, les paramètres et la rubrique de l’accueil.
 - Les pages sont précompilées dans chaque langue : elles fonctionnent aussi sans JavaScript. La détection automatique nécessite JavaScript.
 

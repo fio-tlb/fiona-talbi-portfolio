@@ -77,24 +77,20 @@ export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
   return (
     <header className="site-header">
       <div className="site-wrap header-inner">
-        <div className="header-identity">
-          <HomeLink
-            section="accueil"
-            className="header-brand"
-            aria-label={profile.name + ", " + content.homeLabel}
-            onClick={closeMenu}
-          >
-            <img
-              className="header-logo"
-              src={publicPath("favicon.svg")}
-              width={36}
-              height={36}
-              alt=""
-            />
-            <span className="header-name">{profile.name}</span>
-          </HomeLink>
-          <LanguageSwitcher activeSection={activeSection} />
-        </div>
+        <HomeLink
+          section="accueil"
+          className="header-brand"
+          aria-label={profile.name + ", " + content.homeLabel}
+          onClick={closeMenu}
+        >
+          <img
+            className="header-logo"
+            src={publicPath("favicon.svg")}
+            width={36}
+            height={36}
+            alt=""
+          />
+        </HomeLink>
         <nav className="desktop-nav" aria-label={content.mainLabel}>
           {items.map(renderLink)}
         </nav>
@@ -108,6 +104,7 @@ export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
             <span>{content.contactLabel}</span>
             <Mail size={16} aria-hidden />
           </HomeLink>
+          <LanguageSwitcher activeSection={activeSection} />
           <details className="mobile-menu" ref={menuRef}>
             <summary aria-label={content.menuLabel}>
               <Menu className="menu-open-icon" size={20} aria-hidden />
