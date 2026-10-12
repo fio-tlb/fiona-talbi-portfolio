@@ -45,7 +45,7 @@ function neighbours(project: Project) {
 export function ProjectPage({ project }: { project: Project }) {
   const mainRef = useRef<HTMLElement>(null);
   const { progressRef } = usePortfolioNavigation(noSections);
-  useReveal(mainRef);
+  useReveal(mainRef, { includeVisible: true });
   const lightbox = useLightbox(project.gallery.length);
 
   const brand = brands[project.brandId];
@@ -68,12 +68,12 @@ export function ProjectPage({ project }: { project: Project }) {
     >
       <article aria-labelledby="projet-titre">
         <header className="site-wrap project-hero">
-          <HomeLink section="projets" className="project-back">
+          <HomeLink section="projets" className="project-back enter-still">
             <ArrowLeft size={16} aria-hidden />
             {sectionContent.projects.backLabel}
           </HomeLink>
           <div className="project-hero-grid">
-            <div className="project-hero-text">
+            <div className="project-hero-text enter">
               <div className="project-hero-meta">
                 <span className="project-logo-tile">
                   <Logo logo={brand.logo} alt={brand.name} />
@@ -85,7 +85,7 @@ export function ProjectPage({ project }: { project: Project }) {
               </h1>
               <p className="project-hero-lead">{project.context}</p>
             </div>
-            <section className="project-results" aria-labelledby="projet-resultats">
+            <section className="project-results enter enter-1" aria-labelledby="projet-resultats">
               <h2 id="projet-resultats" className="project-label">
                 {text.resultsTitle}
               </h2>
@@ -105,13 +105,14 @@ export function ProjectPage({ project }: { project: Project }) {
         </header>
 
         {cover && (
-          <figure className="site-wrap project-cover-figure">
+          <figure className="site-wrap project-cover-figure enter enter-2">
             <PhotoLink
               image={cover}
               index={0}
               lightbox={lightbox}
               sizes={coverSizes}
               loading="eager"
+              fetchPriority="high"
               className="project-cover-link"
             />
             <figcaption className="photo-caption">{cover.caption}</figcaption>
@@ -213,7 +214,7 @@ export function ProjectPage({ project }: { project: Project }) {
           </section>
         )}
 
-        <nav className="site-wrap project-pager" aria-label={text.pagerLabel}>
+        <nav className="site-wrap project-pager" aria-label={text.pagerLabel} data-reveal>
           {[
             { project: previous, label: text.previousLabel, rel: "prev", isNext: false },
             { project: next, label: text.nextLabel, rel: "next", isNext: true },

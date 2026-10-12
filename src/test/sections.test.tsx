@@ -36,8 +36,8 @@ describe("Page structure", () => {
       expect(link).toHaveAttribute("href", import.meta.env.BASE_URL + "#" + navigation[index]!.id),
     );
     expect(links.map((link) => link.textContent)).toEqual([
-      "Projets",
       "Expériences",
+      "Projets",
       "Compétences",
       "Formation",
       "Certifications",

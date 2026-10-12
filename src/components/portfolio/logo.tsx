@@ -1,4 +1,5 @@
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
+import { ImageOff } from "lucide-react";
 import type { LogoImage } from "@/data/portfolio";
 import { publicPath } from "@/lib/public-path";
 
@@ -15,8 +16,25 @@ type LogoProps = {
  * Logo SVG monochrome de public/logos. La hauteur vient de `--logo-h` (fixée par le conteneur),
  * corrigée par `logo.scale` pour que des logos de formes différentes paraissent de même taille.
  */
-export function Logo({ logo, alt, className, loading }: LogoProps) {
+export function Logo(props: LogoProps) {
+  return <LogoImageView key={props.logo.src} {...props} />;
+}
+
+function LogoImageView({ logo, alt, className, loading = "lazy" }: LogoProps) {
+  const [failed, setFailed] = useState(false);
   const style = logo.scale ? ({ "--logo-scale": logo.scale } as CSSProperties) : undefined;
+  if (failed) {
+    return (
+      <span
+        className="brand-logo-fallback"
+        role={alt ? "img" : undefined}
+        aria-label={alt || undefined}
+        aria-hidden={alt ? undefined : true}
+      >
+        {alt || <ImageOff size={18} aria-hidden />}
+      </span>
+    );
+  }
   return (
     <img
       className={className ? "brand-logo " + className : "brand-logo"}
@@ -27,6 +45,7 @@ export function Logo({ logo, alt, className, loading }: LogoProps) {
       style={style}
       loading={loading}
       decoding="async"
+      onError={() => setFailed(true)}
     />
   );
 }

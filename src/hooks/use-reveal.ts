@@ -1,7 +1,10 @@
 import { useEffect, type RefObject } from "react";
 import { MOTION } from "@/lib/motion";
 
-export function useReveal(rootRef: RefObject<HTMLElement | null>): void {
+export function useReveal(
+  rootRef: RefObject<HTMLElement | null>,
+  { includeVisible = false }: { includeVisible?: boolean } = {},
+): void {
   useEffect(() => {
     const root = rootRef.current;
 
@@ -15,11 +18,13 @@ export function useReveal(rootRef: RefObject<HTMLElement | null>): void {
       return;
     }
 
-    // Blocks already painted on screen at mount (reload mid-page, deep link) stay as they are:
-    // only content still below the fold fades in, so nothing visible blinks after hydration.
+    // On the home page, a reload or deep link keeps visible content steady.
+    // Project pages can also reveal their initially visible panels.
     const viewportHeight = window.innerHeight;
     const pending = new Set(
-      elements.filter((element) => element.getBoundingClientRect().top >= viewportHeight),
+      elements.filter(
+        (element) => includeVisible || element.getBoundingClientRect().top >= viewportHeight,
+      ),
     );
     const animations = new Set<Animation>();
     const motionPreference =
@@ -141,5 +146,5 @@ export function useReveal(rootRef: RefObject<HTMLElement | null>): void {
         }
       }
     };
-  }, [rootRef]);
+  }, [rootRef, includeVisible]);
 }

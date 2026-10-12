@@ -65,6 +65,7 @@ type PhotoLinkProps = {
   lightbox: Lightbox;
   sizes: string;
   loading?: "lazy" | "eager";
+  fetchPriority?: "high" | "low" | "auto";
   className?: string;
   children?: ReactNode;
 };
@@ -79,6 +80,7 @@ export function PhotoLink({
   lightbox,
   sizes,
   loading,
+  fetchPriority,
   className,
   children,
 }: PhotoLinkProps) {
@@ -95,7 +97,7 @@ export function PhotoLink({
       onClick={onClick}
     >
       <span className="sr-only">{text.enlargeLabel + " : "}</span>
-      <ProjectPicture image={image} sizes={sizes} loading={loading} />
+      <ProjectPicture image={image} sizes={sizes} loading={loading} fetchPriority={fetchPriority} />
       <span className="photo-link-zoom" aria-hidden>
         <Maximize2 size={16} />
       </span>
@@ -183,6 +185,7 @@ export function GalleryLightbox({
                 image={image}
                 sizes="(max-width: 900px) 100vw, min(1400px, 100vw - 160px)"
                 loading="eager"
+                fetchPriority="high"
                 className="lightbox-picture"
               />
               <figcaption className="lightbox-caption">{image.caption}</figcaption>

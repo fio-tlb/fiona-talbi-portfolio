@@ -31,6 +31,7 @@ export function Portfolio() {
       topId="accueil"
     >
       <Hero />
+      <ExperienceSection />
       <section id="projets" className="section site-wrap" aria-labelledby="projets-titre">
         <SectionHeading id="projets-titre" {...sectionContent.projects} />
         <ul className="projects-grid" role="list">
@@ -41,7 +42,6 @@ export function Portfolio() {
           ))}
         </ul>
       </section>
-      <ExperienceSection />
       <SkillsSection />
       <EducationSection />
       <CertificationsSection />

@@ -124,8 +124,8 @@
   --content: 75rem; /* 1200 px */
   --gutter: clamp(1rem, 0.25rem + 3.2vw, 2.5rem); /* 16 → 40 */
   --measure: 36rem;
-  --space-section: clamp(4.5rem, 3rem + 6vw, 8rem); /* 72 → 128 */
-  --space-block: clamp(2rem, 1.5rem + 2vw, 3rem); /* 32 → 48 */
+  --space-section: clamp(2.5rem, 1.75rem + 2.5vw, 4rem); /* 40 → 64 */
+  --space-block: clamp(1.25rem, 1rem + 1.5vw, 2rem); /* 20 → 32 */
   --header-h: 4.5rem; /* 72 px, 60 px sur mobile */
   --grid-gap: clamp(0.75rem, 0.5rem + 0.9vw, 1.5rem); /* 12 → 24, entre les cartes */
 
@@ -316,12 +316,83 @@
   box-shadow: 0 1px 2px color-mix(in oklch, var(--ink) 5%, transparent);
 }
 
+/* Médias : une boîte stable avant le téléchargement, des variantes choisies par le navigateur. */
+.responsive-image {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: var(--media-aspect);
+  overflow: hidden;
+  background: var(--surface-sunk);
+}
+.responsive-image > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.responsive-image[data-state="error"] > img {
+  visibility: hidden;
+}
+.responsive-image-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--ink-soft);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .responsive-image[data-state="loading"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklch, var(--surface) 60%, transparent),
+      transparent
+    );
+    animation: media-sheen 1.2s var(--ease-out) 2;
+  }
+  .responsive-image[data-state="loaded"] > img {
+    animation: media-in var(--motion-base) var(--ease-out);
+  }
+}
+@keyframes media-sheen {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes media-in {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 1;
+  }
+}
 /* Logo d'entreprise ou d'outil : hauteur fixée par --logo-h, corrigée par --logo-scale (données). */
 .brand-logo {
   display: block;
   width: auto;
   height: calc(var(--logo-h, 20px) * var(--logo-scale, 1));
-  max-width: none;
+  max-width: 100%;
+  object-fit: contain;
+  min-width: 0;
+  flex-shrink: 1;
+}
+.brand-logo-fallback {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  overflow: hidden;
+  font-size: var(--text-small);
+  color: var(--ink-soft);
 }
 
 /* ---------- En-tête ---------- */
@@ -593,6 +664,10 @@
   border-radius: 50%;
   background: var(--sky-soft);
   color: var(--bordeaux);
+  flex-shrink: 0;
+}
+.hero-places-text {
+  word-spacing: 0.2em;
 }
 
 /* Chiffres clés : bento de 4 cartes, la première mise en avant en bordeaux.
@@ -728,8 +803,7 @@
   font-weight: 600;
   line-height: 1.2;
   white-space: nowrap;
-  /* Arrive après l'entrée du hero (et après la modale d'accueil, qui s'ouvre à 800 ms). */
-  animation: fab-in var(--motion-slow) var(--ease-out) 1.2s backwards;
+  /* Repère permanent : le changement de page ne retarde pas son apparition. */
   transition:
     opacity var(--motion-base) var(--ease-out),
     translate var(--motion-base) var(--ease-out),
@@ -776,13 +850,6 @@ html:has(.video-fab) {
 body:has(.video-fab) .site-footer {
   padding-bottom: calc(52px + max(16px, env(safe-area-inset-bottom)) + 16px);
 }
-@keyframes fab-in {
-  from {
-    opacity: 0;
-    translate: 0 12px;
-  }
-}
-
 /* Modale d'accueil : carte centrée (vignette | texte), feuille du bas arrondie sur téléphone.
    La preflight de Tailwind met margin: 0 partout : margin: auto recentre le <dialog>. */
 .video-welcome {
@@ -1118,7 +1185,7 @@ html:has(.video-welcome[open], .intro-video-dialog[open]) {
    seconde ligne éventuelle en bordeaux, description courte. */
 .section-heading {
   max-width: 52rem;
-  margin-bottom: clamp(2rem, 1.25rem + 2.4vw, 3.5rem);
+  margin-bottom: clamp(1.5rem, 1rem + 1.8vw, 2.5rem);
 }
 .section-eyebrow {
   display: inline-flex;
@@ -2121,8 +2188,8 @@ html:has(.video-welcome[open], .intro-video-dialog[open]) {
   }
 }
 
-/* ---------- Entrée du hero ---------- */
-/* Le titre et le visuel sont peints dès le premier rendu (pas d'opacité 0) : seul un léger glissement. */
+/* ---------- Entrée de l'accueil et des pages projet ---------- */
+/* Fondu et léger glissement ; les préférences de mouvement réduit les désactivent plus bas. */
 .enter {
   animation: hero-enter 550ms var(--ease-out) both;
 }

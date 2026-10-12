@@ -4,7 +4,6 @@
 .project-page {
   padding-bottom: clamp(3rem, 2rem + 3vw, 5rem);
 }
-
 /* ---------- En-tête : retour, entreprise, titre, contexte et résultats ---------- */
 .project-hero {
   padding-top: clamp(1.25rem, 0.5rem + 2.5vh, 2.5rem);
@@ -523,6 +522,15 @@ html:has(.lightbox[open]) {
 .lightbox-picture {
   display: block;
   min-height: 0;
+}
+.lightbox-picture.responsive-image {
+  display: grid;
+  place-items: center;
+  aspect-ratio: auto;
+  background: transparent;
+}
+.lightbox-picture.responsive-image > img {
+  object-fit: contain;
 }
 .lightbox-picture img {
   width: auto;

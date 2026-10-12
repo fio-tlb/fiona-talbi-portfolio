@@ -10,6 +10,7 @@ import {
 } from "@/data/portfolio";
 import { publicPath } from "@/lib/public-path";
 import { Logo } from "./logo";
+import { ResponsiveImage } from "./responsive-image";
 
 const projectIds = new Set(projects.map((project) => project.id));
 // Une entrée par entreprise, dans l'ordre du parcours.
@@ -17,25 +18,12 @@ const heroBrands = [...new Set(experiences.map((experience) => experience.brandI
   (id) => brands[id],
 );
 
-/** « images/portrait.jpg » → « images/portrait-600.avif » (la plus grande largeur garde le nom de base). */
-function variant(src: string, width: number, largest: number, extension: "jpg" | "avif") {
-  const base = src.replace(/\.[a-z0-9]+$/i, "");
-  return publicPath(
-    width === largest ? base + "." + extension : base + "-" + width + "." + extension,
-  );
-}
-
 // Toute la largeur de la grille sur mobile, puis à hauteur bornée par la fenêtre (styles.css, .hero-portrait).
 const portraitSizes = "(max-width: 720px) calc(100vw - 32px), (max-width: 980px) 19rem, 24rem";
 
 export function Hero() {
   const content = sectionContent.hero;
   const portrait = profile.portrait;
-  const largest = portrait ? Math.max(...portrait.widths) : 0;
-  const srcSet = (extension: "jpg" | "avif") =>
-    portrait?.widths
-      .map((width) => variant(portrait.src, width, largest, extension) + " " + width + "w")
-      .join(", ");
 
   return (
     <section id="accueil" className="hero" aria-labelledby="hero-title">
@@ -108,24 +96,18 @@ export function Hero() {
         {portrait && (
           <div className="hero-visual enter-still enter-1">
             <div className="hero-portrait">
-              <picture>
-                <source type="image/avif" srcSet={srcSet("avif")} sizes={portraitSizes} />
-                <img
-                  src={publicPath(portrait.src)}
-                  srcSet={srcSet("jpg")}
-                  sizes={portraitSizes}
-                  width={portrait.width}
-                  height={portrait.height}
-                  alt={portrait.alt}
-                  decoding="async"
-                />
-              </picture>
+              <ResponsiveImage
+                image={portrait}
+                alt={portrait.alt}
+                sizes={portraitSizes}
+                fetchPriority="high"
+              />
             </div>
             <p className="hero-places">
               <span className="hero-places-icon" aria-hidden>
                 <MapPin size={16} />
               </span>
-              {profile.places}
+              <span className="hero-places-text">{profile.places}</span>
             </p>
           </div>
         )}
