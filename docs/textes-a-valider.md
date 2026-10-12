@@ -156,20 +156,22 @@ Les deux PDF actuels (`public/documents/recommandation-01.pdf` et `-02.pdf`) son
 
 Le CV (`public/documents/cv-fiona-talbi.pdf`) est un fichier provisoire généré uniquement à partir des données du site (`bun scripts/share-assets/cv.mjs`, à relancer après chaque correction de texte) : remplace-le par ton vrai CV (même nom de fichier).
 
-## Vidéo de présentation (lot 4)
+## Vidéo de présentation (2e passe, 12 octobre 2026)
 
-Textes nouveaux (rien n'existait avant), dans `sectionContent.introVideo` et `introVideo` :
+La vidéo est proposée dans une modale à ta première visite de l'accueil, puis reste accessible par le bouton « Voir la vidéo » en bas à droite de toutes les pages. Le bouton « Ma présentation » du hero, le bandeau « Regarder ma présentation · Plus tard » du portrait et la pastille ▶ / ✕ sont supprimés. Textes dans `sectionContent.introVideo` et `introVideo` :
 
-| Où                                                                              | Avant      | Après                                                                                  |
-| ------------------------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------- |
-| Nom de l'invitation et de la pastille pour les lecteurs d'écran (`inviteLabel`) | — (absent) | Vidéo de présentation                                                                  |
-| Hero, bouton secondaire (`heroLabel`)                                           | — (absent) | ▶ Ma présentation (rond ▶ seul sous 1000 px ; lu « Ma présentation (vidéo, 20 s) »)    |
-| Bandeau sur le portrait (`watchLabel`)                                          | — (absent) | ▶ Regarder ma présentation · 20 s — bouton « Plus tard » (`laterLabel`)                |
-| Pastille en bas à droite                                                        | — (absent) | ▶ « Regarder ma présentation (20 s) » et ✕ « Masquer la vidéo » (noms lus, sans texte) |
-| Lecteur (`introVideo.title`, `closeLabel`)                                      | — (absent) | Vidéo de test · 20 s — ✕ « Fermer la vidéo » ; le titre deviendra celui de ta vidéo    |
-| Erreur de lecture (`errorText`)                                                 | — (absent) | La vidéo ne se lance pas ici. — lien « Ouvrir le fichier vidéo » (`errorOpenLabel`)    |
+| Où                                                      | Avant (lot 4)                                                     | Après                                                                                     |
+| ------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Modale d'accueil, sur-titre (`welcomeLabel`)            | — (absent)                                                        | Vidéo de présentation                                                                     |
+| Modale d'accueil, titre (`welcomeTitle`)                | — (absent)                                                        | On dit qu'une image vaut mille mots…                                                      |
+| Modale d'accueil, phrase (`welcomeText`)                | — (absent)                                                        | …alors j'ai préféré une vidéo : mon parcours en 20 s, de vive voix. (durée réelle)        |
+| Modale d'accueil, boutons (`watchLabel`, `ignoreLabel`) | Regarder ma présentation · Plus tard (bandeau du portrait)        | Voir la vidéo · Ignorer                                                                   |
+| Bouton flottant (`fabLabel`, `fabNameSuffix`)           | Pastille ▶ « Regarder ma présentation » et ✕ « Masquer la vidéo » | ▶ Voir la vidéo (texte visible, sans croix ; lu « Voir la vidéo de présentation (20 s) ») |
+| Hero, bouton secondaire (`heroLabel`)                   | ▶ Ma présentation                                                 | Supprimé (remplacé par la modale et le bouton flottant)                                   |
+| Lecteur (`introVideo.title`, `closeLabel`)              | Vidéo de test · 20 s — ✕ « Fermer la vidéo »                      | Inchangé ; le titre deviendra celui de ta vidéo                                           |
+| Erreur de lecture (`errorText`, `errorOpenLabel`)       | La vidéo ne se lance pas ici. — Ouvrir le fichier vidéo           | Inchangé                                                                                  |
 
-La vidéo actuelle (`public/video/presentation.mp4`, 20 s, sans son) est un clip de test : fond beige, monogramme « FT », « Vidéo de test », « Format 9:16 » et un compteur. Elle est visible en ligne et titrée « Vidéo de test » jusqu'à son remplacement par ta vraie vidéo.
+« De vive voix » suppose une vidéo parlée : à ajuster si ta vidéo est sans parole. La vidéo actuelle (`public/video/presentation.mp4`, 20 s, sans son) est un clip de test : fond beige, monogramme « FT », « Vidéo de test », « Format 9:16 » et un compteur. Elle est visible en ligne et titrée « Vidéo de test » jusqu'à son remplacement par ta vraie vidéo.
 
 ## Partage, SEO et pages d'erreur (lot 5)
 
