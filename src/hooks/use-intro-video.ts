@@ -6,12 +6,6 @@ import type { IntroVideo } from "@/data/portfolio";
 export type IntroVideoChoice = "ignored" | "watched";
 
 const STORAGE_PREFIX = "ft-intro-video:";
-/**
- * Valeurs des chiffres clés (hero de l'accueil, résultats d'une page projet) : jamais sous le
- * bouton. Libellés et sources peuvent passer dessous : le bouton reste ainsi visible dès l'arrivée
- * sur presque tous les écrans.
- */
-const FIGURE_TEXT = ".hero-kpi-value, .project-kpi-value";
 /** Délai avant la modale d'accueil : le hero a fini d'entrer (550 ms) et la page est posée. */
 export const WELCOME_DELAY_MS = 800;
 /** Au-delà, le visiteur a commencé à lire la page : pas de modale. */
@@ -64,8 +58,6 @@ export type IntroVideoController = {
   welcomeMounted: boolean;
   /** Une des deux fenêtres est ouverte : le bouton flottant s'efface. */
   dialogOpen: boolean;
-  /** Le bouton flottant masquerait un chiffre clé du hero (haut de l'accueil) : il attend. */
-  fabCovering: boolean;
   /** La <video> n'existe qu'après le premier clic : aucun octet chargé avant. */
   playerMounted: boolean;
   playerError: boolean;
@@ -92,7 +84,6 @@ export function useIntroVideo(video: IntroVideo, offerWelcome: boolean): IntroVi
   const [ready, setReady] = useState(false);
   const [welcomeMounted, setWelcomeMounted] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [fabCovering, setFabCovering] = useState(false);
   const [playerMounted, setPlayerMounted] = useState(false);
   const [playerError, setPlayerError] = useState(false);
   const choiceRef = useRef<IntroVideoChoice | null>(null);
@@ -129,58 +120,6 @@ export function useIntroVideo(video: IntroVideo, offerWelcome: boolean): IntroVi
     }, WELCOME_DELAY_MS);
     return () => window.clearTimeout(timer);
   }, [id, offerWelcome]);
-
-  // Le bouton flottant ne cache jamais le texte d'une carte de chiffre clé : en haut de page, sur
-  // les écrans où il tomberait dessus (390 × 664, 1280 × 720…), il arrive au premier défilement.
-  // Défilement passif, mesure une fois par image, et seulement près du haut de page.
-  useEffect(() => {
-    const fab = fabRef.current;
-    const figures = Array.from(document.querySelectorAll<HTMLElement>(FIGURE_TEXT));
-    if (!fab || figures.length === 0) return;
-    let frame = 0;
-    let disposed = false;
-    const measure = () => {
-      frame = 0;
-      if (window.scrollY > window.innerHeight) return setFabCovering(false);
-      // Position de repos du bouton (sans le décalage de son animation d'entrée ou de sortie).
-      const style = window.getComputedStyle(fab);
-      const right = document.documentElement.clientWidth - parseFloat(style.right);
-      const bottom = document.documentElement.clientHeight - parseFloat(style.bottom);
-      const left = right - fab.offsetWidth;
-      const top = bottom - fab.offsetHeight;
-      // Les lignes de texte réelles, pas la boîte du bloc (qui s'étend sur toute la carte).
-      const range = document.createRange();
-      const lines = (figure: HTMLElement) => {
-        // Sans Range.getClientRects (jsdom), la boîte de l'élément.
-        if (typeof range.getClientRects !== "function") return [figure.getBoundingClientRect()];
-        range.selectNodeContents(figure);
-        return Array.from(range.getClientRects());
-      };
-      setFabCovering(
-        figures.some((figure) =>
-          lines(figure).some(
-            (box) => box.right > left && box.left < right && box.bottom > top && box.top < bottom,
-          ),
-        ),
-      );
-    };
-    const schedule = () => {
-      if (!frame && !disposed) frame = window.requestAnimationFrame(measure);
-    };
-    measure();
-    // Nouvelle mesure une fois l'entrée du hero (550 ms) et les polices terminées.
-    const settled = window.setTimeout(schedule, 700);
-    document.fonts?.ready.then(schedule, () => {});
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-    return () => {
-      disposed = true;
-      window.clearTimeout(settled);
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
-    };
-  }, []);
 
   const remember = useCallback(
     (choice: IntroVideoChoice) => {
@@ -230,7 +169,7 @@ export function useIntroVideo(video: IntroVideo, offerWelcome: boolean): IntroVi
     const target =
       opener && opener !== document.body && opener.isConnected ? opener : fabRef.current;
     target?.focus({ preventScroll: true });
-    // Bouton en attente (il cacherait un chiffre clé) : le focus revient au contenu.
+    // Sans cible focalisable : le focus revient au contenu.
     if (!target || document.activeElement !== target)
       document.getElementById("contenu")?.focus({ preventScroll: true });
   }, []);
@@ -243,7 +182,6 @@ export function useIntroVideo(video: IntroVideo, offerWelcome: boolean): IntroVi
     ready,
     welcomeMounted,
     dialogOpen,
-    fabCovering,
     playerMounted,
     playerError,
     duration: formatDuration(video.durationSeconds),

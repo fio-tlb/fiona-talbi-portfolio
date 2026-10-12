@@ -74,7 +74,7 @@ function VideoFab({ controller }: { controller: IntroVideoController }) {
         className="video-fab"
         href={publicPath(video.src)}
         onClick={onClick}
-        data-hidden={controller.dialogOpen || controller.fabCovering || undefined}
+        data-hidden={controller.dialogOpen || undefined}
       >
         <span className="video-fab-mark" aria-hidden>
           <Play size={14} fill="currentColor" strokeWidth={0} />
