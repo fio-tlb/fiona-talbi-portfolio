@@ -4,12 +4,16 @@ import { act, cleanup, fireEvent, screen, within } from "@testing-library/react"
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Portfolio } from "@/components/portfolio";
 import {
+  brands,
   certifications,
   experiences,
+  interests,
+  languages,
   navigation,
   profile,
   recommendations,
   sectionContent,
+  tools,
 } from "@/data/portfolio";
 import { renderWithRouter } from "./render-with-router";
 
@@ -63,6 +67,50 @@ describe("Page structure", () => {
     const unknown = certifications.find((cert) => cert.organization === null)!;
     const badge = within(block).getByText(unknown.name).closest("li")!;
     expect(badge.textContent).toBe(unknown.name + unknown.year);
+  });
+});
+
+describe("Cards and logos", () => {
+  it("shows each experience as a card with its company logo next to the written name", async () => {
+    await renderWithRouter(<Portfolio />);
+    const career = document.getElementById("parcours")!;
+    const cards = career.querySelectorAll(".experience-card");
+    expect(cards).toHaveLength(experiences.length);
+    experiences.forEach((experience, index) => {
+      const logo = cards[index]!.querySelector("img")!;
+      expect(logo).toHaveAttribute(
+        "src",
+        import.meta.env.BASE_URL + brands[experience.brandId].logo.src,
+      );
+      // The company name is written in the card: the logo is decorative.
+      expect(logo).toHaveAttribute("alt", "");
+      expect(cards[index]!.textContent).toContain(experience.company);
+    });
+    for (const interest of interests) {
+      const label = interest.label.charAt(0).toUpperCase() + interest.label.slice(1);
+      expect(within(career).getByText(label).closest("li")).not.toBeNull();
+    }
+  });
+
+  it("lists every tool with its logo, or a generic icon when there is none", async () => {
+    await renderWithRouter(<Portfolio />);
+    const skills = document.getElementById("competences")!;
+    const chips = skills.querySelectorAll(".tool-chip");
+    expect(chips).toHaveLength(tools.length);
+    tools.forEach((tool, index) => {
+      const chip = chips[index]!;
+      expect(chip.textContent).toBe(tool.name);
+      if (tool.logo)
+        expect(chip.querySelector("img")).toHaveAttribute(
+          "src",
+          import.meta.env.BASE_URL + tool.logo.src,
+        );
+      else expect(chip.querySelector("svg")).not.toBeNull();
+    });
+    const languageBlock = document.getElementById("langues")!;
+    for (const language of languages) {
+      expect(languageBlock.textContent).toContain(language.name + language.level);
+    }
   });
 });
 

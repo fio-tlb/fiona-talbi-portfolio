@@ -1296,292 +1296,411 @@ html:has(.intro-video-dialog[open]) {
   background: var(--paper-deep);
 }
 
-/* Ligne d'information : intitulé dans la même colonne que la marque des fiches projet, contenu à droite.
-   Sert aux expériences, à la formation, aux outils, aux certifications et aux langues. */
-.info-row {
+/* ---------- Cartes d'information (Parcours, Compétences, Recommandations) ---------- */
+/* Non interactives : elles ne réagissent ni au survol ni à la pression (seuls leurs boutons). */
+.experience-card,
+.education-card,
+.skill-card,
+.skills-card,
+.cert-card,
+.recommendation-card {
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-1);
+}
+/* Intitulé d'un groupe de cartes (Expériences, Formation, Savoir-faire, Langues…). */
+.block-title {
+  margin-bottom: clamp(0.875rem, 0.7rem + 0.5vw, 1.25rem);
+  font-size: clamp(1.125rem, 1.04rem + 0.35vw, 1.375rem); /* 18 → 22 */
+  font-weight: var(--weight-heading);
+  line-height: 1.25;
+  letter-spacing: var(--tracking-tight);
+}
+/* Tuile d'icône Lucide : aplat bleu bébé, icône bordeaux. */
+.icon-tile {
   display: grid;
-  grid-template-columns: var(--rail) minmax(0, 1fr);
-  column-gap: var(--rail-gap);
-  padding-block: 28px clamp(2rem, 1.5rem + 1.5vw, 2.75rem);
-  border-top: 1px solid var(--ink);
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-tile);
+  background: var(--sky-soft);
+  color: var(--bordeaux);
 }
-.info-row:last-child {
-  padding-bottom: 0;
+.icon-tile-lg {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-control);
 }
-.info-row-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  line-height: 1.3;
-  letter-spacing: -0.005em;
+/* Tuile de logo : aplat beige, logo monochrome à hauteur visuelle égale (--logo-scale). */
+.logo-tile {
+  --logo-h: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 52px;
+  padding-inline: 18px;
+  border-radius: var(--radius-control);
+  background: var(--paper);
+  border: 1px solid var(--border-soft);
 }
-.entry-list > li + li {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid var(--line);
+.logo-tile.is-square {
+  --logo-h: 20px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: var(--radius-tile);
 }
-.entry-period {
+.chip-lg {
+  min-height: 40px;
+  padding: 8px 16px 8px 14px;
   font-size: var(--text-ui);
-  font-weight: 500;
-  line-height: 1.45;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-soft);
+  font-weight: 560;
+  color: var(--ink);
+}
+.chip-lg svg {
+  color: var(--bordeaux);
+}
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-/* Parcours */
-.about-intro {
-  max-width: 44rem;
-  margin-bottom: var(--space-block);
-}
+/* ---------- Parcours ---------- */
 .about-lead {
-  font-size: var(--text-lead);
-  line-height: 1.6;
+  max-width: 50rem;
+  margin-top: calc(-1 * clamp(0.75rem, 0.25rem + 1.2vw, 1.75rem));
+  margin-bottom: clamp(2.5rem, 1.75rem + 2.5vw, 4rem);
+  font-size: clamp(1.125rem, 1rem + 0.55vw, 1.4375rem); /* 18 → 23 */
+  font-weight: 440;
+  line-height: 1.55;
+  letter-spacing: -0.008em;
   text-wrap: pretty;
 }
-.about-interests {
-  margin-top: 16px;
-  font-size: var(--text-ui);
-  line-height: 1.5;
-  color: var(--ink-soft);
+/* Desktop : expériences (colonne large) | formation et centres d'intérêt. */
+.career-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  align-items: start;
+  gap: clamp(2.5rem, 2rem + 1.5vw, 3.5rem) clamp(1.25rem, 0.5rem + 1.6vw, 2.25rem);
 }
-.experience .entry-period {
-  margin-bottom: 4px;
+.career-column {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.75rem, 1.25rem + 1.2vw, 2.5rem);
+  min-width: 0;
 }
-/* Grand écran : poste et entreprise à gauche, description à droite. */
-@media (min-width: 1121px) {
-  .experience {
-    display: grid;
-    grid-template-columns: minmax(0, 21rem) minmax(0, 1fr);
-    column-gap: var(--rail-gap);
-  }
-  .experience > * {
-    grid-column: 1;
-  }
-  .experience .experience-role {
-    font-size: 1.1875rem;
-  }
-  .experience .experience-text {
-    grid-column: 2;
-    grid-row: 1 / span 3;
-    margin-top: 0;
-  }
+.career-list {
+  display: grid;
+  gap: 12px;
+}
+.experience-card {
+  display: grid;
+  grid-template-columns: 9.5rem minmax(0, 1fr);
+  column-gap: clamp(1.25rem, 0.75rem + 1.2vw, 2rem);
+  padding: clamp(1.25rem, 1rem + 0.8vw, 1.75rem);
+}
+.experience-head {
+  grid-row: 1 / span 3;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+.experience-head .chip {
+  align-self: flex-start;
+}
+.experience-card > :not(.experience-head) {
+  grid-column: 2;
 }
 .experience-role {
   font-size: var(--text-h3);
-  line-height: 1.3;
+  font-weight: var(--weight-heading);
+  line-height: 1.25;
+  letter-spacing: var(--tracking-tight);
+  text-wrap: balance;
 }
 .experience-company {
-  margin-top: 2px;
+  margin-top: 4px;
   font-size: var(--text-ui);
+  font-weight: 500;
   line-height: 1.45;
   color: var(--ink-soft);
 }
 .experience-text {
-  max-width: var(--measure);
-  margin-top: 10px;
+  margin-top: 12px;
   font-size: 1rem;
   line-height: 1.6;
   text-wrap: pretty;
 }
-/* Formation : période en colonne, une entrée par diplôme (forme sobre de la timeline). */
-.education-item {
-  display: grid;
-  grid-template-columns: 8.5rem minmax(0, 1fr);
-  column-gap: 24px;
+.education-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 20px;
 }
-.entry-list > .education-item + .education-item {
-  margin-top: 16px;
-  padding-top: 16px;
+.education-body {
+  min-width: 0;
 }
-.education-item .entry-period {
-  grid-row: 1 / span 2;
-  padding-top: 1px;
-}
-.education-title,
-.education-school {
-  grid-column: 2;
+.education-period {
+  margin-bottom: 4px;
+  font-size: var(--text-meta);
+  font-weight: 600;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+  color: var(--bordeaux);
 }
 .education-title {
-  font-size: var(--text-body);
+  font-size: 1rem;
   font-weight: 600;
-  line-height: 1.45;
+  line-height: 1.4;
   text-wrap: pretty;
 }
 .education-school {
   margin-top: 2px;
-  font-size: var(--text-ui);
+  font-size: var(--text-meta);
   line-height: 1.45;
   color: var(--ink-soft);
 }
+/* Centres d'intérêt : aplat bleu bébé, pilules claires. */
+.interests-card {
+  padding: clamp(1.25rem, 1rem + 0.8vw, 1.625rem);
+  border-radius: var(--radius-card);
+  background: var(--sky-soft);
+}
+.interests-title {
+  margin-bottom: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.005em;
+}
 
-/* Compétences : trois colonnes de texte séparées par des filets, sans cartes ni icônes. */
-.skill-columns {
+/* ---------- Compétences ---------- */
+.skills-block + .skills-bento,
+.skills-bento + .skills-block {
+  margin-top: clamp(2.5rem, 1.75rem + 2vw, 3.75rem);
+}
+.skill-cards {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--grid-gap);
 }
-.skill-group {
-  padding-inline: clamp(1rem, 0.25rem + 1.5vw, 1.75rem);
-}
-.skill-group:first-child {
-  padding-left: 0;
-}
-.skill-group:last-child {
-  padding-right: 0;
-}
-.skill-group + .skill-group {
-  border-left: 1px solid var(--line);
+.skill-card {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.25rem, 1rem + 0.8vw, 1.75rem);
 }
 .skill-title {
-  margin-bottom: 10px;
-  font-size: 1.125rem;
-  line-height: 1.35;
+  margin-top: 20px;
+  font-size: 1.1875rem;
+  font-weight: var(--weight-heading);
+  line-height: 1.3;
+  letter-spacing: var(--tracking-tight);
+}
+.skill-items {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
 }
 .skill-items li {
-  font-size: var(--text-body);
+  position: relative;
+  padding-left: 18px;
+  font-size: 1rem;
   line-height: 1.5;
   text-wrap: pretty;
 }
-.skill-items li + li {
-  margin-top: 6px;
+.skill-items li::before {
+  content: "";
+  position: absolute;
+  left: 1px;
+  top: 0.62em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--bordeaux);
 }
-.tool-line {
+/* Boîte à outils | Langues, à hauteur égale. */
+.skills-bento {
+  display: grid;
+  grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+  gap: clamp(2.5rem, 1.75rem + 2vw, 3.75rem) var(--grid-gap);
+}
+.skills-bento > .skills-block {
   display: flex;
-  flex-wrap: wrap;
-  margin-left: -26px;
-  clip-path: inset(0 0 0 26px); /* le « · » de début de ligne reste hors champ */
-  font-size: var(--text-body);
-  line-height: 1.75;
+  flex-direction: column;
 }
-.tool-line li {
-  white-space: nowrap;
+.skills-bento .skills-card {
+  flex: 1;
 }
-/* Séparateur avant chaque outil : jamais de « · » orphelin en fin de ligne. */
-.tool-line li::before {
-  content: "·";
-  display: inline-block;
-  width: 26px;
-  text-align: center;
-  color: var(--ink-soft);
+.skills-card {
+  padding: clamp(1.125rem, 0.9rem + 0.8vw, 1.625rem);
 }
-/* Certifications : badges compacts d'une ligne. Logo seulement s'il est fourni et autorisé. */
-.cert-badges {
-  display: flex;
-  flex-wrap: wrap;
+/* Grille régulière : 3 outils par ligne, la carte est remplie sans trou (pilules sur mobile). */
+.tool-chips {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
-.cert-badge {
+/* Outil : tuile non cliquable (aucun survol), logo ou icône en encre. */
+.tool-chip {
+  --logo-h: 17px;
   display: inline-flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  column-gap: 12px;
-  padding: 12px 16px;
-  background: var(--paper-light);
-  border: 1px solid var(--line);
-  border-top: 3px solid var(--sky);
-  border-radius: var(--radius);
-}
-.cert-name {
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 8px 16px 8px 14px;
+  border-radius: var(--radius-control);
+  background: var(--paper);
+  border: 1px solid var(--border-soft);
   font-size: var(--text-ui);
-  font-weight: 600;
-  line-height: 1.4;
-}
-.cert-meta {
-  font-size: var(--text-small);
-  line-height: 1.4;
-  font-variant-numeric: tabular-nums;
+  font-weight: 560;
+  line-height: 1.2;
   white-space: nowrap;
-  color: var(--ink-soft);
+}
+.tool-chip svg {
+  flex-shrink: 0;
 }
 .language-list {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px clamp(2rem, 1rem + 3vw, 4rem);
+  flex-direction: column;
+  justify-content: center;
+  padding-block: 6px;
 }
 .language-list li {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding-block: 14px;
+}
+.language-list li + li {
+  border-top: 1px solid var(--border-soft);
 }
 .language-name {
   font-size: var(--text-body);
   font-weight: 600;
-  line-height: 1.45;
+  line-height: 1.4;
 }
-.language-level {
-  font-size: var(--text-ui);
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
-
-/* Lien texte (recommandations) : souligné discret, plein au survol. */
-.text-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  font-size: var(--text-ui);
-  font-weight: 600;
-  color: var(--bordeaux);
-  text-decoration-line: underline;
-  text-decoration-color: color-mix(in oklch, var(--bordeaux) 35%, transparent);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
-  transition:
-    text-decoration-color var(--motion-base) var(--ease-out),
-    opacity var(--motion-fast) var(--ease-out);
-}
-.text-link svg {
-  flex-shrink: 0;
-  transition: translate var(--motion-base) var(--ease-out);
-}
-
-/* Recommandations : cartes-documents compactes. */
-.recommendation-list {
+/* Certifications : une carte par certification, toutes sur une ligne en grand écran. */
+.cert-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: var(--grid-gap);
 }
-.recommendation-card {
+.cert-card {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 22px 24px 12px;
-  background: var(--paper-light);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  gap: 18px;
+  width: 100%;
+  padding: 20px;
 }
-.recommendation-kind {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 8px;
-  font-size: var(--text-small);
+.cert-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cert-name {
+  font-size: 1rem;
   font-weight: 600;
+  line-height: 1.35;
+}
+.cert-meta {
+  font-size: var(--text-meta);
   line-height: 1.4;
-  color: var(--bordeaux);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+
+/* ---------- Recommandations : cartes-documents ---------- */
+.recommendation-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--grid-gap);
+}
+.recommendation-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  padding: clamp(1.25rem, 1rem + 1vw, 2rem);
+  overflow: hidden;
+}
+/* Feuille décorative qui dépasse du coin de la carte : évoque la lettre, sans contenu. */
+.recommendation-sheet {
+  position: absolute;
+  right: clamp(1.25rem, 0.5rem + 2vw, 2.5rem);
+  bottom: -28px;
+  width: clamp(84px, 60px + 4vw, 124px);
+  aspect-ratio: 210 / 297;
+  border-radius: 8px;
+  background:
+    linear-gradient(var(--bordeaux), var(--bordeaux)) 14% 14% / 34% 4px no-repeat,
+    repeating-linear-gradient(to bottom, var(--line) 0 3px, transparent 3px 11px) 50% 72% / 72% 46%
+      no-repeat,
+    var(--paper-light);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-1);
+  rotate: 6deg;
+  pointer-events: none;
+}
+.recommendation-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  align-self: stretch;
+  margin-bottom: clamp(1.25rem, 1rem + 1vw, 2rem);
+}
+.recommendation-title,
+.recommendation-text {
+  max-width: calc(100% - clamp(84px, 60px + 4vw, 124px) - 1.5rem);
 }
 .recommendation-title {
   font-size: var(--text-h3);
-  line-height: 1.3;
+  font-weight: var(--weight-heading);
+  line-height: 1.25;
+  letter-spacing: var(--tracking-tight);
 }
 .recommendation-text {
-  margin-top: 6px;
+  margin-top: 8px;
   font-size: var(--text-ui);
   line-height: 1.55;
   color: var(--ink-soft);
 }
 .recommendation-link {
-  margin-top: 8px;
+  margin-top: clamp(1.25rem, 1rem + 0.8vw, 1.75rem);
 }
 
-/* Contact : bloc bordeaux profond, texte beige. */
+/* ---------- Contact : grande carte bordeaux, texte | actions ---------- */
+/* La carte porte son propre espace : section plus courte au-dessus, et juste avant le pied de page. */
 .contact-section {
-  background: var(--bordeaux-deep);
-  color: var(--paper-light);
+  --section-pad: clamp(4rem, 2.5rem + 4vw, 6rem);
+  padding-bottom: clamp(2.5rem, 2rem + 2vw, 4rem);
 }
-.contact-grid {
+.contact-card {
   display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-  align-items: end;
-  column-gap: var(--rail-gap);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: 32px clamp(2rem, 0.5rem + 4.5vw, 5rem);
+  padding: clamp(1.75rem, 0.75rem + 4vw, 4.5rem);
+  border-radius: var(--radius-card-lg);
+  background:
+    radial-gradient(
+      90% 120% at 0% 0%,
+      color-mix(in oklch, var(--bordeaux) 85%, transparent),
+      transparent 70%
+    ),
+    var(--bordeaux-deep);
+  color: var(--paper-light);
+  box-shadow: var(--shadow-2);
 }
 .contact-copy {
   max-width: 28rem;
@@ -1591,39 +1710,53 @@ html:has(.intro-video-dialog[open]) {
   color: color-mix(in oklch, var(--paper-light) 84%, var(--bordeaux-deep));
   text-wrap: pretty;
 }
+/* Panneau translucide des actions, posé sur la carte. */
+.contact-main {
+  min-width: 0;
+  padding: clamp(1.125rem, 0.75rem + 1.2vw, 2rem);
+  border-radius: var(--radius-card);
+  background: color-mix(in oklch, var(--paper-light) 7%, transparent);
+  border: 1px solid color-mix(in oklch, var(--paper-light) 14%, transparent);
+}
 .contact-email-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: 12px 16px;
 }
 .contact-email {
   display: inline-flex;
   align-items: center;
+  gap: 12px;
   min-height: 44px;
   min-width: 0;
-  font-family: var(--font-display);
-  font-size: clamp(1.375rem, 0.9rem + 2vw, 2.5rem); /* 22 → 40 */
-  font-weight: 400;
+  font-size: clamp(1.25rem, 0.95rem + 1.2vw, 1.875rem); /* 20 → 30 */
+  font-weight: 600;
   line-height: 1.2;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   overflow-wrap: anywhere;
+  transition: opacity var(--motion-fast) var(--ease-out);
+}
+.contact-email-icon {
+  flex-shrink: 0;
+  color: var(--sky);
+}
+.contact-email-text {
   text-decoration-line: underline;
-  text-decoration-color: var(--sky);
+  text-decoration-color: color-mix(in oklch, var(--sky) 70%, transparent);
   text-decoration-thickness: 1px;
-  text-underline-offset: 8px;
-  transition:
-    text-decoration-color var(--motion-base) var(--ease-out),
-    opacity var(--motion-fast) var(--ease-out);
+  text-underline-offset: 7px;
+  transition: text-decoration-color var(--motion-base) var(--ease-out);
 }
 .copy-button {
   display: inline-grid;
   place-items: center;
   flex-shrink: 0;
   min-height: 44px;
-  padding-inline: 14px;
+  padding-inline: 18px;
   border: 1px solid color-mix(in oklch, var(--paper-light) 32%, transparent);
-  border-radius: var(--radius-control);
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--paper-light);
   font-size: var(--text-ui);
@@ -1691,7 +1824,9 @@ html:has(.intro-video-dialog[open]) {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 12px;
+  margin-top: 10px;
+  padding-top: 20px;
+  border-top: 1px solid color-mix(in oklch, var(--paper-light) 14%, transparent);
 }
 .action-light {
   background: var(--paper-light);
@@ -1701,7 +1836,7 @@ html:has(.intro-video-dialog[open]) {
   color: var(--paper-light);
   border-color: color-mix(in oklch, var(--paper-light) 40%, transparent);
 }
-.contact-section :focus-visible {
+.contact-card :focus-visible {
   outline-color: var(--sky);
 }
 .print-only {
@@ -1711,16 +1846,20 @@ html:has(.intro-video-dialog[open]) {
   white-space: nowrap;
 }
 
-/* Pied de page */
+/* ---------- Pied de page (accueil et pages projet) ---------- */
+/* Marge basse : le bouton flottant « Voir la vidéo » (≈ 56 px, à 16 px du bord) ne recouvre
+   jamais un lien quand on arrive en bas de page. */
 .site-footer {
-  padding: 12px 0 16px;
+  padding-bottom: calc(56px + 2 * max(16px, env(safe-area-inset-bottom)));
 }
 .footer-inner {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0 32px;
+  gap: 4px 32px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-soft);
   font-size: var(--text-meta);
   color: var(--ink-soft);
 }
@@ -1735,6 +1874,7 @@ html:has(.intro-video-dialog[open]) {
   gap: 6px;
   min-height: 44px;
   color: var(--ink);
+  font-weight: 500;
   text-decoration-line: underline;
   text-decoration-color: transparent;
   text-decoration-thickness: 1px;
@@ -1747,6 +1887,188 @@ html:has(.intro-video-dialog[open]) {
 .footer-links svg {
   flex-shrink: 0;
   transition: translate var(--motion-base) var(--ease-out);
+}
+
+/* ---------- Sections : survols (souris seulement) ---------- */
+@media (hover: hover) and (pointer: fine) {
+  .contact-email:hover .contact-email-text {
+    text-decoration-color: var(--paper-light);
+  }
+  .copy-button:not([data-copied]):hover {
+    background: color-mix(in oklch, var(--paper-light) 10%, transparent);
+    border-color: color-mix(in oklch, var(--paper-light) 60%, transparent);
+  }
+  .action-light:hover {
+    background: var(--paper-deep);
+  }
+  .action-light:hover .lucide-download {
+    translate: 0 var(--nudge);
+  }
+  .action-outline-light:hover {
+    background: color-mix(in oklch, var(--paper-light) 10%, transparent);
+    border-color: color-mix(in oklch, var(--paper-light) 75%, transparent);
+  }
+  .action-secondary:hover .lucide-mail {
+    translate: var(--nudge) 0;
+  }
+  .footer-links a:hover {
+    color: var(--bordeaux);
+    text-decoration-color: currentColor;
+  }
+  .footer-links a:hover .lucide-arrow-up {
+    translate: 0 calc(-1 * var(--nudge));
+  }
+}
+
+/* ---------- Sections : tablette et mobile ---------- */
+@media (max-width: 1100px) {
+  .skills-bento {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* Langues sur toute la largeur : trois colonnes (langue, puis niveau). */
+  .language-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding-block: clamp(1.125rem, 0.9rem + 0.8vw, 1.625rem);
+  }
+  .language-list li {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 2px clamp(1rem, 0.5rem + 1.5vw, 1.5rem);
+  }
+  .language-list li:first-child {
+    padding-left: 0;
+  }
+  .language-list li + li {
+    border-top: 0;
+    border-left: 1px solid var(--border-soft);
+  }
+  /* Certifications : 3 cartes par ligne, la dernière ligne partagée à parts égales. */
+  .cert-grid {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .cert-grid > li {
+    grid-column: span 2;
+  }
+  .cert-grid > li:nth-last-child(2):nth-child(3n + 1),
+  .cert-grid > li:last-child:nth-child(3n + 2) {
+    grid-column: span 3;
+  }
+}
+@media (max-width: 980px) {
+  .career-grid,
+  .contact-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 899px) {
+  /* Savoir-faire : une carte par ligne, tuile et titre à gauche, liste à droite. */
+  .skill-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .skill-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 13rem) minmax(0, 1fr);
+    align-items: start;
+    column-gap: 18px;
+  }
+  .skill-title {
+    margin-top: 8px;
+  }
+  .skill-items {
+    margin-top: 10px;
+  }
+}
+@media (max-width: 720px) {
+  .experience-card {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 18px 18px 20px;
+  }
+  .experience-head {
+    grid-row: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .experience-card > :not(.experience-head) {
+    grid-column: 1;
+  }
+  .logo-tile {
+    --logo-h: 20px;
+    height: 48px;
+    padding-inline: 16px;
+  }
+  .education-card {
+    padding: 16px;
+  }
+  .tool-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tool-chip {
+    min-height: 44px;
+    border-radius: var(--radius-pill);
+  }
+  .language-list {
+    display: flex;
+    padding-block: 6px;
+  }
+  .language-list li {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+  }
+  .language-list li + li {
+    border-left: 0;
+    border-top: 1px solid var(--border-soft);
+  }
+  .skill-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .skill-items {
+    grid-column: 2;
+  }
+  .cert-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+  .cert-grid > li,
+  .cert-grid > li:nth-last-child(2):nth-child(3n + 1),
+  .cert-grid > li:last-child:nth-child(3n + 2) {
+    grid-column: auto;
+  }
+  .cert-card {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 16px;
+  }
+  .recommendation-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .contact-actions li {
+    flex: 1 1 14rem;
+    display: flex;
+  }
+  .contact-actions .action {
+    flex: 1;
+  }
+  .footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 12px;
+  }
+  .footer-signature {
+    padding-top: 10px;
+  }
+  .footer-links {
+    column-gap: 20px;
+  }
 }
 
 /* ---------- Entrée du hero ---------- */
@@ -1804,7 +2126,6 @@ html:has(.intro-video-dialog[open]) {
   transition-duration: 0s;
 }
 .header-brand:active,
-.text-link:active,
 .contact-email:active,
 .footer-links a:active {
   opacity: 0.7;
@@ -1857,7 +2178,6 @@ html:has(.intro-video-dialog[open]) {
     translate: 0 var(--nudge);
   }
   .action:hover .lucide-arrow-up-right,
-  .text-link:hover .lucide-arrow-up-right,
   .footer-links a:hover .lucide-arrow-up-right {
     translate: var(--nudge) calc(-1 * var(--nudge));
   }
@@ -1893,36 +2213,6 @@ html:has(.intro-video-dialog[open]) {
   }
   .project-card:hover .project-cta-arrow svg {
     translate: var(--nudge) 0;
-  }
-  .text-link:hover {
-    text-decoration-color: currentColor;
-  }
-  .text-link:hover .lucide-mail {
-    translate: var(--nudge) 0;
-  }
-  .contact-email:hover {
-    text-decoration-color: var(--paper-light);
-  }
-  .copy-button:not([data-copied]):hover {
-    background: color-mix(in oklch, var(--paper-light) 10%, transparent);
-    border-color: color-mix(in oklch, var(--paper-light) 60%, transparent);
-  }
-  .action-light:hover {
-    background: var(--paper-deep);
-  }
-  .action-light:hover .lucide-download {
-    translate: 0 var(--nudge);
-  }
-  .action-outline-light:hover {
-    background: color-mix(in oklch, var(--paper-light) 10%, transparent);
-    border-color: color-mix(in oklch, var(--paper-light) 75%, transparent);
-  }
-  .footer-links a:hover {
-    color: var(--bordeaux);
-    text-decoration-color: currentColor;
-  }
-  .footer-links a:hover .lucide-arrow-up {
-    translate: 0 calc(-1 * var(--nudge));
   }
   .intro-invite-watch:hover:not(:active) {
     background: color-mix(in oklch, var(--paper-deep) 55%, var(--paper-light));
@@ -1973,31 +2263,6 @@ html:has(.intro-video-dialog[open]) {
   .nav-link {
     padding-inline: 12px;
     font-size: var(--text-meta);
-  }
-  /* Compétences : domaines empilés, listes courtes sous chaque intitulé. */
-  .skill-columns {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .skill-group,
-  .skill-group:first-child,
-  .skill-group:last-child {
-    display: grid;
-    grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
-    column-gap: 24px;
-    padding: 0;
-  }
-  .skill-group + .skill-group {
-    margin-top: 16px;
-    padding-top: 16px;
-    border-left: 0;
-    border-top: 1px solid var(--line);
-  }
-  .skill-title {
-    margin-bottom: 6px;
-    font-size: var(--text-body);
-  }
-  .skill-items li + li {
-    margin-top: 2px;
   }
 }
 
@@ -2101,14 +2366,6 @@ html:has(.intro-video-dialog[open]) {
   }
   .hero-places {
     left: -12px;
-  }
-  /* Lignes d'information : colonne d'intitulés plus étroite. */
-  :root {
-    --rail: 10rem;
-  }
-  .contact-grid {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 28px;
   }
 }
 @media (hover: hover) and (pointer: fine) and (max-width: 767px) {
@@ -2274,94 +2531,6 @@ html:has(.intro-video-dialog[open]) {
   .project-stats li {
     padding: 12px 12px 13px;
   }
-  /* Lignes d'information : intitulé au-dessus du contenu, en petit libellé bordeaux. */
-  .info-row {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 14px;
-    padding-top: 20px;
-  }
-  .info-row-title {
-    font-size: var(--text-ui);
-    line-height: 1.4;
-    letter-spacing: 0;
-    color: var(--bordeaux);
-  }
-  .about-lead {
-    font-size: var(--text-body);
-  }
-  .skill-group,
-  .skill-group:first-child,
-  .skill-group:last-child {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .education-item {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .education-item .entry-period {
-    grid-row: auto;
-    padding-top: 0;
-    font-size: var(--text-meta);
-  }
-  .education-title,
-  .education-school {
-    grid-column: 1;
-  }
-  .cert-badges {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
-  .cert-badge {
-    justify-content: space-between;
-  }
-  .language-list {
-    flex-direction: column;
-    gap: 0;
-  }
-  .language-list li {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: baseline;
-    column-gap: 16px;
-    padding-block: 10px;
-  }
-  .language-list li + li {
-    border-top: 1px solid var(--line);
-  }
-  .language-list li:first-child {
-    padding-top: 0;
-  }
-  .language-list li:last-child {
-    padding-bottom: 0;
-  }
-  .recommendation-list {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
-  }
-  .recommendation-card {
-    padding: 18px 20px 10px;
-  }
-  .contact-actions li {
-    flex: 1 1 14rem;
-    display: flex;
-  }
-  .contact-actions .action {
-    flex: 1;
-  }
-  .site-footer {
-    padding-top: 8px;
-  }
-  .footer-inner {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .footer-signature {
-    padding-top: 12px;
-  }
-  .footer-links {
-    column-gap: 20px;
-  }
 }
 @media (max-width: 380px) {
   .hero-kpi {
@@ -2433,7 +2602,6 @@ html:has(.intro-video-dialog[open]) {
     background: Highlight;
   }
   .nav-link,
-  .text-link,
   .footer-links a {
     text-decoration-line: none;
   }
@@ -2455,11 +2623,9 @@ html:has(.intro-video-dialog[open]) {
   .copy-button {
     border: 1px solid ButtonText;
   }
-  .info-row {
-    border-top-color: CanvasText;
-  }
-  .contact-section {
-    border-block: 1px solid CanvasText;
+  .interests-card,
+  .contact-card {
+    border: 1px solid CanvasText;
   }
   html:has(.mobile-menu[open]) body::after {
     background: transparent;
@@ -2546,25 +2712,47 @@ html:has(.intro-video-dialog[open]) {
   .section-heading,
   .section-eyebrow,
   .section-title,
-  .info-row-title,
+  .block-title,
   .skill-title {
     break-after: avoid;
   }
   .section-heading,
   .hero-kpi,
   .project-card,
-  .entry-list > li,
-  .skill-group,
-  .cert-badge,
+  .experience-card,
+  .education-card,
+  .interests-card,
+  .skill-card,
+  .skills-card,
+  .cert-card,
   .recommendation-card,
-  .contact-grid {
+  .contact-card {
     break-inside: avoid;
+  }
+  /* Cartes à plat : bord fin, ni ombre ni aplat coloré. */
+  .experience-card,
+  .education-card,
+  .skill-card,
+  .skills-card,
+  .cert-card,
+  .recommendation-card {
+    box-shadow: none;
   }
   .contact-section {
     padding-block: 18px 0;
+  }
+  .contact-card,
+  .contact-main {
+    padding: 0;
     background: none;
+    border: 0;
+    box-shadow: none;
     color: var(--ink);
+  }
+  .contact-card {
     border-top: 1px solid var(--ink);
+    padding-top: 18px;
+    border-radius: 0;
   }
   .contact-section .section-eyebrow,
   .contact-copy {
@@ -2574,11 +2762,14 @@ html:has(.intro-video-dialog[open]) {
     font-size: 1.5rem;
     color: var(--ink);
   }
+  .contact-email-icon {
+    display: none;
+  }
   .print-only {
     margin-top: 8px;
     font-size: var(--text-ui);
   }
   .site-footer {
-    padding-top: 0;
+    padding-bottom: 0;
   }
 }

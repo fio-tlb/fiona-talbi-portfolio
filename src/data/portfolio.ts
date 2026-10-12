@@ -821,7 +821,10 @@ export const sectionContent = {
     label: "Compétences",
     title: "Savoir-faire, outils et certifications",
     skillsTitle: "Savoir-faire",
+    /** Intitulé des outils dans le CV PDF (scripts/share-assets/cv.mjs). */
     toolsTitle: "Outils",
+    /** Titre de la carte des outils sur le site. */
+    toolboxTitle: "Boîte à outils",
     certificationsTitle: "Certifications",
     languagesTitle: "Langues",
   },
@@ -833,7 +836,8 @@ export const sectionContent = {
     requestDescription: "Je vous les envoie par e-mail, sur simple demande.",
     mixedDescription: "À lire en PDF ou à demander par e-mail.",
     documentLabel: "PDF",
-    openLabel: "Lire la lettre (PDF)",
+    /** Bouton de la carte, à côté de la pilule « PDF » (le titre de la lettre le décrit). */
+    openLabel: "Lire la lettre",
     requestLabel: "Demander la lettre par e-mail",
     requestSubject: "Demande de recommandation : ",
     requestBody:
