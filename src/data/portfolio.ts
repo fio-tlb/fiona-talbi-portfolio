@@ -8,8 +8,22 @@ export interface PortfolioProfile {
   location: string;
   email: string;
   linkedin: string;
-  experience: string;
-  internationalLabel: string;
+  /** Villes du parcours, affichées sous le nom (« Paris · Londres · Dublin »). */
+  places: string;
+  /**
+   * Portrait du hero. Fichiers dans public/images : `src` est le JPEG de 1200 px de large ;
+   * les variantes `-600`/`-900` (JPEG et AVIF) et `.avif` portent le même nom.
+   * Remplacer la photo = écraser ces fichiers (format 4:5). `null` : aucun visuel affiché.
+   */
+  portrait: PortraitImage | null;
+}
+export interface PortraitImage {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  /** Largeurs disponibles en `-<largeur>.jpg` / `-<largeur>.avif` (la plus grande = `src`). */
+  widths: readonly number[];
 }
 export interface NavigationItem {
   id: string;
@@ -22,19 +36,22 @@ export interface Metric {
   label: string;
 }
 export interface ImpactStat extends Metric {
-  company: string;
+  /** Entreprise et métier d'où vient le chiffre. */
+  source: string;
+  /** Ancre de destination sur la page : l'id d'un projet, ou « parcours ». */
+  targetId: string;
 }
 export interface Project {
+  /** Sert aussi d'ancre (#id) : ne pas le modifier, les chiffres clés du hero y mènent. */
   id: string;
-  brandId: string;
   brand: string;
-  theme: string;
   category: string;
   title: string;
+  /** Enjeu : le contexte en une phrase. */
   context: string;
-  mission: string;
+  /** Action : ce que j'ai fait, à la 1re personne. */
+  action: string;
   metrics: readonly Metric[];
-  details: readonly string[];
 }
 export interface Experience {
   id: string;
@@ -82,16 +99,10 @@ export interface Recommendation {
   description?: string;
   documentPath: string | null;
 }
-export interface Brand {
-  id: string;
-  name: string;
-  displayName: string;
-}
 export interface SectionHeadingContent {
-  number: string;
-  label: string;
+  /** Sur-titre court, en casse normale. */
+  label?: string;
   title: string;
-  accent?: string;
   description?: string;
 }
 
@@ -107,12 +118,18 @@ export const profile: PortfolioProfile = {
   firstName: "Fiona",
   lastName: "Talbi",
   initials: "FT",
-  role: "Marketing 360 & Communication",
+  role: "Marketing 360 & communication",
   location: "Paris, France",
   email: "fiona.2001@live.fr",
   linkedin: "https://www.linkedin.com/in/fiona-talbi-246407193",
-  experience: "Plus de 3 ans d’expérience",
-  internationalLabel: "Un parcours international",
+  places: "Paris · Londres · Dublin",
+  portrait: {
+    src: "images/portrait-fiona.jpg",
+    alt: "Portrait de Fiona Talbi",
+    width: 1200,
+    height: 1500,
+    widths: [600, 900, 1200],
+  },
 };
 
 export const seo: PortfolioSeo = {
@@ -136,113 +153,97 @@ export const navigation: readonly NavigationItem[] = [
 export const impactStats: readonly ImpactStat[] = [
   {
     id: "sales-growth",
-    value: "+30 %",
-    label: "de ventes grâce au réagencement",
-    company: "Logitech · Category management",
+    value: "+30 %",
+    label: "de ventes sur le rayon informatique",
+    source: "Logitech · Category management",
+    targetId: "logitech-category-management",
   },
   {
     id: "stores-activated",
     value: "140",
-    label: "top stores activés day one",
-    company: "Logitech · Trade marketing",
+    label: "top stores équipés en PLV dès le lancement",
+    source: "Logitech · Trade marketing",
+    targetId: "logitech-trade-marketing",
   },
   {
     id: "instagram-community",
     value: "500+",
     label: "abonnés Instagram en moins d’un an",
-    company: "CosmétiCar · Social media",
+    source: "CosmétiCar · Réseaux sociaux",
+    targetId: "cosmeticar-social-media",
   },
   {
     id: "marketing-experience",
-    value: "3+ ans",
-    label: "en marketing & communication",
-    company: "Un parcours international",
+    value: "3+ ans",
+    label: "en marketing et communication",
+    source: "Logitech · CosmétiCar · Massilia",
+    targetId: "parcours",
   },
 ];
 
 export const projects: readonly Project[] = [
   {
     id: "logitech-category-management",
-    brandId: "logitech",
     brand: "Logitech",
-    theme: "catman",
-    category: "Category Management",
-    title: "Repenser le rayon. Booster les ventes.",
+    category: "Category management",
+    title: "Réagencer le rayon informatique des top stores",
     context:
-      "Chez Logitech, faire du rayon informatique un véritable levier de performance dans nos top stores.",
-    mission:
-      "Déploiement de solutions de category management et nouvel agencement des rayons, pour une offre plus lisible et une expérience d’achat optimisée.",
+      "Chez Logitech, rendre l’offre plus lisible dans le rayon informatique de nos top stores.",
+    action:
+      "J’ai déployé plus de 100 solutions de category management (catman) dans nos top stores. Le nouvel agencement du rayon informatique a augmenté les ventes de 30 %.",
     metrics: [
-      { id: "catman-solutions", value: "100+", label: "solutions catman déployées" },
-      { id: "catman-sales", value: "+30 %", label: "de ventes grâce au réagencement" },
-    ],
-    details: [
-      "Déployer les nouveaux agencements dans les points de vente prioritaires.",
-      "Valoriser les produits et améliorer la lisibilité de l’offre.",
-      "Coordonner la mise en œuvre sur le terrain.",
+      {
+        id: "catman-solutions",
+        value: "100+",
+        label: "solutions de category management déployées",
+      },
+      { id: "catman-sales", value: "+30 %", label: "de ventes sur le rayon informatique" },
     ],
   },
   {
     id: "logitech-trade-marketing",
-    brandId: "logitech",
     brand: "Logitech",
-    theme: "trade",
-    category: "Trade Marketing",
-    title: "Le bon impact, dès le premier jour.",
+    category: "Trade marketing",
+    title: "La PLV en place dès le jour du lancement, dans 140 top stores",
     context:
-      "Des lancements produits aux Logi Work Days : transformer les campagnes Logitech en visibilité concrète en magasin.",
-    mission:
-      "Management d’une équipe de merchandisers aux côtés du responsable ventes terrain et coordination de la disponibilité des supports de PLV.",
+      "Chez Logitech, rendre visibles en magasin les lancements produits et les campagnes comme les Logi Work Days.",
+    action:
+      "Aux côtés du responsable des ventes terrain, j’ai managé une équipe de 7 merchandisers. La PLV était disponible dès le jour du lancement dans nos 140 top stores, pour les lancements produits comme pour les Logi Work Days.",
     metrics: [
-      { id: "trade-stores", value: "140", label: "top stores équipés day one" },
-      { id: "trade-merchandisers", value: "7", label: "merchandisers accompagnés" },
-    ],
-    details: [
-      "Coordonner une équipe de 7 merchandisers avec le responsable ventes terrain.",
-      "Garantir la présence de la PLV dès le lancement des campagnes.",
-      "Accompagner les lancements produits et les Logi Work Days.",
+      { id: "trade-stores", value: "140", label: "top stores équipés dès le lancement" },
+      { id: "trade-merchandisers", value: "7", label: "merchandisers managés sur le terrain" },
     ],
   },
   {
     id: "cosmeticar-social-media",
-    brandId: "cosmeticar",
     brand: "CosmétiCar",
-    theme: "social",
-    category: "Communication & Social Media",
-    title: "Faire grandir une marque de niche.",
+    category: "Communication & réseaux sociaux",
+    title: "Faire connaître un réseau de lavage auto sur Instagram",
     context:
-      "Développer la présence digitale d’un réseau de franchises spécialisé dans le lavage automobile.",
-    mission:
-      "Gestion de Facebook, Instagram et TikTok, avec un focus Instagram, et formation des nouveaux franchisés à la communication.",
+      "CosmétiCar, réseau de franchises de lavage automobile : une marque de niche, et plus de 30 agences ouvertes dans l’année.",
+    action:
+      "J’ai géré Facebook, Instagram et TikTok, avec un focus sur Instagram, qui a dépassé 500 abonnés en moins d’un an. J’ai aussi assuré 30 formations communication pour les nouveaux franchisés.",
     metrics: [
       { id: "social-followers", value: "500+", label: "abonnés Instagram en moins d’un an" },
-      { id: "social-training", value: "30", label: "formations communication dispensées" },
-    ],
-    details: [
-      "Animer Facebook, Instagram et TikTok avec des contenus adaptés.",
-      "Accompagner plus de 30 ouvertures d’agence dans l’année.",
-      "Former les franchisés à la communication et à la présence sur les réseaux sociaux.",
+      { id: "social-training", value: "30", label: "formations communication pour les franchisés" },
     ],
   },
   {
     id: "massilia-influencer-relations",
-    brandId: "massilia",
     brand: "Massilia E-consulting",
-    theme: "influence",
     category: "Relations influenceurs",
-    title: "Créer des liens, au-delà des frontières.",
+    title: "Signer 5 influenceuses en un mois, en France et en Espagne",
     context:
-      "Pour Massilia E-consulting, développer des collaborations en France et en Espagne au début de la crise sanitaire.",
-    mission:
-      "Identification et signature d’influenceuses, suivi des partenariats et gestion des fournisseurs chinois dans un contexte de stocks limités.",
+      "Chez Massilia E-consulting, au début de la crise sanitaire : des stocks limités, donc peu de marge de manœuvre avec les influenceuses.",
+    action:
+      "En un mois, j’ai signé 3 influenceuses françaises et 2 espagnoles. Je gérais aussi les fournisseurs chinois.",
     metrics: [
-      { id: "influence-partners", value: "5", label: "influenceuses signées" },
-      { id: "influence-time", value: "1 mois", label: "pour activer les partenariats" },
-    ],
-    details: [
-      "Signer 3 influenceuses françaises et 2 influenceuses espagnoles.",
-      "Gérer les échanges avec les fournisseurs chinois au début de la crise sanitaire.",
-      "Adapter les collaborations aux contraintes de stocks et à une marge de manœuvre réduite.",
+      {
+        id: "influence-partners",
+        value: "5",
+        label: "influenceuses signées en France et en Espagne",
+      },
+      { id: "influence-time", value: "1 mois", label: "pour signer les cinq partenariats" },
     ],
   },
 ];
@@ -425,12 +426,6 @@ export const recommendations: readonly Recommendation[] = [
   },
 ];
 
-export const brands: readonly Brand[] = [
-  { id: "logitech", name: "Logitech", displayName: "logitech." },
-  { id: "cosmeticar", name: "CosmétiCar", displayName: "CosmétiCar" },
-  { id: "massilia", name: "Massilia E-consulting", displayName: "Massilia" },
-];
-
 export const sectionContent = {
   navigation: {
     contactLabel: "Contact",
@@ -438,65 +433,46 @@ export const sectionContent = {
     secondaryLabel: "Pour aller plus loin",
   },
   hero: {
-    eyebrow: "Marketing 360 · Communication · Créativité",
-    title: "De l’idée",
-    accent: "à l’impact.",
-    description:
-      "J’allie stratégie, création et coordination terrain pour faire rayonner les marques.",
+    lead: "Plus de trois ans en marketing et communication, entre la marque et le terrain : category management et trade marketing chez Logitech, réseaux sociaux chez CosmétiCar, relations influenceurs chez Massilia E-consulting.",
+    credentials:
+      "Diplômée d’un Master Marketing Digital & Innovation (IÉSEG) et d’un MSc Luxury Marketing (GCU Londres)",
+    linkedinLabel: "LinkedIn",
     primaryAction: "Voir les projets",
-    secondaryAction: "Contact",
-    statsLabel: "Mes résultats en chiffres",
-    visualCaption: "Stratégie. Créativité. Impact.",
-  },
-  career: {
-    label: "Parcours professionnel",
-    title: "Des marques. Du terrain. De l’impact.",
+    statsLabel: "Chiffres clés",
   },
   about: {
-    number: "02",
     label: "Mon parcours",
-    title: "La curiosité comme moteur.",
-    accent: "L’impact comme cap.",
+    title: "La curiosité comme moteur. L’impact comme cap.",
     paragraphs: [
       "Basée à Paris, je combine stratégie de marque, créativité et coordination opérationnelle. De la tech au luxe, en passant par les réseaux de franchises, mon parcours s’est construit entre Paris, Londres et Dublin.",
     ],
     experiencesTitle: "Expériences professionnelles",
   },
   projects: {
-    number: "01",
-    label: "Projets sélectionnés",
-    title: "Des projets concrets.",
-    accent: "Des résultats mesurables.",
-    description:
-      "Quatre expériences où la stratégie rencontre le terrain, la création et la performance.",
-    missionLabel: "Mes missions",
-    detailsLabel: "Voir les missions",
+    label: "Projets",
+    title: "Quatre missions chez Logitech, CosmétiCar et Massilia",
+    description: "Pour chacune : l’enjeu, ce que j’ai fait et les résultats obtenus.",
+    contextLabel: "Enjeu",
+    actionLabel: "Action",
     resultsLabel: "Résultats",
   },
   skills: {
-    number: "03",
     label: "Compétences & outils",
-    title: "De la stratégie au terrain.",
-    accent: "Une approche à 360°.",
+    title: "De la stratégie au terrain. Une approche à 360°.",
     toolsLabel: "Ma boîte à outils",
   },
   education: {
-    number: "04",
     label: "Formation",
-    title: "Apprendre ici.",
-    accent: "Voir plus loin.",
+    title: "Apprendre ici. Voir plus loin.",
     description:
       "Un double parcours en marketing digital et en marketing du luxe, nourri d’expériences internationales.",
   },
   certifications: {
-    number: "05",
     label: "Certifications",
-    title: "Toujours en mouvement.",
-    accent: "Toujours en apprentissage.",
+    title: "Toujours en mouvement. Toujours en apprentissage.",
   },
   languages: { title: "Sans frontières.", label: "Langues" },
   recommendations: {
-    number: "06",
     label: "Recommandations",
     title: "La confiance se construit.",
     description: "Les regards de celles et ceux avec qui j’ai eu le plaisir de travailler.",
@@ -505,7 +481,6 @@ export const sectionContent = {
     requestSubject: "Demande de recommandation",
   },
   contact: {
-    number: "07",
     label: "Et si on échangeait ?",
     title: "Les belles idées commencent",
     accent: "par un échange.",
@@ -536,5 +511,4 @@ export const portfolio = {
   interests,
   recommendations,
   sectionContent,
-  brands,
 } as const;

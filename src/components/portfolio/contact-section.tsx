@@ -28,10 +28,7 @@ export function ContactSection() {
   return (
     <section id="contact" className="section contact-section site-wrap">
       <div className="contact-panel" data-reveal>
-        <p className="section-eyebrow">
-          <span>{content.number}</span>
-          {content.label}
-        </p>
+        <p className="section-eyebrow">{content.label}</p>
         <h2>
           {content.title}
           <br />

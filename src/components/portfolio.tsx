@@ -45,11 +45,11 @@ export function Portfolio() {
       <SiteHeader activeSection={activeSection} progressRef={progressRef} />
       <main id="contenu" ref={mainRef} tabIndex={-1}>
         <Hero />
-        <section id="projets" className="section site-wrap">
-          <SectionHeading {...sectionContent.projects} />
-          <div className="projects-grid">
-            {projects.map((project, index) => (
-              <ProjectCard key={project.id} project={project} index={index} />
+        <section id="projets" className="section site-wrap" aria-labelledby="projets-titre">
+          <SectionHeading id="projets-titre" {...sectionContent.projects} />
+          <div className="projects-list">
+            {projects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
             ))}
           </div>
         </section>
