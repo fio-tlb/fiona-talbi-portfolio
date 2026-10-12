@@ -10,6 +10,13 @@ export interface PortfolioProfile {
   linkedin: string;
   /** Villes du parcours, affichées sous le nom (« Paris · Londres · Dublin »). */
   places: string;
+  /** Ville affichée dans le pied de page. */
+  city: string;
+  /**
+   * CV en PDF dans public/ (ex. « documents/cv-fiona-talbi.pdf »), proposé au téléchargement
+   * dans Contact. Remplacer le CV = écraser le fichier. `null` : aucun lien.
+   */
+  cvPath: string | null;
   /**
    * Portrait du hero. Fichiers dans public/images : `src` est le JPEG de 1200 px de large ;
    * les variantes `-600`/`-900` (JPEG et AVIF) et `.avif` portent le même nom.
@@ -26,9 +33,9 @@ export interface PortraitImage {
   widths: readonly number[];
 }
 export interface NavigationItem {
+  /** Id de la section de la page (ancre #id). */
   id: string;
   label: string;
-  tier: "primary" | "secondary";
 }
 export interface Metric {
   id: string;
@@ -57,15 +64,18 @@ export interface Experience {
   id: string;
   company: string;
   location: string | null;
+  /** Intitulé du poste (à confirmer par Fiona, tel qu'il figure sur LinkedIn). */
   role: string;
+  /** Période (« 2022 – 2023 »). Affichée seulement si elle est renseignée : ne pas l'inventer. */
+  period: string | null;
   description: string;
 }
 export interface Education {
   id: string;
-  date: string;
+  /** Période (« 2024 – 2026 »), ou `null` si elle n'est pas connue. */
+  period: string | null;
   title: string;
   school: string;
-  description: string;
 }
 export interface SkillGroup {
   id: string;
@@ -79,10 +89,9 @@ export interface Tool {
 export interface Certification {
   id: string;
   name: string;
-  organization: string;
+  /** Organisme qui délivre la certification ; `null` tant qu'il n'est pas confirmé (seule l'année s'affiche). */
+  organization: string | null;
   year: string | null;
-  mark: string;
-  style: string;
 }
 export interface Language {
   id: string;
@@ -95,8 +104,10 @@ export interface Interest {
 }
 export interface Recommendation {
   id: string;
+  /** Titre affiché. Nom et fonction du recommandant seulement avec son accord : ne rien inventer. */
   title: string;
   description?: string;
+  /** PDF dans public/ (ex. « documents/recommandation-01.pdf ») ; `null` : demande par e-mail. */
   documentPath: string | null;
 }
 export interface SectionHeadingContent {
@@ -123,6 +134,8 @@ export const profile: PortfolioProfile = {
   email: "fiona.2001@live.fr",
   linkedin: "https://www.linkedin.com/in/fiona-talbi-246407193",
   places: "Paris · Londres · Dublin",
+  city: "Paris",
+  cvPath: "documents/cv-fiona-talbi.pdf",
   portrait: {
     src: "images/portrait-fiona.jpg",
     alt: "Portrait de Fiona Talbi",
@@ -138,16 +151,16 @@ export const seo: PortfolioSeo = {
     "Fiona Talbi, professionnelle du marketing 360 et de la communication à Paris. Découvrez mes projets chez Logitech, CosmétiCar et Massilia, mes résultats et mon parcours international.",
   socialTitle: "Fiona Talbi — Marketing, créativité & impact",
   socialDescription:
-    "Plus de 3 ans d’expérience, +30 % de ventes et 140 top stores activés : découvrez le portfolio de Fiona Talbi.",
+    "Plus de 3 ans d’expérience, +30 % de ventes et 140 top stores activés : découvrez le portfolio de Fiona Talbi.",
 };
 
+// Formation, certifications et langues sont des sous-parties (#formation, #certifications, #langues)
+// de Parcours et Compétences : leurs ancres restent valables, sans entrée de menu dédiée.
 export const navigation: readonly NavigationItem[] = [
-  { id: "projets", label: "Projets", tier: "primary" },
-  { id: "parcours", label: "Parcours", tier: "primary" },
-  { id: "competences", label: "Compétences", tier: "primary" },
-  { id: "formation", label: "Formation", tier: "secondary" },
-  { id: "certifications", label: "Certifications", tier: "secondary" },
-  { id: "recommandations", label: "Recommandations", tier: "secondary" },
+  { id: "projets", label: "Projets" },
+  { id: "parcours", label: "Parcours" },
+  { id: "competences", label: "Compétences" },
+  { id: "recommandations", label: "Recommandations" },
 ];
 
 export const impactStats: readonly ImpactStat[] = [
@@ -254,84 +267,77 @@ export const experiences: readonly Experience[] = [
     company: "Logitech",
     location: "France",
     role: "Marketing Manager Assistant",
+    period: null,
     description:
-      "Category management, trade marketing et coordination terrain. Déploiement des campagnes et accompagnement d’une équipe de merchandisers.",
+      "J’ai travaillé en category management et en trade marketing dans nos top stores : nouvel agencement du rayon informatique, PLV des lancements produits et des Logi Work Days, avec une équipe de 7 merchandisers.",
   },
   {
     id: "experience-cosmeticar",
     company: "CosmétiCar",
     location: "France",
     role: "Chargée de communication",
-    description: "Animation des réseaux sociaux et formation communication des franchisés.",
+    period: null,
+    description:
+      "J’ai géré Facebook, Instagram et TikTok pour ce réseau de franchises de lavage auto, et formé à la communication les franchisés des nouvelles agences.",
   },
   {
     id: "experience-massilia",
     company: "Massilia E-consulting",
     location: null,
     role: "Chargée de relations influenceurs",
+    period: null,
     description:
-      "Partenariats en France et en Espagne, coordination avec les fournisseurs internationaux.",
+      "J’ai signé des influenceuses en France et en Espagne, et géré les fournisseurs chinois au début de la crise sanitaire.",
   },
 ];
 
 export const education: readonly Education[] = [
   {
     id: "education-ieseg",
-    date: "2024 — 2026",
+    period: "2024 – 2026",
     title: "Master Marketing Digital & Innovation",
-    school: "IÉSEG School of Management · Paris",
-    description: "Marketing digital, innovation et stratégie de marque.",
+    school: "IÉSEG School of Management, Paris",
   },
   {
     id: "education-gcu",
-    date: "2023 — 2024",
+    period: "2023 – 2024",
     title: "MSc Luxury Marketing",
-    school: "GCU · Londres",
-    description: "Marketing du luxe et expérience de marque dans un environnement international.",
+    school: "GCU London, Londres",
   },
   {
     id: "education-essca",
-    date: "2019 — 2022",
-    title: "Bachelor International Management",
-    school: "ESSCA · Spécialisation marketing",
-    description: "Une formation en management international, avec une spécialisation marketing.",
+    period: "2019 – 2022",
+    title: "Bachelor International Management, spécialisation marketing",
+    school: "ESSCA",
   },
   {
     id: "education-dorset",
-    date: "Semestre d’échange",
-    title: "Dorset College",
-    school: "Dublin · Irlande",
-    description: "Une immersion académique et culturelle anglophone.",
+    period: null,
+    title: "Semestre d’échange",
+    school: "Dorset College, Dublin",
   },
 ];
 
 export const skills: readonly SkillGroup[] = [
   {
-    id: "marketing-strategy",
-    title: "Marketing & stratégie",
-    items: [
-      "Marketing 360 & trade marketing",
-      "Category management",
-      "Déploiement de campagnes",
-      "Analyse des performances",
-    ],
+    id: "marketing-trade",
+    title: "Marketing & trade",
+    items: ["Category management", "Trade marketing", "PLV en magasin", "Déploiement de campagnes"],
   },
   {
-    id: "communication-creation",
-    title: "Communication & création",
+    id: "communication-content",
+    title: "Communication & contenus",
     items: [
-      "Social media & contenus",
+      "Réseaux sociaux : Facebook, Instagram, TikTok",
       "Relations influenceurs",
-      "Création graphique & vidéo",
-      "Communication de marque",
+      "Création graphique et vidéo",
     ],
   },
   {
     id: "coordination-field",
     title: "Coordination & terrain",
     items: [
-      "Gestion de projet",
-      "Coordination d’équipes",
+      "Management d’une équipe de merchandisers",
       "Formation des franchisés",
       "Relations fournisseurs",
     ],
@@ -350,79 +356,42 @@ export const tools: readonly Tool[] = [
   { id: "imovie", name: "iMovie" },
 ];
 
+// Du plus récent au plus ancien. Le TOEIC est présenté une seule fois, dans les langues.
 export const certifications: readonly Certification[] = [
-  {
-    id: "web-development",
-    name: "Web Development",
-    organization: "Le Wagon",
-    year: "2026",
-    mark: "LW",
-    style: "wagon",
-  },
-  {
-    id: "ai-product-building",
-    name: "AI Product Building",
-    organization: "Intelligence artificielle",
-    year: "2026",
-    mark: "AI",
-    style: "",
-  },
-  {
-    id: "ai-proficiency",
-    name: "AI Proficiency",
-    organization: "Section",
-    year: "2026",
-    mark: "S",
-    style: "section-logo",
-  },
-  {
-    id: "google-ads-search",
-    name: "Google Ads Search",
-    organization: "Google",
-    year: "2025",
-    mark: "G",
-    style: "",
-  },
+  { id: "web-development", name: "Web Development", organization: "Le Wagon", year: "2026" },
+  { id: "ai-product-building", name: "AI Product Building", organization: null, year: "2026" },
+  { id: "ai-proficiency", name: "AI Proficiency", organization: "Section", year: "2026" },
+  { id: "google-ads-search", name: "Google Ads Search", organization: "Google", year: "2025" },
   {
     id: "google-ads-analytics",
     name: "Google Ads Analytics",
     organization: "Google",
     year: "2025",
-    mark: "G",
-    style: "",
-  },
-  {
-    id: "toeic",
-    name: "TOEIC · 910 / 990",
-    organization: "ETS",
-    year: null,
-    mark: "ETS",
-    style: "",
   },
 ];
 
 export const languages: readonly Language[] = [
   { id: "french", name: "Français", level: "Langue maternelle" },
-  { id: "english", name: "Anglais", level: "TOEIC · 910 / 990" },
+  { id: "english", name: "Anglais", level: "TOEIC 910 / 990" },
   { id: "spanish", name: "Espagnol", level: "Niveau B2" },
 ];
 
 export const interests: readonly Interest[] = [
-  { id: "travel", label: "Voyage" },
-  { id: "reading", label: "Lecture" },
-  { id: "drawing", label: "Dessin" },
+  { id: "travel", label: "voyage" },
+  { id: "reading", label: "lecture" },
+  { id: "drawing", label: "dessin" },
 ];
 
 export const recommendations: readonly Recommendation[] = [
   {
     id: "recommendation-01",
     title: "Lettre de recommandation 01",
-    documentPath: null,
+    documentPath: "documents/recommandation-01.pdf",
   },
   {
     id: "recommendation-02",
     title: "Lettre de recommandation 02",
-    documentPath: null,
+    documentPath: "documents/recommandation-02.pdf",
   },
 ];
 
@@ -430,7 +399,7 @@ export const sectionContent = {
   navigation: {
     contactLabel: "Contact",
     menuLabel: "Menu de navigation",
-    secondaryLabel: "Pour aller plus loin",
+    mainLabel: "Navigation principale",
   },
   hero: {
     lead: "Plus de trois ans en marketing et communication, entre la marque et le terrain : category management et trade marketing chez Logitech, réseaux sociaux chez CosmétiCar, relations influenceurs chez Massilia E-consulting.",
@@ -441,12 +410,13 @@ export const sectionContent = {
     statsLabel: "Chiffres clés",
   },
   about: {
-    label: "Mon parcours",
-    title: "La curiosité comme moteur. L’impact comme cap.",
-    paragraphs: [
-      "Basée à Paris, je combine stratégie de marque, créativité et coordination opérationnelle. De la tech au luxe, en passant par les réseaux de franchises, mon parcours s’est construit entre Paris, Londres et Dublin.",
-    ],
-    experiencesTitle: "Expériences professionnelles",
+    label: "Parcours",
+    title: "Expériences et formation",
+    intro:
+      "Je suis Fiona, basée à Paris, avec plus de trois ans d’expérience en marketing 360 et en communication. J’ai travaillé dans la tech chez Logitech, dans un réseau de franchises chez CosmétiCar et en relations influenceurs chez Massilia E-consulting. Je me suis formée entre Paris, Londres et Dublin : marketing digital à l’IÉSEG, marketing du luxe à GCU London.",
+    interestsLabel: "En dehors du travail",
+    experiencesTitle: "Expériences",
+    educationTitle: "Formation",
   },
   projects: {
     label: "Projets",
@@ -457,43 +427,48 @@ export const sectionContent = {
     resultsLabel: "Résultats",
   },
   skills: {
-    label: "Compétences & outils",
-    title: "De la stratégie au terrain. Une approche à 360°.",
-    toolsLabel: "Ma boîte à outils",
+    label: "Compétences",
+    title: "Du rayon aux réseaux sociaux",
+    skillsTitle: "Savoir-faire",
+    toolsTitle: "Outils",
+    certificationsTitle: "Certifications",
+    languagesTitle: "Langues",
   },
-  education: {
-    label: "Formation",
-    title: "Apprendre ici. Voir plus loin.",
-    description:
-      "Un double parcours en marketing digital et en marketing du luxe, nourri d’expériences internationales.",
-  },
-  certifications: {
-    label: "Certifications",
-    title: "Toujours en mouvement. Toujours en apprentissage.",
-  },
-  languages: { title: "Sans frontières.", label: "Langues" },
   recommendations: {
     label: "Recommandations",
-    title: "La confiance se construit.",
-    description: "Les regards de celles et ceux avec qui j’ai eu le plaisir de travailler.",
-    openLabel: "Ouvrir le document",
-    requestLabel: "Demander la lettre",
-    requestSubject: "Demande de recommandation",
+    title: "Deux lettres de recommandation",
+    /** Description choisie selon les fichiers renseignés (tous en PDF, aucun, ou une partie). */
+    documentsDescription: "Elles s’ouvrent en PDF, dans un nouvel onglet.",
+    requestDescription: "Je vous les envoie par e-mail, sur simple demande.",
+    mixedDescription: "À lire en PDF ou à demander par e-mail.",
+    documentLabel: "PDF",
+    openLabel: "Lire la lettre (PDF)",
+    requestLabel: "Demander la lettre par e-mail",
+    requestSubject: "Demande de recommandation : ",
+    requestBody:
+      "Bonjour Fiona,\n\nPourriez-vous m’envoyer cette lettre de recommandation ?\n\nMerci,\n",
   },
   contact: {
-    label: "Et si on échangeait ?",
-    title: "Les belles idées commencent",
-    accent: "par un échange.",
+    label: "Contact",
+    title: "Écrivez-moi",
     description:
-      "Un projet, une opportunité ou simplement l’envie de faire connaissance ? Je serai ravie de vous lire.",
-    emailLabel: "Écrivez-moi",
+      "Le plus simple : un e-mail. Vous trouverez aussi mon CV en PDF et mon profil LinkedIn.",
     linkedinLabel: "LinkedIn",
-    copyLabel: "Copier l’adresse email",
-    copiedLabel: "Adresse email copiée",
+    cvLabel: "Télécharger le CV (PDF)",
+    copyLabel: "Copier l’adresse e-mail",
+    copyVisibleLabel: "Copier",
+    copiedVisibleLabel: "Copiée",
+    copiedLabel: "Adresse e-mail copiée",
     copyErrorLabel:
-      "Copie indisponible. Vous pouvez sélectionner l’adresse ou m’écrire directement.",
+      "Copie impossible depuis ce navigateur : l’adresse est sélectionnée, vous pouvez la copier vous-même.",
+    printLinkedinLabel: "LinkedIn : ",
   },
-  footer: { signature: "Imaginé avec curiosité, à Paris.", topLabel: "Retour en haut" },
+  footer: {
+    copyright: "© 2026 Fiona Talbi · Paris",
+    linkedinLabel: "LinkedIn",
+    topLabel: "Haut de page",
+  },
+  newTabLabel: " (nouvel onglet)",
 } as const;
 
 export const portfolio = {

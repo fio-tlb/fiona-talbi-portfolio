@@ -8,6 +8,9 @@ import {
   type NavigationItem,
 } from "@/data/portfolio";
 
+// Même seuil que le @media (max-width: 767px) de styles.css : liens en ligne dès 768 px.
+const INLINE_NAV_QUERY = "(min-width: 768px)";
+
 type SiteHeaderProps = {
   activeSection: string;
   progressRef: RefObject<HTMLDivElement | null>;
@@ -24,7 +27,7 @@ export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
   };
 
   useEffect(() => {
-    const desktop = window.matchMedia("(min-width: 981px)");
+    const desktop = window.matchMedia(INLINE_NAV_QUERY);
     const onDesktop = () => {
       if (desktop.matches) closeMenu();
     };
@@ -81,13 +84,12 @@ export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
         >
           {profile.name}
         </a>
-        <nav className="desktop-nav" aria-label="Navigation principale">
+        <nav className="desktop-nav" aria-label={content.mainLabel}>
           {items.map(renderLink)}
         </nav>
         <a
           className="header-contact"
           href="#contact"
-          aria-label={"Contacter " + profile.name}
           aria-current={activeSection === "contact" ? "location" : undefined}
           onClick={closeMenu}
         >
@@ -99,23 +101,9 @@ export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
             <Menu className="menu-open-icon" size={20} aria-hidden />
             <X className="menu-close-icon" size={20} aria-hidden />
           </summary>
-          <nav className="mobile-nav" aria-label="Navigation mobile">
-            <div className="mobile-nav-primary">
-              {items.filter((item) => item.tier === "primary").map(renderLink)}
-              <a
-                className={activeSection === "contact" ? "nav-link is-active" : "nav-link"}
-                aria-current={activeSection === "contact" ? "location" : undefined}
-                href="#contact"
-                onClick={closeMenu}
-              >
-                {content.contactLabel}
-                <Mail size={16} aria-hidden />
-              </a>
-            </div>
-            <div className="mobile-nav-secondary">
-              <p className="mobile-nav-label">{content.secondaryLabel}</p>
-              {items.filter((item) => item.tier === "secondary").map(renderLink)}
-            </div>
+          {/* Un seul niveau : les 4 sections. Contact reste dans la barre, à côté du bouton. */}
+          <nav className="mobile-nav" aria-label={content.mainLabel}>
+            {items.map(renderLink)}
           </nav>
         </details>
       </div>

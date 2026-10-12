@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, ArrowUpRight } from "lucide-react";
 import { navigation, profile, projects, sectionContent } from "@/data/portfolio";
 import { usePortfolioNavigation } from "@/hooks/use-portfolio-navigation";
 import { useReveal } from "@/hooks/use-reveal";
@@ -7,18 +7,13 @@ import { ContactSection } from "./portfolio/contact-section";
 import { Hero } from "./portfolio/hero";
 import { ProjectCard } from "./portfolio/project-card";
 import { SectionHeading } from "./portfolio/section-heading";
-import {
-  CredentialsSection,
-  EducationSection,
-  JourneySection,
-  RecommendationsSection,
-  SkillsSection,
-} from "./portfolio/sections";
+import { JourneySection, RecommendationsSection, SkillsSection } from "./portfolio/sections";
 import { SiteHeader } from "./portfolio/site-header";
 
 const sectionIds = ["accueil", ...navigation.map((item) => item.id), "contact"];
 
 export function Portfolio() {
+  const footer = sectionContent.footer;
   const mainRef = useRef<HTMLElement>(null);
   const { activeSection, progressRef } = usePortfolioNavigation(sectionIds);
   useReveal(mainRef);
@@ -55,21 +50,30 @@ export function Portfolio() {
         </section>
         <JourneySection />
         <SkillsSection />
-        <EducationSection />
-        <CredentialsSection />
         <RecommendationsSection />
         <ContactSection />
       </main>
       <footer className="site-footer">
         <div className="site-wrap footer-inner">
-          <p>
-            © {profile.name} · {profile.role}
-          </p>
-          <p>{sectionContent.footer.signature}</p>
-          <a href="#accueil">
-            {sectionContent.footer.topLabel}
-            <ArrowUp size={12} aria-hidden />
-          </a>
+          <p className="footer-signature">{footer.copyright}</p>
+          <ul className="footer-links" role="list">
+            <li>
+              <a href={"mailto:" + profile.email}>{profile.email}</a>
+            </li>
+            <li>
+              <a href={profile.linkedin} target="_blank" rel="noopener noreferrer">
+                {footer.linkedinLabel}
+                <ArrowUpRight size={14} aria-hidden />
+                <span className="sr-only">{sectionContent.newTabLabel}</span>
+              </a>
+            </li>
+            <li>
+              <a className="footer-top" href="#accueil">
+                {footer.topLabel}
+                <ArrowUp size={14} aria-hidden />
+              </a>
+            </li>
+          </ul>
         </div>
       </footer>
     </>

@@ -1,11 +1,8 @@
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { impactStats, profile, projects, sectionContent } from "@/data/portfolio";
+import { publicPath } from "@/lib/public-path";
 
 const projectIds = new Set(projects.map((project) => project.id));
-
-function publicPath(path: string) {
-  return import.meta.env.BASE_URL + path.replace(/^\/+/, "");
-}
 
 /** « images/portrait.jpg » → « images/portrait-600.avif » (la plus grande largeur garde le nom de base). */
 function variant(src: string, width: number, largest: number, extension: "jpg" | "avif") {
@@ -50,7 +47,7 @@ export function Hero() {
             >
               {content.linkedinLabel}
               <ArrowUpRight size={14} aria-hidden />
-              <span className="sr-only"> (nouvel onglet)</span>
+              <span className="sr-only">{sectionContent.newTabLabel}</span>
             </a>
           </p>
         </div>
