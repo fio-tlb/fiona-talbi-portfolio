@@ -110,6 +110,29 @@ export interface Recommendation {
   /** PDF dans public/ (ex. « documents/recommandation-01.pdf ») ; `null` : demande par e-mail. */
   documentPath: string | null;
 }
+/**
+ * Vidéo de présentation proposée depuis le hero. Chemins relatifs à public/ (préfixés au rendu).
+ * Remplacer la vidéo : écraser les fichiers, mesurer la durée (ffprobe), changer `id` pour la
+ * reproposer aux visiteurs qui avaient choisi « Plus tard » ou fermé la pastille. `null` : rien.
+ */
+export interface IntroVideo {
+  /** Clé de la mémoire du visiteur (`ft-intro-video:<id>`) : la changer à chaque nouvelle vidéo. */
+  id: string;
+  /** MP4 H.264 avec `+faststart`. */
+  src: string;
+  /** Affiche JPEG au format de la vidéo ; une version WebP du même nom sert de vignette. */
+  poster: string;
+  /** Sous-titres WebVTT en français, ou `null` (vidéo sans parole). */
+  captions: string | null;
+  width: number;
+  height: number;
+  /** Durée réelle, mesurée sur le fichier : elle est affichée (« 20 s »). */
+  durationSeconds: number;
+  /** Titre du lecteur. */
+  title: string;
+  /** Clip de test en attendant la vraie vidéo : titré « Vidéo de test ». */
+  isPlaceholder: boolean;
+}
 export interface SectionHeadingContent {
   /** Sur-titre court, en casse normale. */
   label?: string;
@@ -395,6 +418,18 @@ export const recommendations: readonly Recommendation[] = [
   },
 ];
 
+export const introVideo: IntroVideo | null = {
+  id: "presentation-test-1",
+  src: "video/presentation.mp4",
+  poster: "video/presentation-poster.jpg",
+  captions: null,
+  width: 720,
+  height: 1280,
+  durationSeconds: 20,
+  title: "Vidéo de test",
+  isPlaceholder: true,
+};
+
 export const sectionContent = {
   navigation: {
     contactLabel: "Contact",
@@ -463,6 +498,20 @@ export const sectionContent = {
       "Copie impossible depuis ce navigateur : l’adresse est sélectionnée, vous pouvez la copier vous-même.",
     printLinkedinLabel: "LinkedIn : ",
   },
+  introVideo: {
+    /** Bouton du hero (rond seul sous 1000 px, libellé gardé pour les lecteurs d’écran). */
+    heroLabel: "Ma présentation",
+    /** Précision lue après le libellé : « Ma présentation (vidéo, 20 s) ». */
+    videoLabel: "vidéo",
+    inviteLabel: "Vidéo de présentation",
+    watchLabel: "Regarder ma présentation",
+    laterLabel: "Plus tard",
+    widgetPlayLabel: "Regarder ma présentation",
+    widgetDismissLabel: "Masquer la vidéo",
+    closeLabel: "Fermer la vidéo",
+    errorText: "La vidéo ne se lance pas ici.",
+    errorOpenLabel: "Ouvrir le fichier vidéo",
+  },
   footer: {
     copyright: "© 2026 Fiona Talbi · Paris",
     linkedinLabel: "LinkedIn",
@@ -485,5 +534,6 @@ export const portfolio = {
   languages,
   interests,
   recommendations,
+  introVideo,
   sectionContent,
 } as const;
