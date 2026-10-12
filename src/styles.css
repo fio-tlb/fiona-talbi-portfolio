@@ -1186,8 +1186,7 @@
   }
 }
 @media (max-width: 980px) {
-  .logo-mark,
-  .scroll-track {
+  .logo-mark {
     display: none;
   }
   .header-brand {
