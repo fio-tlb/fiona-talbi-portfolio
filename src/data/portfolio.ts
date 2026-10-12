@@ -34,7 +34,7 @@ export const profile: PortfolioProfile = {
   places: "Paris · Londres · Dublin",
   cvPath: "documents/cv-fiona-talbi.pdf",
   portrait: {
-    ...jpegWithAvif("images/portrait-fiona.jpg", 1200, 1500, [600, 900, 1200]),
+    ...jpegWithAvif("images/portrait-fiona-v2.jpg", 1122, 1402, [600, 900, 1122]),
     alt: "Portrait de Fiona Talbi",
   },
 };

@@ -36,10 +36,10 @@ describe("Hero", () => {
     const { container } = render(<Hero />);
     expect(screen.getByRole("img", { name: "Portrait de Fiona Talbi" })).toHaveAttribute(
       "width",
-      "1200",
+      "1122",
     );
     expect(container.querySelector('source[type="image/avif"]')?.getAttribute("srcset")).toMatch(
-      /portrait-fiona-600\.avif 600w/,
+      /portrait-fiona-v2-600\.avif 600w/,
     );
     // « CV » on phones, but the accessible name stays « Télécharger le CV ».
     const cv = screen.getByRole("link", { name: "Télécharger le CV" });
