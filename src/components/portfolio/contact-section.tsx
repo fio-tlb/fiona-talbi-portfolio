@@ -68,7 +68,6 @@ export function ContactSection() {
           <a className="action action-primary" href={"mailto:" + profile.email}>
             <Mail size={15} aria-hidden />
             {content.emailLabel}
-            <ArrowUpRight size={15} aria-hidden />
           </a>
           <a
             className="action action-secondary"

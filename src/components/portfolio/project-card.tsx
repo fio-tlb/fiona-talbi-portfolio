@@ -1,4 +1,4 @@
-import { ArrowUpRight, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { projects, sectionContent } from "@/data/portfolio";
 
 type Project = (typeof projects)[number];
@@ -20,7 +20,6 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
         </div>
         <div className="project-cover-bottom">
           <span className="project-category">{project.category}</span>
-          <ArrowUpRight size={24} strokeWidth={1.5} aria-hidden />
         </div>
         <div className="cover-rings" aria-hidden>
           <i />

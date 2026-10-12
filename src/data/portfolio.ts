@@ -14,6 +14,7 @@ export interface PortfolioProfile {
 export interface NavigationItem {
   id: string;
   label: string;
+  tier: "primary" | "secondary";
 }
 export interface Metric {
   id: string;
@@ -125,12 +126,12 @@ export const seo: PortfolioSeo = {
 };
 
 export const navigation: readonly NavigationItem[] = [
-  { id: "projets", label: "Projets" },
-  { id: "parcours", label: "Parcours" },
-  { id: "competences", label: "Compétences" },
-  { id: "formation", label: "Formation" },
-  { id: "certifications", label: "Certifications" },
-  { id: "recommandations", label: "Recommandations" },
+  { id: "projets", label: "Projets", tier: "primary" },
+  { id: "parcours", label: "Parcours", tier: "primary" },
+  { id: "competences", label: "Compétences", tier: "primary" },
+  { id: "formation", label: "Formation", tier: "secondary" },
+  { id: "certifications", label: "Certifications", tier: "secondary" },
+  { id: "recommandations", label: "Recommandations", tier: "secondary" },
 ];
 
 export const impactStats: readonly ImpactStat[] = [
@@ -436,14 +437,19 @@ export const brands: readonly Brand[] = [
 ];
 
 export const sectionContent = {
+  navigation: {
+    contactLabel: "Contact",
+    menuLabel: "Menu de navigation",
+    secondaryLabel: "Formation & qualifications",
+  },
   hero: {
     eyebrow: "Marketing 360 · Communication · Créativité",
     title: "De l’idée",
     accent: "à l’impact.",
     description:
-      "Plus de 3 ans d’expérience pour faire rayonner les marques, connecter les audiences et transformer les stratégies en impact.",
-    primaryAction: "Découvrir mes projets",
-    secondaryAction: "Me contacter",
+      "J’allie stratégie, création et coordination terrain pour faire rayonner les marques.",
+    primaryAction: "Voir les projets",
+    secondaryAction: "Contact",
     statsLabel: "Mes résultats en chiffres",
     visualCaption: "Stratégie. Créativité. Impact.",
   },
@@ -457,25 +463,9 @@ export const sectionContent = {
     title: "La curiosité comme moteur.",
     accent: "L’impact comme cap.",
     paragraphs: [
-      "Je suis Fiona, une professionnelle du marketing 360 et de la communication, basée à Paris. J’aime comprendre les marques, imaginer des idées qui font sens et les concrétiser sur le terrain.",
-      "De la tech au luxe, en passant par les réseaux de franchises, mon parcours combine vision stratégique, créativité et coordination opérationnelle. Paris, Londres et Dublin ont nourri ma curiosité et mon ouverture internationale.",
+      "Basée à Paris, je combine stratégie de marque, créativité et coordination opérationnelle. De la tech au luxe, en passant par les réseaux de franchises, mon parcours s’est construit entre Paris, Londres et Dublin.",
     ],
     experiencesTitle: "Expériences professionnelles",
-    visionTitle: "Une vision à 360°",
-    vision: [
-      {
-        id: "strategy-execution",
-        title: "Relier la stratégie à l’exécution.",
-        description:
-          "Un rayon repensé, une campagne prête dès le premier jour, une communauté qui grandit : chaque projet commence par un objectif clair.",
-      },
-      {
-        id: "create-coordinate-measure",
-        title: "Créer, coordonner, mesurer.",
-        description:
-          "Je m’appuie sur une approche transversale du marketing et de la communication pour donner de la cohérence aux marques et de la portée à leurs actions.",
-      },
-    ],
   },
   projects: {
     number: "01",
@@ -516,6 +506,8 @@ export const sectionContent = {
     title: "La confiance se construit.",
     description: "Les regards de celles et ceux avec qui j’ai eu le plaisir de travailler.",
     pendingLabel: "Bientôt disponible en PDF",
+    pendingNote: "Les lettres de recommandation ne sont pas encore disponibles.",
+    remainingNote: "Les autres lettres ne sont pas encore disponibles.",
     openLabel: "Ouvrir le document",
   },
   contact: {

@@ -1,6 +1,13 @@
 import { useEffect, useRef, type RefObject } from "react";
-import { ArrowUpRight, Menu, X } from "lucide-react";
-import { navigation, profile } from "@/data/portfolio";
+import { Mail, Menu, X } from "lucide-react";
+import {
+  navigation,
+  profile,
+  recommendations,
+  sectionContent,
+  type NavigationItem,
+} from "@/data/portfolio";
+import { isRecommendationAvailable } from "@/lib/recommendations";
 
 type SiteHeaderProps = {
   activeSection: string;
@@ -9,11 +16,18 @@ type SiteHeaderProps = {
 
 export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
   const menuRef = useRef<HTMLDetailsElement>(null);
+  const content = sectionContent.navigation;
+  const hasRecommendations = recommendations.some(isRecommendationAvailable);
+  const items = navigation.filter((item) => item.id !== "recommandations" || hasRecommendations);
   const closeMenu = () => {
     if (menuRef.current) menuRef.current.open = false;
   };
 
   useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 981px)");
+    const onDesktop = () => {
+      if (desktop.matches) closeMenu();
+    };
     const onEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape" && menuRef.current?.open) {
         closeMenu();
@@ -25,13 +39,15 @@ export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
     };
     document.addEventListener("keydown", onEscape);
     document.addEventListener("pointerdown", onOutsideClick);
+    desktop.addEventListener("change", onDesktop);
     return () => {
       document.removeEventListener("keydown", onEscape);
       document.removeEventListener("pointerdown", onOutsideClick);
+      desktop.removeEventListener("change", onDesktop);
     };
   }, []);
 
-  const links = navigation.map((item) => (
+  const renderLink = (item: NavigationItem) => (
     <a
       key={item.id}
       href={"#" + item.id}
@@ -41,7 +57,7 @@ export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
     >
       {item.label}
     </a>
-  ));
+  );
 
   return (
     <header className="site-header">
@@ -61,7 +77,7 @@ export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
           </span>
         </a>
         <nav className="desktop-nav" aria-label="Navigation principale">
-          {links}
+          {items.map(renderLink)}
         </nav>
         <a
           className="header-contact"
@@ -70,24 +86,31 @@ export function SiteHeader({ activeSection, progressRef }: SiteHeaderProps) {
           aria-current={activeSection === "contact" ? "location" : undefined}
           onClick={closeMenu}
         >
-          <span>Contact</span>
-          <ArrowUpRight size={17} aria-hidden />
+          <span>{content.contactLabel}</span>
+          <Mail size={16} aria-hidden />
         </a>
         <details className="mobile-menu" ref={menuRef}>
-          <summary aria-label="Menu de navigation">
-            <Menu className="menu-open-icon" size={21} aria-hidden />
-            <X className="menu-close-icon" size={21} aria-hidden />
+          <summary aria-label={content.menuLabel}>
+            <Menu className="menu-open-icon" size={20} aria-hidden />
+            <X className="menu-close-icon" size={20} aria-hidden />
           </summary>
           <nav className="mobile-nav" aria-label="Navigation mobile">
-            {links}
-            <a
-              className={activeSection === "contact" ? "nav-link is-active" : "nav-link"}
-              aria-current={activeSection === "contact" ? "location" : undefined}
-              href="#contact"
-              onClick={closeMenu}
-            >
-              Contact <ArrowUpRight size={16} aria-hidden />
-            </a>
+            <div className="mobile-nav-primary">
+              {items.filter((item) => item.tier === "primary").map(renderLink)}
+              <a
+                className={activeSection === "contact" ? "nav-link is-active" : "nav-link"}
+                aria-current={activeSection === "contact" ? "location" : undefined}
+                href="#contact"
+                onClick={closeMenu}
+              >
+                {content.contactLabel}
+                <Mail size={16} aria-hidden />
+              </a>
+            </div>
+            <div className="mobile-nav-secondary">
+              <p className="mobile-nav-label">{content.secondaryLabel}</p>
+              {items.filter((item) => item.tier === "secondary").map(renderLink)}
+            </div>
           </nav>
         </details>
       </div>

@@ -2,7 +2,6 @@ import {
   ArrowUpRight,
   BookOpen,
   BriefcaseBusiness,
-  Clock3,
   FileText,
   Globe2,
   GraduationCap,
@@ -22,7 +21,9 @@ import {
   sectionContent,
   skills,
   tools,
+  type Recommendation,
 } from "@/data/portfolio";
+import { isRecommendationAvailable } from "@/lib/recommendations";
 import { SectionHeading } from "./section-heading";
 
 const interestIcons = { travel: Plane, reading: BookOpen, drawing: Pencil };
@@ -69,14 +70,6 @@ export function JourneySection() {
               </article>
             ))}
           </div>
-          <div className="vision-card" aria-label={content.visionTitle}>
-            {content.vision.map((item) => (
-              <div key={item.id}>
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </section>
@@ -92,10 +85,12 @@ export function SkillsSection() {
           const Icon = skillIcons[index] ?? Target;
           return (
             <article className="skill-card" key={skill.id} data-reveal data-delay={index * 60}>
-              <span className="skill-icon">
-                <Icon size={21} strokeWidth={1.6} aria-hidden />
-              </span>
-              <h3>{skill.title}</h3>
+              <div className="skill-card-heading">
+                <span className="skill-icon">
+                  <Icon size={18} strokeWidth={1.6} aria-hidden />
+                </span>
+                <h3>{skill.title}</h3>
+              </div>
               <ul>
                 {skill.items.map((item) => (
                   <li key={item}>{item}</li>
@@ -136,7 +131,6 @@ export function EducationSection() {
               <p className="education-date">{item.date}</p>
               <h3>{item.title}</h3>
               <p className="education-school">{item.school}</p>
-              <p className="education-copy">{item.description}</p>
             </div>
           </article>
         ))}
@@ -183,13 +177,32 @@ export function CredentialsSection() {
   );
 }
 
-export function RecommendationsSection() {
+export function RecommendationsSection({
+  items = recommendations,
+}: {
+  items?: readonly Recommendation[];
+} = {}) {
   const content = sectionContent.recommendations;
+  const documents = items.filter(isRecommendationAvailable);
+  if (!documents.length) {
+    return (
+      <section
+        id="recommandations"
+        className="site-wrap recommendations-pending"
+        aria-label={content.label}
+      >
+        <p className="pending-note" data-reveal>
+          <FileText size={17} aria-hidden />
+          {content.pendingNote}
+        </p>
+      </section>
+    );
+  }
   return (
     <section id="recommandations" className="section site-wrap">
       <SectionHeading {...content} />
       <div className="recommendation-grid">
-        {recommendations.map((recommendation, index) => (
+        {documents.map((recommendation, index) => (
           <article
             className="recommendation-card"
             key={recommendation.id}
@@ -202,26 +215,23 @@ export function RecommendationsSection() {
             <div>
               <h3>{recommendation.title}</h3>
               <p>{recommendation.description}</p>
-              {recommendation.status === "available" && recommendation.documentPath ? (
-                <a
-                  className="recommendation-link"
-                  href={import.meta.env.BASE_URL + recommendation.documentPath.replace(/^\/+/, "")}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {content.openLabel}
-                  <ArrowUpRight size={14} aria-hidden />
-                </a>
-              ) : (
-                <span className="pending-label">
-                  <Clock3 size={11} aria-hidden />
-                  {content.pendingLabel}
-                </span>
-              )}
+              <a
+                className="recommendation-link"
+                href={
+                  import.meta.env.BASE_URL + recommendation.documentPath.trim().replace(/^\/+/, "")
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={content.openLabel + " : " + recommendation.title}
+              >
+                {content.openLabel}
+                <ArrowUpRight size={14} aria-hidden />
+              </a>
             </div>
           </article>
         ))}
       </div>
+      {documents.length < items.length && <p className="pending-note">{content.remainingNote}</p>}
     </section>
   );
 }

@@ -65,11 +65,11 @@ export function useReveal(rootRef: RefObject<HTMLElement | null>): void {
                 // Visibility belongs to the temporary animation, never to the base styles.
                 const animation = element.animate(
                   [
-                    { opacity: 0, transform: "translateY(18px)" },
+                    { opacity: 0, transform: "translateY(10px)" },
                     { opacity: 1, transform: "translateY(0)" },
                   ],
                   {
-                    duration: 650,
+                    duration: 400,
                     delay,
                     easing: "cubic-bezier(0.2, 0.65, 0.3, 1)",
                     fill: "both",
